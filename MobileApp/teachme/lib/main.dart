@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/firebase_options.dart';
 import 'package:teachme/providers/providers.dart';
@@ -19,7 +20,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
-  await UserPreferences.instance.initPrefs();
+  await Hive.initFlutter(); // Cargamos las preferencias locales y las mini BD locales
+  await UserPreferences.instance.initPrefs(); // Cargamos las preferencias locales y las mini BD locales
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   
   bool isSessionActive = await AuthService.initSession();

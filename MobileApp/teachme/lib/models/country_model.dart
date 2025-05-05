@@ -9,11 +9,16 @@ class Pais {
     required this.idiomas,
   });
 
-  factory Pais.fromJson(Map<String, dynamic> json) {
+  factory Pais.fromJson(Map json) {
+    final name = json['name'] as Map?;
+    final common = name?['common'] ?? '';
+    final timezones = json['timezones'] as List?;
+    final langs = (json['languages'] as Map?)?.values.map((e) => e.toString()).toList() ?? [];
+  
     return Pais(
-      nombre: json['name']['common'],
-      zonaHoraria: (json['timezones'] as List).first,
-      idiomas: (json['languages'] as Map).values.map((e) => e.toString()).toList(),
+      nombre: common,
+      zonaHoraria: timezones?.first ?? '',
+      idiomas: langs,
     );
   }
 }

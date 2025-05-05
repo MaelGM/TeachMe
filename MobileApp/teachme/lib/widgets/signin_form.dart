@@ -167,31 +167,31 @@ class _SignInFormState extends State<SignInForm> {
   _registerUser(SignFormProvider signForm, BuildContext context) async{
     //return signForm.isLoading ? null : 
     //() async {
-      signForm.clearErrors; // Limpia errores previos
-      bool isValid = true;
-
-      print('Estoy');
-
-      if (validateForm(signForm) || !signForm.formKey.currentState!.validate()) isValid = false;
-
-      if(isValid) {
-        signForm.isLoading = true;
-        final authService = AuthService(); // Instancia de AuthService
-        if (await authService.emailExists(signForm.email)) {
-          signForm.emailError = translate(context, "emailExists");
-          signForm.isLoading = false;
-        }else {
-          creatingUser = UserModel(
-            id: '',
-            connected: false, 
-            email: signForm.email, 
-            isStudent: false, 
-            isTeacher: false, 
-            name: signForm.name, 
-            profilePicture: ''
-          );
-          isGoogleSignUp = false;
-          creatingUserPassword = signForm.password;
+      //signForm.clearErrors; // Limpia errores previos
+      //bool isValid = true;
+//
+      //print('Estoy');
+//
+      //if (validateForm(signForm) || !signForm.formKey.currentState!.validate()) isValid = false;
+//
+      //if(isValid) {
+      //  signForm.isLoading = true;
+      //  final authService = AuthService(); // Instancia de AuthService
+      //  if (await authService.emailExists(signForm.email)) {
+      //    signForm.emailError = translate(context, "emailExists");
+      //    signForm.isLoading = false;
+      //  }else {
+      //    creatingUser = UserModel(
+      //      id: '',
+      //      connected: false, 
+      //      email: signForm.email, 
+      //      isStudent: false, 
+      //      isTeacher: false, 
+      //      name: signForm.name, 
+      //      profilePicture: ''
+      //    );
+      //    isGoogleSignUp = false;
+      //    creatingUserPassword = signForm.password;
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -210,10 +210,10 @@ class _SignInFormState extends State<SignInForm> {
               },
             ),
           );
-        }
-      }
+      //  }
+      //}
 
-      signForm.isLoading = false;
+      //signForm.isLoading = false;
     
   }
 

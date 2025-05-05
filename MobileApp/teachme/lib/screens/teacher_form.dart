@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
+import 'package:teachme/models/country_model.dart';
 import 'package:teachme/models/models.dart';
 import 'package:teachme/providers/teacher_form_provider.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/ui/input_decorations.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
+import 'package:teachme/utils/user_preferences.dart';
 
 class TeacherForm extends StatefulWidget{
   static const routeName = "teacherForm";
@@ -15,6 +18,9 @@ class TeacherForm extends StatefulWidget{
 
 class _TeacherFormState extends State<TeacherForm> {
   final TextEditingController _dateController = TextEditingController();
+  late TextEditingController localidadController;
+  late TextEditingController zonaHorariaController;
+  late TextEditingController lenguajeController;
   DateTime? selectedDate;
   String description = '';
 
@@ -22,7 +28,20 @@ class _TeacherFormState extends State<TeacherForm> {
   void initState() {
     super.initState();
     currentTeacher = TeacherModel(userId: '', aboutMe: '', birthDate: '', rating: 0, country: '', timeZone: '', memberSince: '');
+    localidadController = TextEditingController();
+    zonaHorariaController = TextEditingController();
+    lenguajeController = TextEditingController();
   }
+
+  @override
+  void dispose() {
+    localidadController.dispose();
+    zonaHorariaController.dispose();
+    lenguajeController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final teacherForm = Provider.of<TeacherFormProvider>(context);
@@ -73,9 +92,53 @@ class _TeacherFormState extends State<TeacherForm> {
         Text("Fecha de nacimiento*", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),),
         SizedBox(height: 2),
         _dateField(teacherForm),
-        
+        SizedBox(height: 31),
+        Text("Localidad*", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),),
+        SizedBox(height: 2),
+        _countryField(teacherForm),
+
       ],
     );
+  }
+
+  TypeAheadField<Pais> _countryField(TeacherFormProvider teacherForm) {
+    return TypeAheadField<Pais>(
+        suggestionsCallback: (pattern) async {
+          final paises = UserPreferences.getPaises();
+          final resultados = paises.where((p) => p.nombre.toLowerCase().contains(pattern.toLowerCase())).toList();
+
+          return resultados;
+        },
+        itemBuilder: (context, Pais suggestion) {
+          return ListTile(title: Text(suggestion.nombre));
+        },
+        onSelected: (Pais suggestion) {
+          localidadController.text = suggestion.nombre;
+          setState(() {
+            zonaHorariaController.text = suggestion.zonaHoraria;
+            lenguajeController.text = suggestion.idiomas.join(', ');
+            // update modelo del trabajador
+          });
+        },
+        controller: localidadController,
+        builder: (context, controller, focusNode) {
+          return TextFormField(
+            validator:(value) {
+              if (value == null || value.isEmpty) return 'Seleccione su país';
+              return null;
+              
+            },
+            style: TextStyle(color: Colors.white),
+            controller: controller,
+            focusNode: focusNode,
+            decoration: InputDecorations.authInputDecorationBorderFull(
+              hintText: 'Seleccione el pais en el que habita',
+              labelText: 'Pais',
+              simplySuffixIcon: Icons.calendar_today
+            ),
+          );
+        },
+      );
   }
 
   TextFormField _dateField(TeacherFormProvider teacherForm) {

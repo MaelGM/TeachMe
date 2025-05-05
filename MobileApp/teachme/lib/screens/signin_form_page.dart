@@ -82,8 +82,8 @@ class _SigninFormPageState extends State<SigninFormPage> {
   ElevatedButton _nextButton(BuildContext context) {
     return ElevatedButton(
                 onPressed: () => !isStudent && !isTeacher ? {} : {
-                  creatingUser.isStudent = isStudent,
-                  creatingUser.isTeacher = isTeacher,
+                  //creatingUser.isStudent = isStudent,
+                  //creatingUser.isTeacher = isTeacher,
                   Navigator.push(
                     context,
                     PageRouteBuilder(
