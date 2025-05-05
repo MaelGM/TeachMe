@@ -1,0 +1,10 @@
+export 'package:teachme/screens/access_page.dart';
+export 'package:teachme/screens/home_page.dart';
+export 'package:teachme/screens/nav_bar.dart';
+export 'package:teachme/screens/profile_page.dart';
+export 'package:teachme/screens/search_page.dart';
+export 'package:teachme/screens/messages_page.dart';
+export 'package:teachme/screens/config_menu.dart';
+export 'package:teachme/screens/signin_form_page.dart';
+export 'package:teachme/screens/choose_interests_page.dart';
+export 'package:teachme/screens/teacher_form.dart';

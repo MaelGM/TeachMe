@@ -1,0 +1,21 @@
+
+import 'package:flutter/material.dart';
+import 'package:teachme/screens/choose_language_page.dart';
+import 'package:teachme/screens/pages.dart';
+
+Map<String, WidgetBuilder> getApplicationRoutes(){
+  return <String, WidgetBuilder>{
+    //'/':(BuildContext context) => HomePage(),
+    AccessPage.routeName:(BuildContext context) => AccessPage(),
+    HomePage.routeName:(BuildContext context) => HomePage(),
+    NavBarPage.routeName:(BuildContext context) => NavBarPage(),
+    MessagesPage.routeName:(BuildContext context) => MessagesPage(),
+    ProfilePage.routeName:(BuildContext context) => ProfilePage(),
+    SearchPage.routeName:(BuildContext context) => SearchPage(),
+    SigninFormPage.routeName:(BuildContext context) => SigninFormPage(),
+    ChooseInterestsPage.routeName:(BuildContext context) => ChooseInterestsPage(),
+    TeacherForm.routeName:(BuildContext context) => TeacherForm(),
+    ChooseLanguagePage.routeName:(BuildContext context) => ChooseLanguagePage(),
+
+  };
+}

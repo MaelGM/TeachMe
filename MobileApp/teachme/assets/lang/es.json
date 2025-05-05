@@ -1,0 +1,65 @@
+{
+    "welcome": "Bienvenido a TeachMe",
+
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "signin": "Registrarse",
+    "googleButton": "Continuar con Google",
+    "googleError": "Ha ocurrido un error con el log in de google",
+
+    "password": "Contraseña",
+    "enterPassword": "Introduce la contraseña",
+    "enterPasswordPlease": "Introduzca la contraseña",
+    "repeatPassword": "Repetir contraseña",
+    "repeatPasswordPlease": "Repita la contraseña",
+    "minimalLengthPassword": "La contraseña debe tener mínimo 8 caracteres",
+    "forgotPassword": "¿Has olvidado tu contraseña?",
+    "differentsPasswords": "Las contraseñas no coinciden",
+    "weakPassword": "La contraseña es muy débil",
+
+    "incorrectEmailOrPassword": "Correo o contraseña incorrectos",
+    "invalidEmailOrPassword": "Correo o contraseña invalidos",
+
+    "email": "Correo electrónico",
+    "enterEmailPlease": "Introduzca su email",
+    "enterCorrectEmailPlease": "Introduzca un email válido",
+    "emailExists": "El correo ya está en uso",
+    "incorrectEmail": "Correo electrónico invalido",
+
+    "name": "Nombre",
+    "enterNamePlease": "Introduzca el nombre",
+
+    "dishabledUser": "Este usuario ha sido deshabilitado",
+    "userNotFound": "No hay ningun usuario con este correo",
+    "maxTries": "Demasiados intentos. Intenta más tarde",
+    "loginDishabled": "Inicio de sesión deshabilitado",
+    "loginError": "Error al iniciar sesión",
+    "redError": "Error de red. Revisa tu conexión",
+
+    "randomError": "Ocurrió un error",
+    "unexpectedError": "Error inesperado. Intenta de nuevo",
+
+    "next": "Siguiente",
+    "back": "Atras",
+    "student": "Estudiante",
+    "teacher": "Profesor",
+    "whatInterests": "¿Qué te interesa?",
+    "whatAreYou": "¿Que deseas ser en TeachMe?",
+    "tellUsAboutYou": "Cuentanos algo de ti",
+    "chooseLanguage": "Elige tu lenguaje",
+    "language": "Idioma",
+    "myAccount": "Mi cuenta",
+
+    "search": "Buscar",
+    "searchPage": "Descubre",
+
+    "profile": "Perfil",
+
+    "home": "Inicio",
+
+    "messages": "Mensajes",
+    "notifications": "Habilitar notificaciones",
+    "configurationTitle": "Configuración de datos"
+    
+
+}

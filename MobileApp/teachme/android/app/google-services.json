@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "631498841165",
+    "project_id": "teachme-39e86",
+    "storage_bucket": "teachme-39e86.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:631498841165:android:a8ee54de164e5a04671004",
+        "android_client_info": {
+          "package_name": "com.example.teachme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "631498841165-8h788ehqvf88t6kvbth10tuq30ljk941.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.teachme",
+            "certificate_hash": "a7872e3b37c9bf7538bf54a1bc10170329a8639d"
+          }
+        },
+        {
+          "client_id": "631498841165-nt8eu6cfbko4di3ac6fbcbr19f4ia3ke.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu8oOagK93v-nGnrmKXead59VQzyKH1LM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "631498841165-nt8eu6cfbko4di3ac6fbcbr19f4ia3ke.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "631498841165-7bh8pbg2o10lo1pmgm8hqo6o18aalda2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.teachme"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
