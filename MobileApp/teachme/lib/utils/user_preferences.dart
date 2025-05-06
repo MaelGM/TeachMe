@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
@@ -6,9 +7,11 @@ import 'package:teachme/models/country_model.dart';
 import 'dart:convert';
 
 import 'package:teachme/models/models.dart';
+import 'package:teachme/models/skill_model.dart';
 
 class UserPreferences {
   static late Box _box;
+  static final _firestore = FirebaseFirestore.instance;
   UserPreferences._internal();
 
   static final UserPreferences _instance = UserPreferences._internal();
@@ -24,11 +27,65 @@ class UserPreferences {
   Future<void> initPrefs() async {
     _box = await Hive.openBox('local_storage');
     await _loadCountriesIfNeeded();
+    await _loadSkillsIfNeeded();
     try {
       _refreshToken = await _prefs.read(key: 'refreshToken');
     } catch (e) {
       print("Error leyendo el refresh token: $e");
     }
+  }
+
+  /*
+    Se revisa si ya están las habilidades en la BD local del dispositivo,
+    y si no lo estaban, se guardan.
+  */
+  static Future<void> _loadSkillsIfNeeded() async {
+    if (!_box.containsKey('skills')) {
+      try {
+        final snapshot = await _firestore.collection('skills').get();
+        final List<Map<String, dynamic>> skillList = snapshot.docs
+            .map((doc) => {'name': doc['name']})
+            .toList();
+
+        final encoded = json.encode(skillList);
+        await _box.put('skills', encoded);
+
+        print("Skills descargadas y guardadas localmente.");
+      } catch (e) {
+        print("Error cargando skills desde Firestore: $e");
+        throw Exception("No se pudieron cargar las skills");
+      }
+    } else {
+      print("Skills ya estaban guardadas");
+    }
+  }
+
+  /// Devuelve las skills en JSON crudo (como List<dynamic>)
+  static List<dynamic> getSkillsJson() {
+    final String? jsonData = _box.get('skills');
+    if (jsonData == null) return [];
+    return json.decode(jsonData);
+  }
+
+  /// Devuelve las skills como lista de objetos Skill
+  static List<Skill> getSkills() {
+    final String? jsonData = _box.get('skills');
+    if (jsonData == null) return [];
+
+    List<Skill> skills = [];
+    final List<dynamic> decoded = json.decode(jsonData);
+
+    for (final e in decoded) {
+      if (e is Map) {
+        try {
+          skills.add(Skill.fromJson(Map<String, dynamic>.from(e)));
+        } catch (err) {
+          print("Error parseando skill: $err");
+        }
+      }
+    }
+
+    return skills;
   }
 
 

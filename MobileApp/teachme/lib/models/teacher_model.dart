@@ -7,6 +7,7 @@ class TeacherModel {
   String timeZone;
   String birthDate;
   String memberSince;
+  List<String> skills;
   double rating;
 
   TeacherModel({
@@ -16,6 +17,7 @@ class TeacherModel {
     required this.timeZone,
     required this.memberSince,
     required this.birthDate,
+    required this.skills,
     required this.rating,
   });
 
@@ -28,6 +30,7 @@ class TeacherModel {
       'timeZone': timeZone,
       'memberSince': memberSince,
       'birthDate': birthDate,
+      'skills': skills,
       'rating': rating,
     };
   }
@@ -41,6 +44,7 @@ class TeacherModel {
       timeZone: json['timeZone'] ?? '',
       memberSince: json['memberSince'] ?? '',
       birthDate: json['birthDate'] ?? '',
+      skills: List<String>.from(json['skills'] ?? []),
       rating: (json['rating'] ?? 0).toDouble(),
     );
   }
@@ -55,6 +59,7 @@ class TeacherModel {
       timeZone: data['timeZone'] ?? '',
       memberSince: data['memberSince'] ?? '',
       birthDate: data['birthDate'] ?? '',
+      skills: List<String>.from(data['skills'] ?? []),
       rating: (data['rating'] ?? 0).toDouble(),
     );
   }

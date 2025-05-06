@@ -3,12 +3,15 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/models/country_model.dart';
 import 'package:teachme/models/models.dart';
+import 'package:teachme/models/skill_model.dart';
 import 'package:teachme/providers/teacher_form_provider.dart';
 import 'package:teachme/service/auth_service.dart';
+import 'package:teachme/service/skill_service.dart';
 import 'package:teachme/ui/input_decorations.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
+import 'package:teachme/utils/utils.dart';
 
 class TeacherForm extends StatefulWidget{
   static const routeName = "teacherForm";
@@ -21,16 +24,18 @@ class _TeacherFormState extends State<TeacherForm> {
   late TextEditingController localidadController;
   late TextEditingController zonaHorariaController;
   late TextEditingController lenguajeController;
+  late TextEditingController skillController;
   DateTime? selectedDate;
   String description = '';
 
   @override
   void initState() {
     super.initState();
-    currentTeacher = TeacherModel(userId: '', aboutMe: '', birthDate: '', rating: 0, country: '', timeZone: '', memberSince: '');
+    currentTeacher = TeacherModel(userId: '', aboutMe: '', birthDate: '', rating: 0, country: '', timeZone: '', memberSince: '', skills: []);
     localidadController = TextEditingController();
     zonaHorariaController = TextEditingController();
     lenguajeController = TextEditingController();
+    skillController = TextEditingController();
   }
 
   @override
@@ -38,6 +43,7 @@ class _TeacherFormState extends State<TeacherForm> {
     localidadController.dispose();
     zonaHorariaController.dispose();
     lenguajeController.dispose();
+    skillController.dispose();
     super.dispose();
   }
 
@@ -47,38 +53,50 @@ class _TeacherFormState extends State<TeacherForm> {
     final teacherForm = Provider.of<TeacherFormProvider>(context);
     
     return Scaffold(
-      appBar: AppBar(
-        leading: null,
-        automaticallyImplyLeading: false,
-        title: Text(translate(context, "tellUsAboutYou"), style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),),
-        centerTitle: true,
-        toolbarHeight: 70,
-      ),
-      body: Form(
-        key: teacherForm.formKey,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _teacherForm(teacherForm),
-              Container(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _backButton(context),
-                    _nextButton(context, teacherForm),
-                  ],
-                ),
+  appBar: AppBar(
+    leading: null,
+    automaticallyImplyLeading: false,
+    title: Text(
+      translate(context, "tellUsAboutYou"),
+      style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+    ),
+    centerTitle: true,
+    toolbarHeight: 70,
+  ),
+  body: Form(
+    key: teacherForm.formKey,
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: IntrinsicHeight(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _teacherForm(teacherForm),
+                  Spacer(), // empuja los botones al fondo si hay espacio
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _backButton(context),
+                        _nextButton(context, teacherForm),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
+      },
+    ),
+  ),
+);
+
   }
 
   Widget _teacherForm(TeacherFormProvider teacherForm) {
@@ -96,6 +114,12 @@ class _TeacherFormState extends State<TeacherForm> {
         Text("Localidad*", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),),
         SizedBox(height: 2),
         _countryField(teacherForm),
+        SizedBox(height: 31),
+        Text("Cualidades*", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),),
+        SizedBox(height: 2),
+        _skillsCards(teacherForm),
+        SizedBox(height: 20),
+        _skillChips(),
 
       ],
     );
@@ -110,7 +134,11 @@ class _TeacherFormState extends State<TeacherForm> {
           return resultados;
         },
         itemBuilder: (context, Pais suggestion) {
-          return ListTile(title: Text(suggestion.nombre));
+          return ListTile(
+            title: Text(suggestion.nombre),
+            tileColor: Colors.black,
+            textColor: Colors.white,
+          );
         },
         onSelected: (Pais suggestion) {
           localidadController.text = suggestion.nombre;
@@ -120,6 +148,7 @@ class _TeacherFormState extends State<TeacherForm> {
             // update modelo del trabajador
           });
         },
+        emptyBuilder: (context) => SizedBox.shrink(),
         controller: localidadController,
         builder: (context, controller, focusNode) {
           return TextFormField(
@@ -134,7 +163,7 @@ class _TeacherFormState extends State<TeacherForm> {
             decoration: InputDecorations.authInputDecorationBorderFull(
               hintText: 'Seleccione el pais en el que habita',
               labelText: 'Pais',
-              simplySuffixIcon: Icons.calendar_today
+              simplySuffixIcon: Icons.flag
             ),
           );
         },
@@ -201,6 +230,105 @@ class _TeacherFormState extends State<TeacherForm> {
         decoration: InputDecorations.authInputDecorationBorderFull(
             hintText: 'Escribe algo sobre ti, como tu objetivo o tu formación',
             labelText: 'Escribe algo sobre ti, como tu objetivo o tu formación'),
+      );
+  }
+
+  _skillsCards(TeacherFormProvider teacherForm) {
+    return Row(
+        children: [
+          Expanded(child: _skillField()),
+          _addButton(),
+        ],
+      );
+  }
+
+  Wrap _skillChips() {
+    return Wrap(
+        spacing: 10,
+        children: currentTeacher.skills.map((skill) {
+          return Chip(
+            label: Text(skill),
+            deleteIcon: Icon(Icons.close),
+            onDeleted: () {
+              setState(() {
+                currentTeacher.skills.remove(skill);
+              }); 
+            },
+          );
+        }).toList(),
+      );
+  }
+
+  Container _addButton() {
+    return Container(
+      margin: EdgeInsets.only(left: 20),
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              color: Color(0xFF3B82F6),
+              borderRadius: BorderRadius.circular(20)
+              
+            ),
+            child: IconButton(
+              onPressed: () async {
+                final habilidad = skillController.text;
+                final service = SkillService();
+                final exists = await service.skillExists(habilidad);
+
+                if(!exists) {
+                  ScaffoldMessageError("Esta habilidad no existe", context);
+                }
+
+                if (habilidad.isNotEmpty && habilidad != '' && exists && !currentTeacher.skills.contains(habilidad)) {
+                  setState(() {
+                    currentTeacher.skills.add(habilidad);
+                    print("Habilidad ${habilidad} añadida");
+                    print(currentTeacher.skills.length);
+                    skillController.clear();
+                    FocusScope.of(context).unfocus();
+                  });
+                }
+              },
+              icon: Icon(Icons.add, color: Colors.white,),
+            ),
+          );
+  }
+
+  TypeAheadField<Skill> _skillField() {
+    return TypeAheadField<Skill>(
+        suggestionsCallback: (pattern) async {
+          final skills = UserPreferences.getSkills();
+          final resultados = skills
+            .where((skill) => !currentTeacher.skills.contains(skill.name))
+            .where((skill) => skill.name.toLowerCase().contains(pattern.toLowerCase())).toList();
+
+          return resultados;
+        },
+        emptyBuilder: (context) => SizedBox.shrink(),
+        itemBuilder: (context, Skill skill) {
+          return ListTile(
+            title: Text(skill.name),
+            tileColor: Color(0xFF151515),
+            textColor: Colors.white,
+          );
+        },
+        onSelected: (Skill suggestion) {
+          skillController.text = suggestion.name;
+        },
+        controller: skillController,
+        builder: (context, controller, focusNode) {
+          return TextFormField(
+            autofocus: false,
+            style: TextStyle(color: Colors.white),
+            controller: controller,
+            focusNode: focusNode,
+            decoration: InputDecorations.authInputDecorationBorderFull(
+              hintText: 'Seleccione una cualidad',
+              labelText: 'Habilidad',
+              simplySuffixIcon: Icons.school
+            ),
+          );
+        },
       );
   }
   
@@ -271,5 +399,21 @@ class _TeacherFormState extends State<TeacherForm> {
         ],
       ),
     );
+  }
+
+  String capitalize(String word) {
+    if (word.isEmpty) return word;
+    return '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}';
+  }
+  
+  String capitalizePhrase(String phrase) {
+    if (phrase.trim().isEmpty) return phrase;
+
+    return phrase
+        .trim()
+        .split(RegExp(r'\s+'))
+        .map((word) =>
+            word.isEmpty ? '' : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}')
+        .join(' ');
   }
 }
