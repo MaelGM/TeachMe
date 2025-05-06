@@ -26,7 +26,7 @@ class UserPreferences {
 
   Future<void> initPrefs() async {
     _box = await Hive.openBox('local_storage');
-    await _loadCountriesIfNeeded();
+    //await _loadCountriesIfNeeded();
     await _loadSkillsIfNeeded();
     try {
       _refreshToken = await _prefs.read(key: 'refreshToken');

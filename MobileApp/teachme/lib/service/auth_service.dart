@@ -31,6 +31,7 @@ class AuthService extends ChangeNotifier{
 
   Future<void> register(BuildContext context) async {
     try {
+      print("REGISTRANDO");
       String uid;
 
       if (!isGoogleSignUp) {
@@ -46,6 +47,7 @@ class AuthService extends ChangeNotifier{
       } else {
         uid = FirebaseAuth.instance.currentUser!.uid;
       }
+      print("REGISTRANDO CON GOOGLE");
 
       creatingUser.id = uid;
       await _firestore.collection('users').doc(uid).set(creatingUser.toMap());

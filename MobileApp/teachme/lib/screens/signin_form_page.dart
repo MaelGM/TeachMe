@@ -23,6 +23,7 @@ class _SigninFormPageState extends State<SigninFormPage> {
   
   @override
   Widget build(BuildContext context) {
+    print("ESTOY YA EN OTRA PANTALLA");
     return Scaffold(
       appBar: AppBar(
         leading: null,
@@ -82,8 +83,8 @@ class _SigninFormPageState extends State<SigninFormPage> {
   ElevatedButton _nextButton(BuildContext context) {
     return ElevatedButton(
                 onPressed: () => !isStudent && !isTeacher ? {} : {
-                  //creatingUser.isStudent = isStudent,
-                  //creatingUser.isTeacher = isTeacher,
+                  creatingUser.isStudent = isStudent,
+                  creatingUser.isTeacher = isTeacher,
                   Navigator.push(
                     context,
                     PageRouteBuilder(

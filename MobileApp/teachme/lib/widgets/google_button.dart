@@ -22,6 +22,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     setState(() => _isLoading = true);
 
     try {
+      print("VAMOS A INICIAL EL LOGIN CON GOOGLE");
       // Se hace el login con google
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       
@@ -30,11 +31,15 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
         return; // Cancelado
       }
 
+      print("USUARIO DE GOOGLE NO ES NULL");
+
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
+      print("CREDENTIAL OBTENIDO");
 
       // Se obtienen los datos del inicio de sesión
       final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
@@ -87,6 +92,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
   }
   
   void _firstRegister(GoogleSignInAccount googleUser) {
+    print("REGISTRANDO CON GOOGLE POR PRIMERA VEZ");
+
     creatingUser = UserModel(
       id: '',
       connected: false, 
@@ -96,7 +103,9 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
       name: googleUser.displayName ?? googleUser.email, 
       profilePicture: googleUser.photoUrl ?? ''
     );
+
     isGoogleSignUp = true;
+    print("CREATING USER INICIALIZADO");
     Navigator.push(
       context,
       PageRouteBuilder(

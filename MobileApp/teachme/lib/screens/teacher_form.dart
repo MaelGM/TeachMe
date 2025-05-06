@@ -53,49 +53,50 @@ class _TeacherFormState extends State<TeacherForm> {
     final teacherForm = Provider.of<TeacherFormProvider>(context);
     
     return Scaffold(
-  appBar: AppBar(
-    leading: null,
-    automaticallyImplyLeading: false,
-    title: Text(
-      translate(context, "tellUsAboutYou"),
-      style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-    ),
-    centerTitle: true,
-    toolbarHeight: 70,
-  ),
-  body: Form(
-    key: teacherForm.formKey,
-    child: LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: IntrinsicHeight(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _teacherForm(teacherForm),
-                  Spacer(), // empuja los botones al fondo si hay espacio
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 50),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _backButton(context),
-                        _nextButton(context, teacherForm),
-                      ],
-                    ),
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        leading: null,
+        automaticallyImplyLeading: false,
+        title: Text(
+          translate(context, "tellUsAboutYou"),
+          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        toolbarHeight: 70,
+      ),
+      body: Form(
+        key: teacherForm.formKey,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _teacherForm(teacherForm),
+                      Spacer(), // empuja los botones al fondo si hay espacio
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 50),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _backButton(context),
+                            _nextButton(context, teacherForm),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        );
-      },
-    ),
-  ),
-);
+            );
+          },
+        ),
+      ),
+    );
 
   }
 
