@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teachme/utils/utils.dart';
 
 class SkillService {
   final CollectionReference _skillCollection =

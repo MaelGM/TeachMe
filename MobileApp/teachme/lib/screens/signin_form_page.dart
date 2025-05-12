@@ -23,12 +23,11 @@ class _SigninFormPageState extends State<SigninFormPage> {
   
   @override
   Widget build(BuildContext context) {
-    print("ESTOY YA EN OTRA PANTALLA");
     return Scaffold(
       appBar: AppBar(
         leading: null,
         automaticallyImplyLeading: false,
-        title: Text(translate(context, "whatAreYou"), style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),),
+        title: Text(translate(context, "whatAreYou"), style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),),
         centerTitle: true,
         toolbarHeight: 70,
       ),

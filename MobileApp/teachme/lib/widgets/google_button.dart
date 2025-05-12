@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:teachme/models/models.dart';
 import 'package:teachme/screens/pages.dart';
+import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
+import 'package:teachme/utils/utils.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   const GoogleSignInButton({super.key});
@@ -22,7 +24,6 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     setState(() => _isLoading = true);
 
     try {
-      print("VAMOS A INICIAL EL LOGIN CON GOOGLE");
       // Se hace el login con google
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       
@@ -31,15 +32,11 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
         return; // Cancelado
       }
 
-      print("USUARIO DE GOOGLE NO ES NULL");
-
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
-      print("CREDENTIAL OBTENIDO");
 
       // Se obtienen los datos del inicio de sesión
       final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
@@ -62,12 +59,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
     } catch (e) {
       print("ERROR: "+e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(translate(context, "googleError")),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      ScaffoldMessageError(translate(context, "googleError"), context);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -96,11 +88,11 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
     creatingUser = UserModel(
       id: '',
-      connected: false, 
+      connected: 'no', 
       email: googleUser.email, 
       isStudent: false, 
       isTeacher: false, 
-      name: googleUser.displayName ?? googleUser.email, 
+      username: googleUser.displayName ?? googleUser.email, 
       profilePicture: googleUser.photoUrl ?? ''
     );
 
@@ -127,14 +119,18 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
   }
   
   Future<void> _loginWithGoogle(DocumentSnapshot<Map<String, dynamic>> userDoc) async {
-    final userModel = UserModel.fromJson(userDoc.data()!);
+    final userModel = UserModel.fromDocument(userDoc);
 
     await UserPreferences.instance.saveUser(userModel);
     currentUser = userModel;
+    print(currentUser.id);
+    AuthService authService = AuthService();
+
+    await authService.initUser();
   
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) => HomePage(),
+        pageBuilder: (_, __, ___) => NavBarPage(),
         transitionsBuilder: (_, animation, __, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
@@ -146,4 +142,5 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
       (route) => false,
     );
   }
+
 }

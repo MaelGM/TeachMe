@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
   String id;
-  bool connected;
+  String connected;
   String email;
   bool isStudent;
   bool isTeacher;
-  String name;
+  String username;
   String profilePicture;
 
   // Constructor
@@ -16,7 +16,7 @@ class UserModel {
     required this.email,
     required this.isStudent,
     required this.isTeacher,
-    required this.name,
+    required this.username,
     required this.profilePicture,
   });
 
@@ -28,7 +28,7 @@ class UserModel {
       email: doc['email'] ?? '',
       isStudent: doc['isStudent'] ?? false,
       isTeacher: doc['isTeacher'] ?? false,
-      name: doc['name'] ?? '',
+      username: doc['username'] ?? '',
       profilePicture: doc['profile_picture'] ?? '',
     );
   }
@@ -41,7 +41,7 @@ class UserModel {
       email: json['email'] ?? '',
       isStudent: json['isStudent'] ?? false,
       isTeacher: json['isTeacher'] ?? false,
-      name: json['name'] ?? '',
+      username: json['username'] ?? '',
       profilePicture: json['profile_picture'] ?? '',
     );
   }
@@ -54,7 +54,7 @@ class UserModel {
       'email': email,
       'isStudent': isStudent,
       'isTeacher': isTeacher,
-      'name': name,
+      'username': username,
       'profile_picture': profilePicture,
     };
   }
@@ -66,7 +66,7 @@ class UserModel {
       'email': email,
       'isStudent': isStudent,
       'isTeacher': isTeacher,
-      'name': name,
+      'username': username,
       'profile_picture': profilePicture,
     };
   }

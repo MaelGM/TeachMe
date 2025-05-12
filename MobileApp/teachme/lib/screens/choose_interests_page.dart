@@ -21,7 +21,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
   void initState() {
     super.initState();
     _futureSubjects = _subjectService.getSubjects(); // Solo se ejecuta una vez
-    creatingStudent = StudentModel(userId: '', interestsIds: [], interestsNames: []);
+    currentStudent = StudentModel(userId: '', interestsIds: [], interestsNames: []);
   }
 
   @override
@@ -30,7 +30,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
       appBar: AppBar(
         leading: null,
         automaticallyImplyLeading: false,
-        title: Text(translate(context, "whatInterests"), style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+        title: Text(translate(context, "whatInterests"), style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
         centerTitle: true,
         toolbarHeight: 70,
       ),
@@ -85,7 +85,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
   ElevatedButton _backButton(BuildContext context) {
     return ElevatedButton(
                 onPressed: () {
-                  creatingStudent.interestsIds = [];
+                  currentStudent.interestsIds = [];
                   Navigator.pop(context);
                 },
               
@@ -115,8 +115,8 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
     AuthService authService;
     return ElevatedButton(
                 onPressed: () => selectedSubjects.isEmpty ? {} : {
-                  creatingStudent.interestsIds = selectedSubjects.map((s) => s.id).toList(),
-                  creatingStudent.interestsNames = selectedSubjects.map((s) => s.name).toList(),
+                  currentStudent.interestsIds = selectedSubjects.map((s) => s.id).toList(),
+                  currentStudent.interestsNames = selectedSubjects.map((s) => s.name).toList(),
                   if(creatingUser.isTeacher == false) {
                     authService = AuthService(), // Instancia de AuthService
                     authService.register(context)

@@ -26,7 +26,7 @@ class TeacherModel {
     return {
       'userId': userId,
       'aboutMe': aboutMe,
-      'country': country,
+      'countryName': country,
       'timeZone': timeZone,
       'memberSince': memberSince,
       'birthDate': birthDate,
@@ -40,7 +40,7 @@ class TeacherModel {
     return TeacherModel(
       userId: json['userId'] ?? '',
       aboutMe: json['aboutMe'] ?? '',
-      country: json['country'] ?? '',
+      country: json['countryName'] ?? '',
       timeZone: json['timeZone'] ?? '',
       memberSince: json['memberSince'] ?? '',
       birthDate: json['birthDate'] ?? '',
@@ -55,7 +55,7 @@ class TeacherModel {
     return TeacherModel(
       userId: data['userId'] ?? '',
       aboutMe: data['aboutMe'] ?? '',
-      country: data['country'] ?? '',
+      country: data['countryName'] ?? '',
       timeZone: data['timeZone'] ?? '',
       memberSince: data['memberSince'] ?? '',
       birthDate: data['birthDate'] ?? '',

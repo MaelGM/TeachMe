@@ -10,7 +10,7 @@ class HamburguerMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.menu), // El ícono de las tres líneas
+      icon: Icon(Icons.menu, color: Colors.white,), // El ícono de las tres líneas
       onPressed: () {
         Navigator.push(
           context,

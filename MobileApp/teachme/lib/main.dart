@@ -10,7 +10,6 @@ import 'package:teachme/providers/teacher_form_provider.dart';
 import 'package:teachme/routes/routes.dart';
 import 'package:teachme/screens/pages.dart';
 import 'package:teachme/service/auth_service.dart';
-import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
 import 'package:teachme/widgets/app_localizations.dart';
@@ -24,9 +23,7 @@ void main() async {
   await UserPreferences.instance.initPrefs(); // Cargamos las preferencias locales y las mini BD locales
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   
-  bool isSessionActive = await AuthService.initSession();
-  if(isSessionActive) currentUser = (await UserPreferences.instance.getUser())!;
-
+  bool isSessionActive = await AuthService().initSession();
   runApp(
     MultiProvider(
       providers: [

@@ -39,6 +39,7 @@ class LanguageProvider extends ChangeNotifier {
   void setLanguage(String languageCode) async {
     _locale = Locale(languageCode);
     UserPreferences.instance.language = languageCode;
+    print("SETTING LANG CODE");
     notifyListeners();
   }
 }

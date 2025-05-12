@@ -26,7 +26,7 @@ class UserPreferences {
 
   Future<void> initPrefs() async {
     _box = await Hive.openBox('local_storage');
-    //await _loadCountriesIfNeeded();
+    await _loadCountriesIfNeeded();
     await _loadSkillsIfNeeded();
     try {
       _refreshToken = await _prefs.read(key: 'refreshToken');
@@ -172,6 +172,71 @@ class UserPreferences {
     await _prefs.delete(key: 'user');
   }
 
+
+
+  // Guarda el usuario en formato JSON en almacenamiento seguro
+  Future<void> saveTeacher(TeacherModel teacher) async {
+    print("INSERTING TEACHER");
+    final teacherJson = jsonEncode(teacher.toJson());
+    print(teacherJson);
+    await _prefs.write(key: 'teacherUser', value: teacherJson);
+  }
+
+  // Recupera el usuario almacenado
+  Future<TeacherModel?> getTeacher() async {
+    try {
+      final teacherString = await _prefs.read(key: 'teacherUser');
+      if (teacherString != null) {
+        final userMap = jsonDecode(teacherString);
+        return TeacherModel.fromJson(userMap);
+      }
+    } catch (e) {
+      print("Error leyendo el profesor: $e");
+    }
+    return null;
+  }
+
+  Future<void> deleteTeacher() async {
+    await _prefs.delete(key: 'teacherUser');
+  }
+
+  Future<bool> existTeacher() async {
+    final exists = await _prefs.containsKey(key: 'teacherUser');
+    return exists;
+  }
+
+
+
+  Future<void> saveStudent(StudentModel student) async {
+    final studentJson = jsonEncode(student.toJson());
+    await _prefs.write(key: 'studentUser', value: studentJson);
+  }
+
+  // Recupera el usuario almacenado
+  Future<StudentModel?> getStudent() async {
+    try {
+      final studentString = await _prefs.read(key: 'studentUser');
+      if (studentString != null) {
+        final userMap = jsonDecode(studentString);
+        return StudentModel.fromJson(userMap);
+      }
+    } catch (e) {
+      print("Error leyendo el profesor: $e");
+    }
+    return null;
+  }
+
+  Future<void> deleteStudent() async {
+    await _prefs.delete(key: 'studentUser');
+  }
+
+  Future<bool> existStudent() async {
+    final exists = await _prefs.containsKey(key: 'studentUser');
+    return exists;
+  }
+
+
+
   Future<void> saveLanguage(String languageCode) async {
     await _prefs.write(key: 'language', value: languageCode);
     print("Idioma guardado correctamente: $languageCode");
@@ -182,6 +247,8 @@ class UserPreferences {
     print("Idioma leído correctamente: $language");
     return language;
   }
+
+
 
   static Future<void> saveSwitchValue(bool value) async {
     final prefs = await SharedPreferences.getInstance();
