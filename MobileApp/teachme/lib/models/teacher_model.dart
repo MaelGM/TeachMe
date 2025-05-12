@@ -9,6 +9,7 @@ class TeacherModel {
   String memberSince;
   List<String> skills;
   double rating;
+  int ratingCount;
 
   TeacherModel({
     required this.userId,
@@ -19,6 +20,7 @@ class TeacherModel {
     required this.birthDate,
     required this.skills,
     required this.rating,
+    required this.ratingCount,
   });
 
   // Convertir a JSON
@@ -32,6 +34,7 @@ class TeacherModel {
       'birthDate': birthDate,
       'skills': skills,
       'rating': rating,
+      'ratingCount': ratingCount,
     };
   }
 
@@ -46,6 +49,7 @@ class TeacherModel {
       birthDate: json['birthDate'] ?? '',
       skills: List<String>.from(json['skills'] ?? []),
       rating: (json['rating'] ?? 0).toDouble(),
+      ratingCount: (json['ratingCount'] ?? 0),
     );
   }
 
@@ -61,6 +65,7 @@ class TeacherModel {
       birthDate: data['birthDate'] ?? '',
       skills: List<String>.from(data['skills'] ?? []),
       rating: (data['rating'] ?? 0).toDouble(),
+      ratingCount: (data['ratingCount'] ?? 0),
     );
   }
 }

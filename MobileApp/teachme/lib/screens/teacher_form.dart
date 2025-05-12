@@ -35,7 +35,7 @@ class _TeacherFormState extends State<TeacherForm> {
   @override
   void initState() {
     super.initState();
-    currentTeacher = TeacherModel(userId: '', aboutMe: '', birthDate: '', rating: 0, country: '', timeZone: '', memberSince: '', skills: []);
+    currentTeacher = TeacherModel(userId: '', aboutMe: '', birthDate: '', rating: 0, ratingCount: 0, country: '', timeZone: '', memberSince: '', skills: []);
     localidadController = TextEditingController();
     skillController = TextEditingController();
     englishSkillController = TextEditingController();
@@ -80,7 +80,7 @@ class _TeacherFormState extends State<TeacherForm> {
                       _teacherForm(teacherForm),
                       Spacer(), // empuja los botones al fondo si hay espacio
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 50),
+                        padding: const EdgeInsets.only(bottom: 50, top: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

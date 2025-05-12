@@ -2,10 +2,8 @@ import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/config.dart';
-import 'package:teachme/utils/translate.dart';
-import 'package:teachme/widgets/hamburguer_menu.dart';
+import 'package:teachme/widgets/comments_section.dart';
 import 'package:teachme/widgets/skill_chips.dart';
-import 'package:teachme/widgets/standard_app_bar.dart';
 import 'package:teachme/widgets/widgets.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -20,18 +18,31 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
   @override
   Widget build(BuildContext context) {
-    print(currentTeacher.country);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        body: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverToBoxAdapter(child: _header(context)),
+        body: Column(
+          children: [
+            _header(context),
+            currentUser.isTeacher && !currentUser.isStudent ? _tabBarTeacher(context) : _tabBarTeacher(context),
+            currentUser.isTeacher && !currentUser.isStudent ? _teacherSection(context) : _teacherSection(context),
           ],
-          body: currentUser.isTeacher ? _teacherSection(context) : _teacherSection(context),
-        ),
+        )
+      ),
+    );
+  }
+
+  Widget _teacherSection(BuildContext context) {
+    return Expanded(
+      child: TabBarView(
+        children: [
+          _aboutMeSection(),
+          _aboutMeSection(),
+          CommentsSection(teacherId: currentTeacher.userId,)
+        ]
       ),
     );
   }
@@ -50,6 +61,32 @@ class _ProfilePageState extends State<ProfilePage> {
               Tab(text: "Comentarios")
             ]
           );
+  }
+  
+  Widget _aboutMeSection() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('User information', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),),
+            SizedBox(height: 7,),
+            ExpandableText(
+              currentTeacher.aboutMe, maxLines: 5, style: TextStyle(color: Colors.white, fontSize: 15),
+              expandText: 'show more', collapseText: 'show less', linkColor: Color(0xFF3B82F6),
+            ),
+            InfoListTile(subtitle: currentTeacher.country, icon: Icons.location_on, title: 'From',),
+            InfoListTile(subtitle: currentTeacher.memberSince, icon: Icons.person_outline, title: 'Member since',),
+            InfoListTile(subtitle: '2h ago', icon: Icons.location_on, title: 'Last active',),
+            SizedBox(height: 7,),
+            Text('Skills', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),),
+            SizedBox(height: 7,),
+            SkillChips(editable: false,)
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _header(BuildContext context) {
@@ -146,47 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
-
-  Widget _teacherSection(BuildContext context) {
-    return Column(
-        children: [
-          _tabBarTeacher(context),
-          Expanded(
-            child: TabBarView(
-              children: [
-                _aboutMeSection(),
-                _aboutMeSection(),
-                _aboutMeSection(),
-              ]
-            ),
-          ),
-        ],
-      );
-  }
-
-  Widget _aboutMeSection() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('User information', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),),
-            SizedBox(height: 7,),
-            ExpandableText(
-              currentTeacher.aboutMe, maxLines: 5, style: TextStyle(color: Colors.white, fontSize: 15),
-              expandText: 'show more', collapseText: 'show less', linkColor: Color(0xFF3B82F6),
-            ),
-            InfoListTile(subtitle: currentTeacher.country, icon: Icons.location_on, title: 'From',),
-            InfoListTile(subtitle: currentTeacher.memberSince, icon: Icons.person_outline, title: 'Member since',),
-            InfoListTile(subtitle: '2h ago', icon: Icons.location_on, title: 'Last active',),
-            SizedBox(height: 7,),
-            Text('Skills', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),),
-            SizedBox(height: 7,),
-            SkillChips(editable: false,)
-          ],
-        ),
-      ),
-    );
-  }
 }
+  
+
+

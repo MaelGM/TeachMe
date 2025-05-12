@@ -24,7 +24,7 @@ class _SkillChipsState extends State<SkillChips> {
                 side: BorderSide(color: const Color.fromARGB(255, 65, 65, 65),), // Opcional: borde del chip
               ),
               label: Text(translate(context, skill), style: TextStyle(color: Colors.white),),
-              deleteIcon: widget.editable ? Icon(Icons.close) : null,
+              deleteIcon: widget.editable ? Icon(Icons.close, color: Colors.white,) : null,
               onDeleted: widget.editable ? () {
                 setState(() {
                   currentTeacher.skills.remove(skill);

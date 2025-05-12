@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/utils/translate.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 String capitalize(String word) {
   if (word.isEmpty) return word;
@@ -42,6 +43,18 @@ ScaffoldMessageError(String text, BuildContext context) {
       duration: const Duration(seconds: 4),
     ),
   );
+}
+
+void initializeTimeagoLocales() {
+  timeago.setLocaleMessages('es', timeago.EsMessages());
+  timeago.setLocaleMessages('en', timeago.EnMessages());
+  timeago.setLocaleMessages('fr', timeago.FrMessages());
+  timeago.setLocaleMessages('de', timeago.DeMessages());
+  timeago.setLocaleMessages('it', timeago.ItMessages());
+  timeago.setLocaleMessages('pt', timeago.PtBrMessages());
+  timeago.setLocaleMessages('zh', timeago.ZhCnMessages());
+  timeago.setLocaleMessages('ja', timeago.JaMessages());
+  timeago.setLocaleMessages('ko', timeago.KoMessages());
 }
 
 Color selectedColor = Color(0xFF3B82F6);

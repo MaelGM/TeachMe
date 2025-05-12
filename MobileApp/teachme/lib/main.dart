@@ -12,6 +12,7 @@ import 'package:teachme/screens/pages.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
+import 'package:teachme/utils/utils.dart';
 import 'package:teachme/widgets/app_localizations.dart';
 
 void main() async {
@@ -21,6 +22,7 @@ void main() async {
   );
   await Hive.initFlutter(); // Cargamos las preferencias locales y las mini BD locales
   await UserPreferences.instance.initPrefs(); // Cargamos las preferencias locales y las mini BD locales
+  initializeTimeagoLocales();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   
   bool isSessionActive = await AuthService().initSession();
@@ -35,9 +37,7 @@ void main() async {
       child: MyApp(isSessionActive: isSessionActive)
     )
     
-  );
-    
-    
+  ); 
 }
 
 class MyApp extends StatelessWidget {
