@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:teachme/screens/pages.dart';
+import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
 
 class NavBarPage extends StatefulWidget {
@@ -17,7 +18,7 @@ class _NavBarPageState extends State<NavBarPage> {
     HomePage(),
     SearchPage(),
     MessagesPage(),
-    ProfilePage(),
+    ProfilePage(user: currentUser),
   ];
 
   void _onItemTapped(int index) {

@@ -1,26 +1,86 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
+import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/rating_model.dart';
+import 'package:teachme/models/teacher_model.dart';
 import 'package:teachme/utils/config.dart';
 
-class TeacherService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class TeacherService extends ChangeNotifier{
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static List<RatingModel> ratings = [];
+  static List<AdvertisementModel> courses = [];
+  static TeacherModel teacher = TeacherModel(userId: '', aboutMe: '', birthDate: '', rating: 0, ratingCount: 0, country: '', timeZone: '', memberSince: '', skills: []);
 
-  // Obtenemos todos los comentarios de un profesor en concreto
-  Future<List<RatingModel>> getComments(String teacherId, String scoreOrder, DocumentSnapshot? lastDoc) async {
+  static bool dateOrder = true;
+  static bool goodRatingOrder = false;
+
+
+  static Future<void> setTeacher(String id) async {
     try {
-      Query query = await _firestore.collection('ratings').where('teacherId', isEqualTo: teacherId);
-
-      if (scoreOrder == 'date') {
-        query = query.orderBy('date', descending: true);
-      } else if (scoreOrder == 'ascending') {
-        query = query.orderBy('score', descending: false);
-      } else if (scoreOrder == 'descending') {
-        query = query.orderBy('score', descending: true);
-      }
       
-      final snapshot = await query.get();
+      print('TEACHER ID: $id');
+      final doc = await _firestore.collection('teachers').doc(id).get();
+      dateOrder = true;
+      goodRatingOrder = false;
 
-      return snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
+      teacher = TeacherModel.fromFirestore(doc);
+    } catch (e) {
+      throw Exception("Error al obtener al profesor: $e");
+    }
+  }
+
+  // Obtenemos todos los comentarios de un profesor en concreto ordenado segun la fecha
+  Future<void> getCoursesFromTeacher() async {
+    try {
+      final snapshot = await _firestore.collection('advertisements').where('teacherId', isEqualTo: teacher.userId).get();
+
+      courses = snapshot.docs.map((doc) => AdvertisementModel.fromFirestore(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      throw Exception("Error al obtener los cursos: $e");
+    }
+  }
+
+  // Obtenemos todos los comentarios de un profesor en concreto ordenado segun la fecha
+  Future<void> getCommentsByDate(DocumentSnapshot? lastDoc) async {
+    try {
+      final snapshot = await _firestore.collection('ratings').where('teacherId', isEqualTo: teacher.userId).orderBy('date', descending: true).get();
+
+      dateOrder = true;
+      goodRatingOrder = false;
+
+      ratings = snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      throw Exception("Error al obtener los comentarios: $e");
+    }
+  }
+
+  // Obtenemos todos los comentarios de un profesor en concreto ordenado segun la nota de manera ascendente
+  Future<void> getCommentsByScoreAscending(DocumentSnapshot? lastDoc) async {
+    try {
+      final snapshot = await _firestore.collection('ratings').where('teacherId', isEqualTo: teacher.userId).orderBy('score', descending: false).get();
+
+      dateOrder = false;
+      goodRatingOrder = false;
+
+      ratings = snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      throw Exception("Error al obtener los comentarios: $e");
+    }
+  }
+
+  // Obtenemos todos los comentarios de un profesor en concreto ordenado segun la nota de manera descendente
+  Future<void> getCommentsByScoreDescending(DocumentSnapshot? lastDoc) async {
+    try {
+      final snapshot = await _firestore.collection('ratings').where('teacherId', isEqualTo: teacher.userId).orderBy('score', descending: true).get();
+
+      dateOrder = false;
+      goodRatingOrder = true;
+
+      ratings = snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
+      notifyListeners();
     } catch (e) {
       throw Exception("Error al obtener los comentarios: $e");
     }

@@ -33,8 +33,6 @@ class AuthService extends ChangeNotifier{
 
   Future<void> initUser() async {
     final savedUser = await UserPreferences.instance.getUser();
-    
-
     if(currentUser.isStudent) await checkAndSetStudent(currentUser.id);
     if(currentUser.isTeacher) await checkAndSetTeacher(currentUser.id);
 

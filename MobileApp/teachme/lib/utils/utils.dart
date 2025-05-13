@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teachme/utils/translate.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 String capitalize(String word) {

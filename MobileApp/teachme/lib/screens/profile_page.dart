@@ -1,16 +1,19 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:teachme/models/models.dart';
 import 'package:teachme/service/auth_service.dart';
+import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
-import 'package:teachme/widgets/comments_section.dart';
 import 'package:teachme/widgets/skill_chips.dart';
 import 'package:teachme/widgets/widgets.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = 'profilePage';
+  final UserModel user;
 
   const ProfilePage({
     super.key,
+    required this.user
   });
 
   @override
@@ -20,6 +23,19 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   @override
+  void initState() {
+    if(widget.user.isTeacher) TeacherService.setTeacher(widget.user.id);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    TeacherService.ratings = [];
+    TeacherService.courses = [];
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
@@ -27,8 +43,8 @@ class _ProfilePageState extends State<ProfilePage> {
         body: Column(
           children: [
             _header(context),
-            currentUser.isTeacher && !currentUser.isStudent ? _tabBarTeacher(context) : _tabBarTeacher(context),
-            currentUser.isTeacher && !currentUser.isStudent ? _teacherSection(context) : _teacherSection(context),
+            widget.user.isTeacher && !widget.user.isStudent ? _tabBarTeacher(context) : _tabBarTeacher(context),
+            widget.user.isTeacher && !widget.user.isStudent ? _teacherSection(context) : _teacherSection(context),
           ],
         )
       ),
@@ -40,27 +56,30 @@ class _ProfilePageState extends State<ProfilePage> {
       child: TabBarView(
         children: [
           _aboutMeSection(),
-          _aboutMeSection(),
-          CommentsSection(teacherId: currentTeacher.userId,)
+          TeacherCourses(),
+          CommentsSection()
         ]
       ),
     );
   }
 
-  TabBar _tabBarTeacher(BuildContext context) {
-    return TabBar(
-            labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Estilo del tab activo
-            unselectedLabelStyle: TextStyle(fontSize: 16, color: Colors.white), // Estilo de los inactivos
-            
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicatorColor: Color(0xFF3B82F6),
-            labelColor: Color(0xFF3B82F6),
-            tabs: [
-              Tab(text: "Sobre mi"), 
-              Tab(text: "Mis anuncios"),
-              Tab(text: "Comentarios")
-            ]
-          );
+  Container _tabBarTeacher(BuildContext context) {
+    return Container(
+      color: Color(0xFF151515), 
+      child: TabBar(
+              labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Estilo del tab activo
+              unselectedLabelStyle: TextStyle(fontSize: 16, color: Colors.white), // Estilo de los inactivos
+              
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorColor: Color(0xFF3B82F6),
+              labelColor: Color(0xFF3B82F6),
+              tabs: [
+                Tab(text: "Sobre mi"), 
+                Tab(text: "Mis anuncios"),
+                Tab(text: "Comentarios")
+              ]
+            ),
+    );
   }
   
   Widget _aboutMeSection() {
@@ -90,30 +109,33 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _header(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(),
-        Container(
-          padding: EdgeInsets.only(top: 60, bottom: 16, left: 16, right: 16),
-          child: Column(
-            children: [
-              _profilePicture(context),
-              const SizedBox(height: 15),
-              Text(
-                currentUser.username,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-            ],
+    return Container(
+      color: Color(0xFF151515), 
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(),
+          Container(
+            padding: EdgeInsets.only(top: 60, bottom: 16, left: 16, right: 16),
+            child: Column(
+              children: [
+                _profilePicture(context),
+                const SizedBox(height: 15),
+                Text(
+                  currentUser.username,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ],
+            ),
           ),
-        ),
-        Positioned(
-          top: 50,
-          right: 0,
-
-          child: HamburguerMenu()
-        ),
-      ],
+          Positioned(
+            top: 50,
+            right: 0,
+      
+            child: HamburguerMenu()
+          ),
+        ],
+      ),
     );
   }
 
