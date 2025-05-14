@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teachme/models/enums/AdvertisementState.dart';
 
 class AdvertisementModel {
+  final String id;
   final String title;
   final Map<String, String>? parametersDeluxe;
   final Map<String, String>? parametersPro;
@@ -17,6 +18,7 @@ class AdvertisementModel {
   final String tutorId;
 
   AdvertisementModel({
+    required this.id,
     required this.title,
     required this.parametersBasic,
     required this.description,
@@ -35,8 +37,9 @@ class AdvertisementModel {
   // Convertir desde Firestore
   factory AdvertisementModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    print("WOW");
+
     return AdvertisementModel(
+      id: doc.id,
       title: data['title'],
       parametersDeluxe: Map<String, String>.from(data['parametersDeluxe'] ?? {}),
       parametersPro: Map<String, String>.from(data['parametersPro'] ?? {}),
@@ -56,6 +59,7 @@ class AdvertisementModel {
   // Convertir a Firestore
   Map<String, dynamic> toFirestore() {
     return {
+      'id': id,
       'title': title,
       'parametersDeluxe': parametersDeluxe,
       'parametersPro': parametersPro,

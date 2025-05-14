@@ -16,8 +16,8 @@ class CourseCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: GestureDetector(
-        onTap: () {
-          CourseService.course = course;
+        onTap: () async {
+          await CourseService.setCourse(course.id);
           Navigator.push(
             context,
             PageRouteBuilder(

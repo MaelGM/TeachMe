@@ -92,7 +92,7 @@ class _CommentsSectionState extends State<CommentsSection> {
     return Column(
       children: [
         _showScore(),
-        SizedBox(height: 8,),
+        SizedBox(height: 10,),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -256,7 +256,7 @@ Row _authorName(RatingModel rating) {
           color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      Icon(Icons.star, color: Colors.white, size: 17),
+      Icon(Icons.star, color: Colors.amber, size: 17),
       SizedBox(width: 4),
       Text(
         rating.score.toStringAsFixed(1),

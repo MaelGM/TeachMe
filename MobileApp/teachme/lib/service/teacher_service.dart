@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:teachme/models/adverstiment_model.dart';
+import 'package:teachme/models/models.dart';
 import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/models/teacher_model.dart';
 import 'package:teachme/utils/config.dart';
@@ -10,6 +12,7 @@ class TeacherService extends ChangeNotifier{
   static List<RatingModel> ratings = [];
   static List<AdvertisementModel> courses = [];
   static TeacherModel teacher = TeacherModel(userId: '', aboutMe: '', birthDate: '', rating: 0, ratingCount: 0, country: '', timeZone: '', memberSince: '', skills: []);
+  static UserModel teacherUserAcount = UserModel(id: '', connected: '', email: '', isStudent: false, isTeacher: false, username: '', profilePicture: '');
 
   static bool dateOrder = true;
   static bool goodRatingOrder = false;
@@ -24,6 +27,19 @@ class TeacherService extends ChangeNotifier{
       goodRatingOrder = false;
 
       teacher = TeacherModel.fromFirestore(doc);
+      await setUserAcount(id);
+    } catch (e) {
+      throw Exception("Error al obtener al profesor: $e");
+    }
+  }
+
+  static Future<void> setUserAcount(String id) async {
+    try {
+      print('USER ID: $id');
+
+      final doc = await _firestore.collection('users').doc(id).get();
+
+      teacherUserAcount = UserModel.fromDocument(doc);
     } catch (e) {
       throw Exception("Error al obtener al profesor: $e");
     }

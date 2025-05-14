@@ -21,7 +21,13 @@ class _TeacherCoursesState extends State<TeacherCourses> {
   @override
   void initState() {
     super.initState();
-    if(TeacherService.courses.isEmpty) _teacherService.getCoursesFromTeacher();
+    _loadCourses();
+  }
+
+  Future<void> _loadCourses() async {
+    setState(() {_isLoading = true;});
+    await _teacherService.getCoursesFromTeacher();
+    setState(() {_isLoading = false;});
   }
 
 
