@@ -15,6 +15,7 @@ import 'package:teachme/utils/user_preferences.dart';
 import 'package:teachme/utils/utils.dart';
 import 'package:teachme/widgets/app_localizations.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

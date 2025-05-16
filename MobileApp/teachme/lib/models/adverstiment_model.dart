@@ -15,6 +15,7 @@ class AdvertisementModel {
   final double scoreCount;
   final AdvertisementState state;
   final String specialityId;
+  final String subjectId;
   final String tutorId;
 
   AdvertisementModel({
@@ -29,6 +30,7 @@ class AdvertisementModel {
     required this.scoreCount,
     required this.state,
     required this.specialityId,
+    required this.subjectId,
     required this.tutorId,
     this.parametersDeluxe,
     this.parametersPro,
@@ -52,6 +54,7 @@ class AdvertisementModel {
       scoreCount: (data['scoreCount'] ?? 0).toDouble(),
       state: AdvertisementStateExtension.fromString(data['state']),
       specialityId: data['specialityId'],
+      subjectId: data['subjectId'],
       tutorId: data['teacherId'],
     );
   }
@@ -72,6 +75,7 @@ class AdvertisementModel {
       'scoreCount': scoreCount,
       'state': state.name,
       'specialityId': specialityId,
+      'subjectId': subjectId,
       'tutorId': tutorId,
     };
   }
@@ -90,6 +94,7 @@ class AdvertisementModel {
       'scoreCount': scoreCount,
       'state': state.name,
       'specialityId': specialityId,
+      'subjectId': subjectId,
       'tutorId': tutorId,
     };
   }

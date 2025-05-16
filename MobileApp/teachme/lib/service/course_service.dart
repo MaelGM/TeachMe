@@ -6,8 +6,9 @@ import 'package:teachme/models/rating_model.dart';
 
 class CourseService extends ChangeNotifier{
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static AdvertisementModel course = AdvertisementModel(id: '',title: '', parametersBasic: {}, description: '', photos: [], prices: [], publicationDate: DateTime.now(), score: 0, scoreCount: 0, state: AdvertisementState.hidden, specialityId: '', tutorId: '');
+  static AdvertisementModel course = AdvertisementModel(id: '',title: '', parametersBasic: {}, description: '', photos: [], prices: [], publicationDate: DateTime.now(), score: 0, scoreCount: 0, state: AdvertisementState.hidden, specialityId: '', tutorId: '', subjectId: '');
   static List<RatingModel> ratings = []; 
+  static List<RatingModel> allRatings = [];
 
   static Future<void> setCourse(String id) async {
     try {
@@ -20,6 +21,48 @@ class CourseService extends ChangeNotifier{
       print(course.tutorId);
     } catch (e) {
       throw Exception("Error al obtener el curso: $e");
+    }
+  }
+
+  Future<List<AdvertisementModel>> getOtherCoursesFromTeacher (String teacherId) async{
+    try {
+      final snapshot = await _firestore.collection('advertisements').where('teacherId', isEqualTo: teacherId).limit(6).get();
+
+      final otherCourse = snapshot.docs.map((doc) => AdvertisementModel.fromFirestore(doc))
+        //.where((courseItem) => courseItem.id != course.id)
+        .toList();
+
+      return otherCourse;
+    } catch (e) {
+      throw Exception("Error al obtener los cursos: $e");
+    }
+  }
+
+  Future<List<AdvertisementModel>> getOtherCoursesFromSpeciality (String specialityId) async{
+    try {
+      final snapshot = await _firestore.collection('advertisements').where('specialityId', isEqualTo: specialityId).limit(6).get();
+
+      final otherCourse = snapshot.docs.map((doc) => AdvertisementModel.fromFirestore(doc))
+        //.where((courseItem) => courseItem.id != course.id)
+        .toList();
+
+      return otherCourse;
+    } catch (e) {
+      throw Exception("Error al obtener los cursos: $e");
+    }
+  }
+
+  Future<List<AdvertisementModel>> getOtherCoursesFromSubject (String subjectId) async{
+    try {
+      final snapshot = await _firestore.collection('advertisements').where('subjectId', isEqualTo: subjectId).limit(6).get();
+
+      final otherCourse = snapshot.docs.map((doc) => AdvertisementModel.fromFirestore(doc))
+        //.where((courseItem) => courseItem.id != course.id)
+        .toList();
+
+      return otherCourse;
+    } catch (e) {
+      throw Exception("Error al obtener los cursos: $e");
     }
   }
 
@@ -42,7 +85,31 @@ class CourseService extends ChangeNotifier{
       print(course.id);
       final snapshot = await _firestore.collection('ratings').where('advertisementId', isEqualTo: course.id).get();
 
-      ratings = snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
+      allRatings = snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      throw Exception("Error al obtener los comentarios: $e");
+    }
+  }
+
+  Future<void> getCommentsByRating(bool descending) async {
+    try {
+      print(course.id);
+      final snapshot = await _firestore.collection('ratings').where('advertisementId', isEqualTo: course.id).orderBy('score', descending: descending).get();
+
+      allRatings = snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      throw Exception("Error al obtener los comentarios: $e");
+    }
+  }
+
+  Future<void> getCommentsByDate() async {
+    try {
+      print(course.id);
+      final snapshot = await _firestore.collection('ratings').where('advertisementId', isEqualTo: course.id).orderBy('date', descending: true).get();
+
+      allRatings = snapshot.docs.map((doc) => RatingModel.fromFirestore(doc)).toList();
       notifyListeners();
     } catch (e) {
       throw Exception("Error al obtener los comentarios: $e");

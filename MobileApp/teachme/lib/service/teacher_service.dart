@@ -46,9 +46,9 @@ class TeacherService extends ChangeNotifier{
   }
 
   // Obtenemos todos los comentarios de un profesor en concreto ordenado segun la fecha
-  Future<void> getCoursesFromTeacher() async {
+  Future<void> getCoursesFromTeacher(String id) async {
     try {
-      final snapshot = await _firestore.collection('advertisements').where('teacherId', isEqualTo: teacher.userId).get();
+      final snapshot = await _firestore.collection('advertisements').where('teacherId', isEqualTo: id).get();
 
       courses = snapshot.docs.map((doc) => AdvertisementModel.fromFirestore(doc)).toList();
       notifyListeners();

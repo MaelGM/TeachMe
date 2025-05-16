@@ -6,6 +6,7 @@ import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
 import 'package:teachme/widgets/horizontal_comments.dart';
+import 'package:teachme/widgets/other_courses_recomendations.dart';
 
 class CourseDetailsPage extends StatefulWidget {
   static final routeName = 'courseDetails';
@@ -84,7 +85,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
+              duration: Duration(milliseconds: 300),
               color: _isScrolledPastImage ? Color(0xFF151515) : Colors.transparent,
               child: AppBar(
                 backgroundColor:Colors.transparent, 
@@ -109,35 +110,12 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                 _textContent(),
                 _pricesTab(),
                 HorizontalComments(),
+                OtherCoursesRecomendations(),
+                SizedBox(height: 40,)
               ],
             ),
           ),
         );
-  }
-
-  Widget _topImageWithIcons(double screenHeight) {
-    return Stack(
-      children: [
-        // Imagen de fondo
-        _topImage(screenHeight),
-
-        // Iconos encima
-        Positioned(
-          top: 49.8, // ajusta según notch/status bar
-          left: 5,
-          child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        Positioned(
-          top: 62,
-          right: 48,
-          child: Icon(Icons.favorite_outline, color: Colors.white),
-        ),
-        Positioned(top: 49.8, right: 0, child: HamburguerMenu()),
-      ],
-    );
   }
 
   Widget _pricesTab() {
@@ -461,3 +439,5 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
     );
   }
 }
+
+

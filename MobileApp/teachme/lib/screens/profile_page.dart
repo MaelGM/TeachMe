@@ -8,8 +8,9 @@ import 'package:teachme/widgets/widgets.dart';
 class ProfilePage extends StatefulWidget {
   static const routeName = 'profilePage';
   final UserModel user;
+  final int? initialIndex;
 
-  const ProfilePage({super.key, required this.user});
+  const ProfilePage({super.key, required this.user, this.initialIndex});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -39,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: widget.initialIndex != null ? widget.initialIndex! : 0,
       length: 3,
       child: Scaffold(
         extendBodyBehindAppBar: true,
@@ -62,6 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _teacherSection(BuildContext context) {
     return Expanded(
       child: TabBarView(
+        
         children: [
           AboutMeSection(),
           TeacherCourses(),
@@ -75,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       color: Color(0xFF151515),
       child: TabBar(
+        
         labelStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,

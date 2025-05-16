@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/service/teacher_service.dart';
-import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/course_card.dart';
 
 class TeacherCourses extends StatefulWidget{
@@ -26,7 +23,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
 
   Future<void> _loadCourses() async {
     setState(() {_isLoading = true;});
-    await _teacherService.getCoursesFromTeacher();
+    await _teacherService.getCoursesFromTeacher(TeacherService.teacher.userId);
     setState(() {_isLoading = false;});
   }
 
@@ -34,7 +31,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async => await _teacherService.getCoursesFromTeacher(), 
+      onRefresh: () async => await _teacherService.getCoursesFromTeacher(TeacherService.teacher.userId), 
       child: TeacherService.courses.isEmpty && _isLoading ? Center(child: CircularProgressIndicator()) : 
         ListView.builder(
           controller: _scrollController,
@@ -47,9 +44,5 @@ class _TeacherCoursesState extends State<TeacherCourses> {
           }
         )
     );
-  }
-
-  Widget _buildOwnCourseCard(AdvertisementModel course) {
-    return Card();
   }
 }
