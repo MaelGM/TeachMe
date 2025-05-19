@@ -87,7 +87,7 @@ class _SigninFormPageState extends State<SigninFormPage> {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => isStudent ? ChooseInterestsPage() : TeacherForm(), 
+                      pageBuilder: (_, __, ___) => isStudent ? ChooseInterestsPage(editing: false,) : TeacherForm(editing: false,), 
                       transitionsBuilder: (_, animation, __, child) {
                         const begin = Offset(1.0, 0.0);
                         const end = Offset.zero;

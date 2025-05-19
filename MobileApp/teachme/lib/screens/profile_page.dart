@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:teachme/models/models.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/service/teacher_service.dart';
+import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/about_me_section.dart';
+import 'package:teachme/widgets/my_interests.dart';
 import 'package:teachme/widgets/widgets.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -15,6 +17,7 @@ class ProfilePage extends StatefulWidget {
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
+
 class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = false;
 
@@ -25,9 +28,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadUser() async {
-    setState(() {_isLoading = true;});
+    setState(() {
+      _isLoading = true;
+    });
     await TeacherService.setTeacher(widget.user.id);
-    setState(() {_isLoading = false;});
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -39,6 +46,29 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    return widget.user.isTeacher ? _teacherScreen(context) : _studentScreen();
+  }
+
+  Scaffold _studentScreen() {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        actions: [HamburguerMenu()],
+      ),
+      body:
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                children: [
+                  _header(context),
+                  MyInterests()
+                ]
+              ),
+    );
+  }
+
+  DefaultTabController _teacherScreen(BuildContext context) {
     return DefaultTabController(
       initialIndex: widget.initialIndex != null ? widget.initialIndex! : 0,
       length: 3,
@@ -48,15 +78,16 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Colors.transparent,
           actions: [HamburguerMenu()],
         ),
-        body: _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  _header(context),
-                  _tabBarTeacher(context),
-                  _teacherSection(context),
-                ],
-              ),
+        body:
+            _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Column(
+                  children: [
+                    _header(context),
+                    _tabBarTeacher(context),
+                    _teacherSection(context),
+                  ],
+                ),
       ),
     );
   }
@@ -64,12 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _teacherSection(BuildContext context) {
     return Expanded(
       child: TabBarView(
-        
-        children: [
-          AboutMeSection(),
-          TeacherCourses(),
-          CommentsSection(),
-        ],
+        children: [AboutMeSection(), TeacherCourses(), CommentsSection()],
       ),
     );
   }
@@ -78,15 +104,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       color: Color(0xFF151515),
       child: TabBar(
-        
-        labelStyle: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-        ),
+        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        unselectedLabelStyle: TextStyle(fontSize: 16, color: Colors.white),
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorColor: Color(0xFF3B82F6),
         labelColor: Color(0xFF3B82F6),
@@ -101,24 +120,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _header(BuildContext context) {
     return Container(
-      color: Color(0xFF151515),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.only(top: 60, bottom: 16, left: 16, right: 16),
-        child: Column(
-          children: [
-            _profilePicture(context),
-            const SizedBox(height: 15),
-            Text(
-              widget.user.username,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+      decoration: BoxDecoration(
+        border: currentUser.isStudent && !currentUser.isTeacher ? Border(bottom: BorderSide(width: 1, color: Color(0xFF3B82F6))) : null,
+        color: Color(0xFF151515),
+      ),
+      width: double.infinity,
+      padding: EdgeInsets.only(top: 60, bottom: 16, left: 16, right: 16),
+      child: Column(
+        children: [
+          _profilePicture(context),
+          const SizedBox(height: 15),
+          Text(
+            widget.user.username,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

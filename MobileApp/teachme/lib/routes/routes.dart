@@ -15,8 +15,8 @@ Map<String, WidgetBuilder> getApplicationRoutes(){
     ProfilePage.routeName:(BuildContext context) => ProfilePage(user: currentUser,),
     SearchPage.routeName:(BuildContext context) => SearchPage(),
     SigninFormPage.routeName:(BuildContext context) => SigninFormPage(),
-    ChooseInterestsPage.routeName:(BuildContext context) => ChooseInterestsPage(),
-    TeacherForm.routeName:(BuildContext context) => TeacherForm(),
+    ChooseInterestsPage.routeName:(BuildContext context) => ChooseInterestsPage(editing: false),
+    TeacherForm.routeName:(BuildContext context) => TeacherForm(editing: false,),
     ChooseLanguagePage.routeName:(BuildContext context) => ChooseLanguagePage(),
     CourseDetailsPage.routeName:(BuildContext context) => CourseDetailsPage(),
 

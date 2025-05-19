@@ -47,7 +47,7 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
             ],
             title: Text('${CourseService.allRatings.length} Comments'),
           ),
-          body: ListView.builder(itemBuilder: itemBuilder),
+          //body: ListView.builder(itemBuilder: itemBuilder),
         );
   }
 

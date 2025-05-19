@@ -2,19 +2,20 @@ import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:teachme/service/teacher_service.dart';
+import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/info_list_tile.dart';
+import 'package:teachme/widgets/interests_chips.dart';
 import 'package:teachme/widgets/skill_chips.dart';
 
 class AboutMeSection extends StatelessWidget {
-  const AboutMeSection({
-    super.key,
+  const AboutMeSection({    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 26),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -61,6 +62,8 @@ class AboutMeSection extends StatelessWidget {
             ),
             SizedBox(height: 7),
             SkillChips(editable: false),
+            if(currentUser.isStudent &&  currentUser.id == TeacherService.teacher.userId)
+              InterestsChips()
           ],
         ),
       ),

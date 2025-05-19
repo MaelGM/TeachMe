@@ -19,6 +19,10 @@ import 'package:teachme/widgets/skill_chips.dart';
 
 class TeacherForm extends StatefulWidget{
   static const routeName = "teacherForm";
+  final bool editing;
+
+  const TeacherForm({super.key, required this.editing});
+
   @override
   State<TeacherForm> createState() => _TeacherFormState();
 }
@@ -85,7 +89,7 @@ class _TeacherFormState extends State<TeacherForm> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _backButton(context),
-                            _nextButton(context, teacherForm),
+                            widget.editing ? _saveButton(context, teacherForm) : _nextButton(context, teacherForm),
                           ],
                         ),
                       ),
@@ -397,6 +401,58 @@ class _TeacherFormState extends State<TeacherForm> {
     );
   }
 
+  ElevatedButton _saveButton(BuildContext context, TeacherFormProvider teacherForm) {
+    AuthService authService;
+    return ElevatedButton(
+      onPressed: () async {
+        if(teacherForm.isValidForm() && await lenguageValid()) {
+
+          final bool? confirm = await _confirmDialog(context);
+
+          if(confirm != true) return;
+
+          teacherForm.isLoading = true;
+          
+          currentTeacher.birthDate = teacherForm.date;
+          currentTeacher.aboutMe = teacherForm.description;
+          currentTeacher.country = country!.nombre;
+          currentTeacher.timeZone = country!.zonaHoraria;
+          currentTeacher.memberSince = DateFormat("MMM yy", 'en_US').format(DateTime.now());
+
+          final langCode = getPreferredLanguageCode(country!);
+          Provider.of<LanguageProvider>(context, listen: false).setLanguage(langCode);
+
+          authService = AuthService(); // Instancia de AuthService
+          authService.register(context);
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color(0xFF3B82F6), //teacherForm.isValidForm() ? Color(0xFF3B82F6) : Colors.grey,
+        minimumSize: Size(0, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10), // Border radius leve
+        ),
+        
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            translate(context, "next"),
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(width: 8),
+          Icon(
+            Icons.arrow_forward,
+            color: Colors.white,
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<bool?> _confirmDialog(BuildContext context) {
     return showDialog<bool>(
