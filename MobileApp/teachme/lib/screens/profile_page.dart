@@ -3,6 +3,7 @@ import 'package:teachme/models/models.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/widgets/FavoriteCourses.dart';
 import 'package:teachme/widgets/about_me_section.dart';
 import 'package:teachme/widgets/my_interests.dart';
 import 'package:teachme/widgets/widgets.dart';
@@ -76,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
   DefaultTabController _teacherScreen(BuildContext context) {
     return DefaultTabController(
       initialIndex: widget.initialIndex != null ? widget.initialIndex! : 0,
-      length: 3,
+      length: currentUser.isStudent && currentUser.id == widget.user.id ? 4 : 3,
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
@@ -100,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _teacherSection(BuildContext context) {
     return Expanded(
       child: TabBarView(
-        children: [AboutMeSection(), TeacherCourses(), CommentsSection()],
+        children: [AboutMeSection(), TeacherCourses(), CommentsSection(), if(currentUser.isStudent && currentUser.id == widget.user.id) FavoriteCourses() ],
       ),
     );
   }
@@ -110,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
       color: Color(0xFF151515),
       child: TabBar(
         labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        unselectedLabelStyle: TextStyle(fontSize: 16, color: Colors.white),
+        unselectedLabelStyle: TextStyle(fontSize: 14, color: Colors.white),
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorColor: Color(0xFF3B82F6),
         labelColor: Color(0xFF3B82F6),
@@ -118,6 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Tab(text: "Sobre mi"),
           Tab(text: "Anuncios"),
           Tab(text: "Comentarios"),
+          if(currentUser.isStudent && currentUser.id == widget.user.id) Tab(text: "Favoritos",)
         ],
       ),
     );
@@ -154,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage> {
   GestureDetector _profilePicture(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (widget.user.id == widget.user.id) _showConnectionOptions(context);
+        if (widget.user.id == currentUser.id) _showConnectionOptions(context);
       },
       child: Stack(
         children: [

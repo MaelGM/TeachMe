@@ -1,13 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:teachme/models/rating_model.dart';
-import 'package:teachme/providers/language_provider.dart';
 import 'package:teachme/service/teacher_service.dart';
-import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/rating_card.dart';
-import 'package:teachme/widgets/widgets.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class CommentsSection extends StatefulWidget {
   const CommentsSection({super.key});

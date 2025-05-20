@@ -41,7 +41,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
       currentStudent = StudentModel(
         userId: '',
         interestsIds: [],
-        interestsNames: [],
+        interestsNames: [], savedAdvertisements: [],
       );
     } else {
       selectedSubjects = await _subjectService.getSubjectsByIds(

@@ -43,7 +43,9 @@ class AdvertisementModel {
     return AdvertisementModel(
       id: doc.id,
       title: data['title'],
-      parametersDeluxe: Map<String, String>.from(data['parametersDeluxe'] ?? {}),
+      parametersDeluxe: Map<String, String>.from(
+        data['parametersDeluxe'] ?? {},
+      ),
       parametersPro: Map<String, String>.from(data['parametersPro'] ?? {}),
       parametersBasic: Map<String, String>.from(data['parametersBasic']),
       description: data['description'],
@@ -70,25 +72,6 @@ class AdvertisementModel {
       'description': description,
       'photos': photos,
       'prices': prices,
-      'publicationDate': publicationDate,
-      'score': score,
-      'scoreCount': scoreCount,
-      'state': state.name,
-      'specialityId': specialityId,
-      'subjectId': subjectId,
-      'tutorId': tutorId,
-    };
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'title': title,
-      'parametersDeluxe': parametersDeluxe,
-      'parametersPro': parametersPro,
-      'parametersBasic': parametersBasic,
-      'description': description,
-      'photos': photos,
-      'prices': prices,
       'publicationDate': publicationDate.toIso8601String(),
       'score': score,
       'scoreCount': scoreCount,
@@ -99,4 +82,40 @@ class AdvertisementModel {
     };
   }
 
+  factory AdvertisementModel.fromJson(Map<String, dynamic> json) {
+    return AdvertisementModel(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      parametersDeluxe:
+          json['parametersDeluxe'] != null
+              ? Map<String, String>.from(json['parametersDeluxe'])
+              : null,
+      parametersPro:
+          json['parametersPro'] != null
+              ? Map<String, String>.from(json['parametersPro'])
+              : null,
+      parametersBasic: Map<String, String>.from(json['parametersBasic'] ?? {}),
+      description: json['description'] ?? '',
+      photos:
+          json['photos'] != null
+              ? List<String>.from(json['photos'])
+              : <String>[],
+      prices:
+          json['prices'] != null
+              ? List<double>.from(json['prices'].map((e) => e.toDouble()))
+              : <double>[],
+      publicationDate:
+          json['publicationDate'] is Timestamp
+              ? (json['publicationDate'] as Timestamp).toDate()
+              : DateTime.tryParse(json['publicationDate'] ?? '') ??
+                  DateTime.now(),
+
+      score: (json['score'] ?? 0).toDouble(),
+      scoreCount: (json['scoreCount'] ?? 0).toDouble(),
+      state: AdvertisementStateExtension.fromString(json['state']),
+      specialityId: json['specialityId'] ?? '',
+      subjectId: json['subjectId'] ?? '',
+      tutorId: json['tutorId'] ?? '',
+    );
+  }
 }

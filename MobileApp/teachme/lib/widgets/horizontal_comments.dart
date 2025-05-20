@@ -8,6 +8,7 @@ import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/focus_comments_page.dart';
+import 'package:teachme/widgets/no_comments_alert.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class HorizontalComments extends StatefulWidget {
@@ -35,22 +36,24 @@ class _HorizontalCommentsState extends State<HorizontalComments> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _topColumn(),
-          SizedBox(height: CourseService.ratings.isEmpty ? 0 : 10),
-          if (CourseService.ratings.isNotEmpty)
-            SizedBox(
-              height: 180,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: CourseService.ratings.length,
-                itemBuilder: (context, index) {
-                  final rating = CourseService.ratings[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: _commentBox(rating),
-                  );
-                },
-              ),
-            ),
+          SizedBox(height: CourseService.ratings.isEmpty ? 0 : 8),
+          SizedBox(
+            height: 180,
+            child:
+                CourseService.ratings.isNotEmpty
+                    ? NoCommentsAlert()
+                    : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: CourseService.ratings.length,
+                      itemBuilder: (context, index) {
+                        final rating = CourseService.ratings[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: _commentBox(rating),
+                        );
+                      },
+                    ),
+          ),
         ],
       ),
     );
@@ -138,45 +141,46 @@ class _HorizontalCommentsState extends State<HorizontalComments> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _showCourseScore(),
-        TextButton(
-          onPressed: () async {
-            print('see all');
-            await CourseService().getCommentsByDate();
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (_, __, ___) => FocusCommentsPage(),
-                transitionsBuilder: (_, animation, __, child) {
-                  const begin = Offset(1.0, 0.0);
-                  const end = Offset.zero;
-                  const curve = Curves.ease;
+        if (CourseService.ratings.isNotEmpty)
+          TextButton(
+            onPressed: () async {
+              print('see all');
+              await CourseService().getCommentsByDate();
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => FocusCommentsPage(),
+                  transitionsBuilder: (_, animation, __, child) {
+                    const begin = Offset(1.0, 0.0);
+                    const end = Offset.zero;
+                    const curve = Curves.ease;
 
-                  var tween = Tween(
-                    begin: begin,
-                    end: end,
-                  ).chain(CurveTween(curve: curve));
+                    var tween = Tween(
+                      begin: begin,
+                      end: end,
+                    ).chain(CurveTween(curve: curve));
 
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
-              ),
-            );
-          },
-          style: ButtonStyle(
-            padding: MaterialStateProperty.all<EdgeInsets>(
-              EdgeInsets.zero,
-            ), // Eliminar padding extra
-            tapTargetSize:
-                MaterialTapTargetSize
-                    .shrinkWrap, // Hace que el área de tap se ajuste al contenido
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            },
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all<EdgeInsets>(
+                EdgeInsets.zero,
+              ), // Eliminar padding extra
+              tapTargetSize:
+                  MaterialTapTargetSize
+                      .shrinkWrap, // Hace que el área de tap se ajuste al contenido
+            ),
+            child: Text(
+              'See all',
+              style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
+            ),
           ),
-          child: Text(
-            'See all',
-            style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
-          ),
-        ),
       ],
     );
   }

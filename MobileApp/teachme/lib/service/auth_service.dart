@@ -41,8 +41,10 @@ class AuthService extends ChangeNotifier {
 
   Future<void> checkAndSetStudent(String userUid) async {
     if (await UserPreferences.instance.existStudent()) {
+      print('STUDENT EXIST');
       currentStudent = (await UserPreferences.instance.getStudent())!;
     } else {
+      print('CREATING STUDENT');
       await saveStudent(userUid);
     }
   }
@@ -304,18 +306,18 @@ class AuthService extends ChangeNotifier {
       final studentDoc = await _firestore.collection('students').doc(uid).get();
       if (studentDoc.exists) {
         final studentModel = StudentModel.fromFirestore(studentDoc);
+        print('AFTER FROM FIRESTORE');
         await UserPreferences.instance.saveStudent(studentModel);
         currentStudent = studentModel;
       }
     } catch (e) {
-      print("Error loading student/teacher data: $e");
+      print("Error loading student data: $e");
     }
   }
 
   Future<void> saveTeacher(String uid) async {
     try {
       final teacherDoc = await _firestore.collection('teachers').doc(uid).get();
-      print("TEACHER GOT");
       if (teacherDoc.exists) {
         final teacherModel = TeacherModel.fromFirestore(teacherDoc);
         await UserPreferences.instance.saveTeacher(teacherModel);

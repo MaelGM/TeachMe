@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/service/course_service.dart';
+import 'package:teachme/utils/config.dart';
+import 'package:teachme/widgets/no_comments_alert.dart';
+import 'package:teachme/widgets/rating_card.dart';
 import 'package:teachme/widgets/widgets.dart';
 
 class FocusCommentsPage extends StatefulWidget {
@@ -11,6 +15,8 @@ class FocusCommentsPage extends StatefulWidget {
 class _FocusCommentsPageState extends State<FocusCommentsPage> {
   final CourseService _courseService = CourseService();
   bool _isLoading = false;
+  bool get _dateOrder => CourseService.dateOrder;
+  bool get _goodRatingOrder => CourseService.goodRatingOrder;
 
   @override
   void initState() {
@@ -23,6 +29,13 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
       _isLoading = true;
     });
     await CourseService().getCommentsByDate();
+    if (_dateOrder) {
+      await _courseService.getCommentsByDate();
+    } else if (_goodRatingOrder) {
+      await _courseService.getCommentsByRating(true);
+    } else {
+      await _courseService.getCommentsByRating(false);
+    }
     setState(() {
       _isLoading = false;
     });
@@ -30,26 +43,43 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
 
   @override
   Widget build(BuildContext context) {
-    
-    return _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.close),
-            ),
-            actions: [
-              IconButton(
-                onPressed: () => _showSortOptions(context),
-                icon: Icon(Icons.filter_list_alt),
-              ),
-            ],
-            title: Text('${CourseService.allRatings.length} Comments'),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.close),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => _showSortOptions(context),
+            icon: Icon(Icons.filter_list_alt),
           ),
-          //body: ListView.builder(itemBuilder: itemBuilder),
-        );
+        ],
+        title: Text(
+          CourseService.allRatings.isEmpty
+              ? 'No comments'
+              : '${CourseService.allRatings.length} Comments',
+        ),
+      ),
+      body:
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : CourseService.allRatings.isEmpty
+              ? NoCommentsAlert()
+              : ListView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 10,
+                ),
+                itemCount: CourseService.allRatings.length,
+                itemBuilder: (context, index) {
+                  final RatingModel rating = CourseService.allRatings[index];
+                  return RatingCard(rating: rating);
+                },
+              ),
+    );
   }
 
   void _showSortOptions(BuildContext context) {
@@ -90,9 +120,13 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  setState(() {_isLoading = true;});
+                  setState(() {
+                    _isLoading = true;
+                  });
                   await _courseService.getCommentsByDate();
-                  setState(() {_isLoading = false;});
+                  setState(() {
+                    _isLoading = false;
+                  });
                 },
               ),
               Divider(color: const Color.fromARGB(31, 158, 158, 158)),
@@ -104,9 +138,13 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  setState(() {_isLoading = true;});
+                  setState(() {
+                    _isLoading = true;
+                  });
                   await _courseService.getCommentsByRating(true);
-                  setState(() {_isLoading = false;});
+                  setState(() {
+                    _isLoading = false;
+                  });
                 },
               ),
               Divider(color: const Color.fromARGB(31, 158, 158, 158)),
@@ -118,9 +156,13 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  setState(() {_isLoading = true;});
+                  setState(() {
+                    _isLoading = true;
+                  });
                   await _courseService.getCommentsByRating(false);
-                  setState(() {_isLoading = false;});
+                  setState(() {
+                    _isLoading = false;
+                  });
                 },
               ),
             ],

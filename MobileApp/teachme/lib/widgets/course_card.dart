@@ -8,8 +8,9 @@ import 'package:teachme/utils/translate.dart';
 
 class CourseCard extends StatelessWidget {
   final AdvertisementModel course;
+  final bool own;
 
-  CourseCard({required this.course});
+  CourseCard({required this.course, required this.own});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class CourseCard extends StatelessWidget {
                 ),
               ),
             ),
-            if(currentUser.isTeacher && course.tutorId == currentTeacher.userId)
+            if(currentUser.isTeacher && course.tutorId == currentTeacher.userId && own)
               Positioned(
                 top: 5,
                 right: 5,

@@ -4,6 +4,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teachme/screens/profile_page.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/teacher_service.dart';
+import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
 import 'package:teachme/widgets/horizontal_comments.dart';
 import 'package:teachme/widgets/other_courses_recomendations.dart';
@@ -23,6 +24,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
   int _currentTabIndex = 0;
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
+  final CourseService _courseService = CourseService();
   bool _isScrolledPastImage = false;
 
   bool _isLoading = false;
@@ -68,7 +70,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
       _isLoading = true;
     });
     await TeacherService.setTeacher(CourseService.course.tutorId);
-    await CourseService().getFirstsComments();
+    await _courseService.getFirstsComments();
     setState(() {
       _isLoading = false;
     });
@@ -86,16 +88,17 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: AnimatedContainer(
               duration: Duration(milliseconds: 300),
-              color: _isScrolledPastImage ? Color(0xFF151515) : Colors.transparent,
+              color:
+                  _isScrolledPastImage ? Color(0xFF151515) : Colors.transparent,
               child: AppBar(
-                backgroundColor:Colors.transparent, 
+                backgroundColor: Colors.transparent,
                 elevation: 0,
                 leading: IconButton(
                   icon: Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () => Navigator.pop(context),
                 ),
                 actions: [
-                  Icon(Icons.favorite_outline, color: Colors.white),
+                  if (currentUser.isStudent && CourseService.course.tutorId != currentUser.id) _favButton(),
                   HamburguerMenu(),
                 ],
               ),
@@ -111,11 +114,43 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                 _pricesTab(),
                 HorizontalComments(),
                 OtherCoursesRecomendations(),
-                SizedBox(height: 40,)
+                SizedBox(height: 40),
               ],
             ),
           ),
         );
+  }
+
+  Widget _favButton() {
+    return IconButton(
+      icon:
+          currentStudent.savedAdvertisements.any(
+                (ad) => ad.id == CourseService.course.id,
+              )
+              ? Icon(Icons.favorite, color: Colors.red)
+              : Icon(Icons.favorite_outline, color: Colors.white),
+      onPressed: () async {
+        setState(() {
+          if (currentStudent.savedAdvertisements.any(
+            (ad) => ad.id == CourseService.course.id,
+          )) {
+            // Quitar anuncio
+            currentStudent.savedAdvertisements.removeWhere(
+              (ad) => ad.id == CourseService.course.id,
+            );
+          } else {
+            // Añadir anuncio
+            currentStudent.savedAdvertisements.add(CourseService.course);
+          }
+        });
+
+        // Aquí deberías actualizar Firestore con la nueva lista de anuncios guardados del estudiante:
+        await _courseService.updateSavedAdvertisementsInFirestore(
+          currentStudent.userId,
+          currentStudent.savedAdvertisements,
+        );
+      },
+    );
   }
 
   Widget _pricesTab() {
@@ -439,5 +474,3 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
     );
   }
 }
-
-

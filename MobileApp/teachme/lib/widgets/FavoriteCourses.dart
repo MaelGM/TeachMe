@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:teachme/service/student_service.dart';
 import 'package:teachme/service/teacher_service.dart';
+import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/course_card.dart';
 
-class TeacherCourses extends StatefulWidget {
-  const TeacherCourses({super.key});
+class FavoriteCourses extends StatefulWidget {
+  const FavoriteCourses({super.key});
 
   @override
-  State<TeacherCourses> createState() => _TeacherCoursesState();
+  State<FavoriteCourses> createState() => _FavoriteCoursesState();
 }
 
-class _TeacherCoursesState extends State<TeacherCourses> {
-  final TeacherService _teacherService = TeacherService();
+class _FavoriteCoursesState extends State<FavoriteCourses> {
+  final StudentService _studentService = StudentService();
   final ScrollController _scrollController = ScrollController();
 
   bool _isLoading = false;
@@ -25,7 +27,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     setState(() {
       _isLoading = true;
     });
-    await _teacherService.getCoursesFromTeacher(TeacherService.teacher.userId);
+    await _studentService.fetchFavorites(currentUser.id);
     setState(() {
       _isLoading = false;
     });
@@ -33,15 +35,14 @@ class _TeacherCoursesState extends State<TeacherCourses> {
 
   @override
   Widget build(BuildContext context) {
+    print(_studentService.favorites.length);
     return RefreshIndicator(
       onRefresh:
-          () async => await _teacherService.getCoursesFromTeacher(
-            TeacherService.teacher.userId,
-          ),
+          () async => await _studentService.fetchFavorites(currentUser.id),
       child:
           _isLoading
               ? Center(child: CircularProgressIndicator())
-              : TeacherService.courses.isEmpty
+              : _studentService.favorites.isEmpty
               ? _noCoursesAlert()
               : ListView.builder(
                 controller: _scrollController,
@@ -50,10 +51,10 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                   horizontal: 16,
                   vertical: 10,
                 ),
-                itemCount: TeacherService.courses.length,
+                itemCount: _studentService.favorites.length,
                 itemBuilder: (context, index) {
-                  final course = TeacherService.courses[index];
-                  return CourseCard(course: course, own: true,);
+                  final course = _studentService.favorites[index];
+                  return CourseCard(course: course, own: false,);
                 },
               ),
     );
@@ -67,7 +68,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
           Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
           const SizedBox(height: 16),
           Text(
-            'Aún no hay ningún curso publicado',
+            'Aún no hay ningún tienes ningún curso como favorito',
             style: TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -77,7 +78,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Cuando publiques un curso aparecerá aquí.',
+            'Guardate un curso como favorito, y se almacenará aquí.',
             style: TextStyle(color: Colors.white54, fontSize: 14),
             textAlign: TextAlign.center,
           ),

@@ -16,7 +16,6 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
   bool _isLoading = false;
 
   List<AdvertisementModel> _otherCoursesFromTeacher = [];
-  List<AdvertisementModel> _otherCoursesFromSubject = [];
   List<AdvertisementModel> _otherCoursesFromSpeciality = [];
 
   @override
@@ -28,7 +27,6 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
   @override
   void dispose() {
     _otherCoursesFromTeacher = [];
-    _otherCoursesFromSubject = [];
     _otherCoursesFromSpeciality = [];
     
     super.dispose();
@@ -39,7 +37,6 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
     setState(() {_isLoading = true;});
 
     _otherCoursesFromTeacher = await _courseService.getOtherCoursesFromTeacher(CourseService.course.tutorId);
-    _otherCoursesFromSubject = await _courseService.getOtherCoursesFromSubject(CourseService.course.subjectId);
     _otherCoursesFromSpeciality = await _courseService.getOtherCoursesFromSpeciality(CourseService.course.specialityId);
 
     setState(() {_isLoading = false;});
@@ -51,7 +48,6 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
       children: [
         if(_otherCoursesFromTeacher.isNotEmpty) _otherFromTeacher(),
         if(_otherCoursesFromSpeciality.isNotEmpty) _otherFromSpeciality(),
-        if(_otherCoursesFromSubject.isNotEmpty) _otherFromSubject(),
       ],
     );
   }
@@ -148,25 +144,6 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
             ],
           ),
           _scrollHorizontalCourses(_otherCoursesFromSpeciality)
-        ]
-      ),
-    );
-  }
-
-  Container _otherFromSubject() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: Text('Recomended', maxLines: 2, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
-            ],
-          ),
-          _scrollHorizontalCourses(_otherCoursesFromSubject)
         ]
       ),
     );
