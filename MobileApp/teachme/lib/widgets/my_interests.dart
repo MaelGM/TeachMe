@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:teachme/screens/config_menu.dart';
 import 'package:teachme/screens/pages.dart';
+import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/interests_chips.dart';
 
-class MyInterests extends StatelessWidget {
+class MyInterests extends StatefulWidget {
+  final VoidCallback? onBecameTeacher;
+
+  const MyInterests({super.key, this.onBecameTeacher});
+
+  @override
+  State<MyInterests> createState() => _MyInterestsState();
+}
+
+class _MyInterestsState extends State<MyInterests> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,8 +50,7 @@ class MyInterests extends StatelessWidget {
         SizedBox(height: 10),
         _configButton(context),
         _accountButton(context),
-        if(!currentUser.isTeacher) 
-          _becomeSellerButton(context)
+        if (!currentUser.isTeacher) _becomeSellerButton(context),
       ],
     );
   }
@@ -57,9 +66,12 @@ class MyInterests extends StatelessWidget {
               const begin = Offset(1.0, 0.0);
               const end = Offset.zero;
               const curve = Curves.ease;
-    
-              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-    
+
+              var tween = Tween(
+                begin: begin,
+                end: end,
+              ).chain(CurveTween(curve: curve));
+
               return SlideTransition(
                 position: animation.drive(tween),
                 child: child,
@@ -83,8 +95,16 @@ class MyInterests extends StatelessWidget {
 
   GestureDetector _becomeSellerButton(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, TeacherForm.routeName);
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TeacherForm(editing: true)),
+        );
+
+        if (result == true) {
+          await _reloadUserFromBackend();
+            if (widget.onBecameTeacher != null) widget.onBecameTeacher!();
+        }
       },
       child: Container(
         padding: EdgeInsets.all(16),
@@ -121,14 +141,18 @@ class MyInterests extends StatelessWidget {
         Navigator.push(
           context,
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => ConfigMenuPage(), // Tu pantalla destino
+            pageBuilder:
+                (_, __, ___) => ConfigMenuPage(), // Tu pantalla destino
             transitionsBuilder: (_, animation, __, child) {
               const begin = Offset(1.0, 0.0); // De derecha a izquierda
               const end = Offset.zero;
               const curve = Curves.ease;
-    
-              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-    
+
+              var tween = Tween(
+                begin: begin,
+                end: end,
+              ).chain(CurveTween(curve: curve));
+
               return SlideTransition(
                 position: animation.drive(tween),
                 child: child,
@@ -152,21 +176,18 @@ class MyInterests extends StatelessWidget {
 
   Row _buttonRow(String title, IconData icon) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                title,
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ],
-          ),
-          Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
-        ],
-      );
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: Colors.white),
+            SizedBox(width: 10),
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 16)),
+          ],
+        ),
+        Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+      ],
+    );
   }
 
   GestureDetector _favButton(BuildContext context) {
@@ -176,12 +197,19 @@ class MyInterests extends StatelessWidget {
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Color(0xFF151515),
-          border: Border(
-            bottom: BorderSide(width: 1.1, color: Colors.white),
-          ),
+          border: Border(bottom: BorderSide(width: 1.1, color: Colors.white)),
         ),
-        child: _buttonRow('Favoritos', Icons.favorite_outline)
+        child: _buttonRow('Favoritos', Icons.favorite_outline),
       ),
     );
+  }
+
+  Future<void> _reloadUserFromBackend() async {
+    final newUser = await AuthService.getUserById(
+      currentUser.id,
+    ); // o el método que uses
+    setState(() {
+      currentUser = newUser;
+    });
   }
 }

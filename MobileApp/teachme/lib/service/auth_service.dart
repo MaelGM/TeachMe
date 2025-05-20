@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:teachme/models/student_model.dart';
 import 'package:teachme/models/teacher_model.dart';
-import 'package:teachme/models/user_model.dart' as user;
+import 'package:teachme/models/user_model.dart';
 import 'package:teachme/providers/providers.dart';
 import 'package:teachme/screens/pages.dart';
 import 'package:teachme/utils/config.dart';
@@ -12,18 +12,18 @@ import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
 import 'package:teachme/utils/utils.dart';
 
-class AuthService extends ChangeNotifier{
+class AuthService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<bool> initSession() async {
     final savedUser = await UserPreferences.instance.getUser();
-    
+
     if (savedUser != null) {
       currentUser = savedUser;
-      
-      if(currentUser.isStudent) await checkAndSetStudent(savedUser.id);
-      if(currentUser.isTeacher) await checkAndSetTeacher(savedUser.id);
+
+      if (currentUser.isStudent) await checkAndSetStudent(savedUser.id);
+      if (currentUser.isTeacher) await checkAndSetTeacher(savedUser.id);
 
       await updateUserConnectionStatus('yes');
       return true;
@@ -33,40 +33,62 @@ class AuthService extends ChangeNotifier{
 
   Future<void> initUser() async {
     final savedUser = await UserPreferences.instance.getUser();
-    if(currentUser.isStudent) await checkAndSetStudent(currentUser.id);
-    if(currentUser.isTeacher) await checkAndSetTeacher(currentUser.id);
+    if (currentUser.isStudent) await checkAndSetStudent(currentUser.id);
+    if (currentUser.isTeacher) await checkAndSetTeacher(currentUser.id);
 
     await updateUserConnectionStatus('yes');
   }
 
   Future<void> checkAndSetStudent(String userUid) async {
-    if(await UserPreferences.instance.existStudent()) {
+    if (await UserPreferences.instance.existStudent()) {
       currentStudent = (await UserPreferences.instance.getStudent())!;
-    }else {
+    } else {
       await saveStudent(userUid);
     }
   }
 
   Future<void> checkAndSetTeacher(String userUid) async {
     print("SAVING TEACHER");
-    if(await UserPreferences.instance.existTeacher()) {
+    if (await UserPreferences.instance.existTeacher()) {
       print("TEACHER EXISTS");
       currentTeacher = (await UserPreferences.instance.getTeacher())!;
-    }else {
+    } else {
       print("NO TEACHER");
       await saveTeacher(userUid);
     }
     print("FINAL SAVING");
   }
 
-  
-
   Future<bool> emailExists(String email) async {
     // ignore: deprecated_member_use
-    final methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+    final methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(
+      email,
+    );
     return methods.isNotEmpty; // Si hay métodos, el email ya está registrado
   }
 
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw Exception('No se pudo enviar el correo. Verifica el email.');
+    }
+  }
+
+  static Future<UserModel> getUserById(String id) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(id).get();
+
+      if (!doc.exists) {
+        throw Exception('User not found');
+      }
+
+      return UserModel.fromJson(doc.data()!);
+    } catch (e) {
+      throw Exception('Error fetching user: $e');
+    }
+  }
 
   Future<void> register(BuildContext context) async {
     try {
@@ -93,11 +115,15 @@ class AuthService extends ChangeNotifier{
       currentUser = creatingUser;
       await UserPreferences.instance.saveUser(currentUser);
 
-      if (creatingUser.isStudent) _registerStudent();
-      if (creatingUser.isTeacher) _registerTeacher();
+      if (creatingUser.isStudent) registerStudent();
+      if (creatingUser.isTeacher) registerTeacher();
       await updateUserConnectionStatus('yes');
 
-      Navigator.pushNamedAndRemoveUntil(context, NavBarPage.routeName, (Route<dynamic> route) => false);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        NavBarPage.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on FirebaseAuthException {
       ScaffoldMessageError(translate(context, "randomError"), context);
     } catch (e) {
@@ -106,11 +132,14 @@ class AuthService extends ChangeNotifier{
     }
   }
 
-  Future<void> _registerStudent() async {
+  Future<void> registerStudent() async {
     try {
       final currentUser = _auth.currentUser;
       if (currentUser == null) {
-        throw FirebaseAuthException(code: 'no-user', message: 'Usuario no autenticado');
+        throw FirebaseAuthException(
+          code: 'no-user',
+          message: 'Usuario no autenticado',
+        );
       }
 
       currentStudent.userId = currentUser.uid; // Aquí se asigna el ID del user
@@ -126,15 +155,18 @@ class AuthService extends ChangeNotifier{
     }
   }
 
-  Future<void> _registerTeacher() async {
+  Future<void> registerTeacher() async {
     try {
       final currentUser = _auth.currentUser;
       if (currentUser == null) {
-        throw FirebaseAuthException(code: 'no-user', message: 'Usuario no autenticado');
+        throw FirebaseAuthException(
+          code: 'no-user',
+          message: 'Usuario no autenticado',
+        );
       }
-  
+
       currentTeacher.userId = currentUser.uid; // Aquí se asigna el ID del user
-  
+
       await _firestore.collection('teachers').doc(currentTeacher.userId).set({
         'userId': currentTeacher.userId,
         'aboutMe': currentTeacher.aboutMe,
@@ -142,7 +174,7 @@ class AuthService extends ChangeNotifier{
         'countryName': currentTeacher.country,
         'memberSince': currentTeacher.memberSince,
         'skills': currentTeacher.skills,
-        'timeZone': currentTeacher.timeZone, 
+        'timeZone': currentTeacher.timeZone,
         'rating': 0,
       });
       await UserPreferences.instance.saveTeacher(currentTeacher);
@@ -151,6 +183,22 @@ class AuthService extends ChangeNotifier{
     }
   }
 
+  Future<void> transformStudentToTeacher(BuildContext context) async {
+    try {
+      registerTeacher();
+
+      currentUser.isTeacher = true;
+
+      await _firestore.collection('users').doc(currentUser.id).update({
+        'isTeacher': currentUser.isTeacher,
+      });
+
+      await UserPreferences.instance.saveUser(currentUser);
+      Navigator.pop(context, true); // true = indica que hubo cambios
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> login(LoginFormProvider loginForm, BuildContext context) async {
     try {
@@ -180,14 +228,14 @@ class AuthService extends ChangeNotifier{
       final userDoc = await _firestore.collection('users').doc(uid).get();
 
       if (userDoc.exists) {
-        final userModel = user.UserModel.fromDocument(userDoc);
+        final userModel = UserModel.fromDocument(userDoc);
         await UserPreferences.instance.saveUser(userModel);
         currentUser = userModel;
 
         loginForm.isLoading = false;
 
-        if(userModel.isStudent) saveStudent(uid);
-        if(userModel.isTeacher) saveTeacher(uid);
+        if (userModel.isStudent) saveStudent(uid);
+        if (userModel.isTeacher) saveTeacher(uid);
 
         await updateUserConnectionStatus('yes');
 
@@ -201,7 +249,6 @@ class AuthService extends ChangeNotifier{
         loginForm.formKey.currentState?.validate();
         loginForm.isLoading = false;
       }
-
     } on FirebaseAuthException catch (e) {
       print(e.code);
       switch (e.code) {
@@ -215,8 +262,13 @@ class AuthService extends ChangeNotifier{
           loginForm.emailError = translate(context, "userNotFound");
           break;
         case 'wrong-password':
-          loginForm.emailError = translate(context, "incorrectEmailOrPassword");;
-          loginForm.passwordError = translate(context, "incorrectEmailOrPassword");;
+          loginForm.emailError = translate(context, "incorrectEmailOrPassword");
+          ;
+          loginForm.passwordError = translate(
+            context,
+            "incorrectEmailOrPassword",
+          );
+          ;
           break;
         case 'too-many-requests':
           ScaffoldMessageError(translate(context, "maxTries"), context);
@@ -229,13 +281,17 @@ class AuthService extends ChangeNotifier{
           break;
         case 'invalid-credential':
           loginForm.emailError = translate(context, "incorrectEmailOrPassword");
-          loginForm.passwordError = translate(context, "incorrectEmailOrPassword");
+          loginForm.passwordError = translate(
+            context,
+            "incorrectEmailOrPassword",
+          );
           break;
         default:
           ScaffoldMessageError(translate(context, "loginError"), context);
       }
 
-      loginForm.formKey.currentState?.validate(); // Forzar revalidación de errores
+      loginForm.formKey.currentState
+          ?.validate(); // Forzar revalidación de errores
       loginForm.isLoading = false;
     } catch (_) {
       ScaffoldMessageError(translate(context, "unexpectedError"), context);
@@ -244,21 +300,20 @@ class AuthService extends ChangeNotifier{
   }
 
   Future<void> saveStudent(String uid) async {
-    try{
+    try {
       final studentDoc = await _firestore.collection('students').doc(uid).get();
       if (studentDoc.exists) {
         final studentModel = StudentModel.fromFirestore(studentDoc);
         await UserPreferences.instance.saveStudent(studentModel);
         currentStudent = studentModel;
       }
-    }catch(e) {
+    } catch (e) {
       print("Error loading student/teacher data: $e");
     }
   }
 
   Future<void> saveTeacher(String uid) async {
     try {
-
       final teacherDoc = await _firestore.collection('teachers').doc(uid).get();
       print("TEACHER GOT");
       if (teacherDoc.exists) {
@@ -271,12 +326,11 @@ class AuthService extends ChangeNotifier{
     }
   }
 
-
   Future<void> logout(BuildContext context) async {
     await updateUserConnectionStatus('no');
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
-    
+
     await UserPreferences.instance.deleteUser();
     await UserPreferences.instance.deleteStudent();
     await UserPreferences.instance.deleteTeacher();
@@ -294,7 +348,6 @@ class AuthService extends ChangeNotifier{
 
       currentUser.connected = status;
       await UserPreferences.instance.saveUser(currentUser);
-
     } catch (e) {
       print('Error al actualizar el estado de conexión: $e');
     }

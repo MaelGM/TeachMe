@@ -18,6 +18,7 @@ class HorizontalComments extends StatefulWidget {
 class _HorizontalCommentsState extends State<HorizontalComments> {
   @override
   Widget build(BuildContext context) {
+    print(CourseService.ratings.length);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
@@ -34,21 +35,22 @@ class _HorizontalCommentsState extends State<HorizontalComments> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _topColumn(),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 180,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: CourseService.ratings.length,
-              itemBuilder: (context, index) {
-                final rating = CourseService.ratings[index];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: _commentBox(rating),
-                );
-              },
+          SizedBox(height: CourseService.ratings.isEmpty ? 0 : 10),
+          if (CourseService.ratings.isNotEmpty)
+            SizedBox(
+              height: 180,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: CourseService.ratings.length,
+                itemBuilder: (context, index) {
+                  final rating = CourseService.ratings[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: _commentBox(rating),
+                  );
+                },
+              ),
             ),
-          ),
         ],
       ),
     );

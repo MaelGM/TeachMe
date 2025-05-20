@@ -62,8 +62,13 @@ class _ProfilePageState extends State<ProfilePage> {
               : Column(
                 children: [
                   _header(context),
-                  MyInterests()
-                ]
+                  MyInterests(
+                    onBecameTeacher: () async {
+                      await _loadUser(); 
+                      setState(() {});
+                    },
+                  ),
+                ],
               ),
     );
   }
@@ -121,7 +126,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _header(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: currentUser.isStudent && !currentUser.isTeacher ? Border(bottom: BorderSide(width: 1, color: Color(0xFF3B82F6))) : null,
+        border:
+            currentUser.isStudent && !currentUser.isTeacher
+                ? Border(bottom: BorderSide(width: 1, color: Color(0xFF3B82F6)))
+                : null,
         color: Color(0xFF151515),
       ),
       width: double.infinity,
@@ -152,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           CircleAvatar(
             radius: 45,
-            backgroundImage: NetworkImage(widget.user.profilePicture),
+            backgroundImage: widget.user.profilePicture.isEmpty ? AssetImage('assets/defaultProfilePicture.png') : NetworkImage(widget.user.profilePicture),
             backgroundColor: Colors.grey[800],
           ),
           Positioned(

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:teachme/models/teacher_model.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
 
 class SkillChips extends StatefulWidget {
   final bool editable;
-  const SkillChips({super.key, required this.editable});
+  final TeacherModel teacher;
+  const SkillChips({super.key, required this.editable, required this.teacher});
 
   @override
   State<SkillChips> createState() => _SkillChipsState();
@@ -17,7 +19,7 @@ class _SkillChipsState extends State<SkillChips> {
     return Wrap(
       spacing: 10,
       children:
-          TeacherService.teacher.skills.map((skill) {
+          widget.teacher.skills.map((skill) {
             return Chip(
               backgroundColor: const Color.fromARGB(255, 65, 65, 65),
               shape: RoundedRectangleBorder(

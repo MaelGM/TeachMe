@@ -125,7 +125,7 @@ class _TeacherFormState extends State<TeacherForm> {
         SizedBox(height: 2),
         _skillsCards(teacherForm),
         SizedBox(height: 20),
-        SkillChips(editable: true,),
+        SkillChips(editable: true, teacher: currentTeacher),
 
       ],
     );
@@ -423,7 +423,7 @@ class _TeacherFormState extends State<TeacherForm> {
           Provider.of<LanguageProvider>(context, listen: false).setLanguage(langCode);
 
           authService = AuthService(); // Instancia de AuthService
-          authService.register(context);
+          authService.transformStudentToTeacher(context);
         }
       },
       style: ElevatedButton.styleFrom(
@@ -438,7 +438,7 @@ class _TeacherFormState extends State<TeacherForm> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            translate(context, "next"),
+            translate(context, "save"),
             style: TextStyle(
               fontSize: 18,
               color: Colors.white,

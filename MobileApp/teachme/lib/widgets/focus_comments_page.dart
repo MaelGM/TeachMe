@@ -30,6 +30,7 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return _isLoading
         ? Center(child: CircularProgressIndicator())
         : Scaffold(

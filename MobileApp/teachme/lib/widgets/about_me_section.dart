@@ -61,7 +61,7 @@ class AboutMeSection extends StatelessWidget {
               ),
             ),
             SizedBox(height: 7),
-            SkillChips(editable: false),
+            SkillChips(editable: false, teacher: TeacherService.teacher,),
             if(currentUser.isStudent &&  currentUser.id == TeacherService.teacher.userId)
               InterestsChips()
           ],
