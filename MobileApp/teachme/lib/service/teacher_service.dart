@@ -56,6 +56,7 @@ class TeacherService extends ChangeNotifier {
       final doc = await _firestore.collection('users').doc(id).get();
 
       teacherUserAcount = UserModel.fromDocument(doc);
+      print('USER FINAL ID: $id');
     } catch (e) {
       throw Exception("Error al obtener al profesor: $e");
     }

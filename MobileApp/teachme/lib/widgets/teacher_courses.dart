@@ -60,28 +60,31 @@ class _TeacherCoursesState extends State<TeacherCourses> {
   }
 
   Widget _noCoursesAlert() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
-          const SizedBox(height: 16),
-          Text(
-            'Aún no hay ningún curso publicado',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
+            const SizedBox(height: 16),
+            Text(
+              'Aún no hay ningún curso publicado',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Cuando publiques un curso aparecerá aquí.',
-            style: TextStyle(color: Colors.white54, fontSize: 14),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              'Cuando publiques un curso aparecerá aquí.',
+              style: TextStyle(color: Colors.white54, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

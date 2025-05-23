@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/firebase_options.dart';
+import 'package:teachme/providers/edit_form_provider.dart';
 import 'package:teachme/providers/providers.dart';
 import 'package:teachme/providers/teacher_form_provider.dart';
 import 'package:teachme/routes/routes.dart';
@@ -34,6 +35,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TeacherFormProvider()),
         ChangeNotifierProvider(create: (_) => LoginFormProvider()),
         ChangeNotifierProvider(create: (_) => SignFormProvider()),
+        ChangeNotifierProvider(create: (_) => EditFormProvider()),
       ],
       child: MyApp(isSessionActive: isSessionActive)
     )

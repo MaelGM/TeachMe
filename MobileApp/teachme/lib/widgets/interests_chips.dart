@@ -45,7 +45,7 @@ class _InterestsChipsState extends State<InterestsChips> {
 
   Row _title(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(

@@ -3,7 +3,7 @@ import 'package:teachme/models/models.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
-import 'package:teachme/widgets/FavoriteCourses.dart';
+import 'package:teachme/widgets/favorite_courses.dart';
 import 'package:teachme/widgets/about_me_section.dart';
 import 'package:teachme/widgets/my_interests.dart';
 import 'package:teachme/widgets/widgets.dart';
@@ -55,7 +55,14 @@ class _ProfilePageState extends State<ProfilePage> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        actions: [HamburguerMenu()],
+        actions: [
+          HamburguerMenu(
+            onConfigUpdated: () async {
+              await _loadUser();
+              setState(() {});
+            },
+          ),
+        ],
       ),
       body:
           _isLoading
@@ -65,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _header(context),
                   MyInterests(
                     onBecameTeacher: () async {
-                      await _loadUser(); 
+                      await _loadUser();
                       setState(() {});
                     },
                   ),
@@ -101,7 +108,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _teacherSection(BuildContext context) {
     return Expanded(
       child: TabBarView(
-        children: [AboutMeSection(), TeacherCourses(), CommentsSection(), if(currentUser.isStudent && currentUser.id == widget.user.id) FavoriteCourses() ],
+        children: [
+          AboutMeSection(),
+          TeacherCourses(),
+          CommentsSection(),
+          if (currentUser.isStudent && currentUser.id == widget.user.id)
+            FavoriteCourses(),
+        ],
       ),
     );
   }
@@ -119,7 +132,8 @@ class _ProfilePageState extends State<ProfilePage> {
           Tab(text: "Sobre mi"),
           Tab(text: "Anuncios"),
           Tab(text: "Comentarios"),
-          if(currentUser.isStudent && currentUser.id == widget.user.id) Tab(text: "Favoritos",)
+          if (currentUser.isStudent && currentUser.id == widget.user.id)
+            Tab(text: "Favoritos"),
         ],
       ),
     );
@@ -162,7 +176,10 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           CircleAvatar(
             radius: 45,
-            backgroundImage: widget.user.profilePicture.isEmpty ? AssetImage('assets/defaultProfilePicture.png') : NetworkImage(widget.user.profilePicture),
+            backgroundImage:
+                widget.user.profilePicture.isEmpty
+                    ? AssetImage('assets/defaultProfilePicture.png')
+                    : NetworkImage(widget.user.profilePicture),
             backgroundColor: Colors.grey[800],
           ),
           Positioned(

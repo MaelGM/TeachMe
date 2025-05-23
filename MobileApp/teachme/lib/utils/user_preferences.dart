@@ -8,6 +8,7 @@ import 'dart:convert';
 
 import 'package:teachme/models/models.dart';
 import 'package:teachme/models/skill_model.dart';
+import 'package:teachme/utils/config.dart';
 
 class UserPreferences {
   static late Box _box;
@@ -150,6 +151,8 @@ class UserPreferences {
 
   // Guarda el usuario en formato JSON en almacenamiento seguro
   Future<void> saveUser(UserModel user) async {
+          print('saveUser final method: ${currentUser.id}');
+          print('saveUser final method: ${user.id}');
     final userJson = jsonEncode(user.toJson());
     await _prefs.write(key: 'user', value: userJson);
   }

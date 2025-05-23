@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:teachme/screens/config_menu.dart';
+import 'package:teachme/screens/edit_account_page.dart';
+import 'package:teachme/screens/favorite_courses_page.dart';
 import 'package:teachme/screens/pages.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/config.dart';
@@ -96,6 +98,10 @@ class _MyInterestsState extends State<MyInterests> {
   GestureDetector _becomeSellerButton(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        final bool? confirm = await _alertDialog(context);
+
+        if (confirm != true) return;
+
         final result = await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => TeacherForm(editing: true)),
@@ -103,7 +109,7 @@ class _MyInterestsState extends State<MyInterests> {
 
         if (result == true) {
           await _reloadUserFromBackend();
-            if (widget.onBecameTeacher != null) widget.onBecameTeacher!();
+          if (widget.onBecameTeacher != null) widget.onBecameTeacher!();
         }
       },
       child: Container(
@@ -119,9 +125,104 @@ class _MyInterestsState extends State<MyInterests> {
     );
   }
 
+  Future<bool?> _alertDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: Color(0xFF121212),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Column(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Color(0xFFF59E0B), // Color de advertencia (amarillo)
+                  size: 48,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  "Confirmar acción",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "¿Estás seguro de que deseas convertirte en un profesor?",
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Esta acción no es reversible.",
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color(
+                      0xFF3B82F6,
+                    ), // Color rojo claro para advertencia
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.end,
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text("Cancelar"),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF3B82F6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text("Confirmar", style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+    );
+  }
+
   GestureDetector _accountButton(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (_, __, ___) => EditAccountPage(), // Tu pantalla destino
+            transitionsBuilder: (_, animation, __, child) {
+              const begin = Offset(1.0, 0.0); // De derecha a izquierda
+              const end = Offset.zero;
+              const curve = Curves.ease;
+
+              var tween = Tween(
+                begin: begin,
+                end: end,
+              ).chain(CurveTween(curve: curve));
+
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
+          ),
+        );
+      },
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -192,7 +293,30 @@ class _MyInterestsState extends State<MyInterests> {
 
   GestureDetector _favButton(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (_, __, ___) => FavoriteCoursesPage(), // Tu pantalla destino
+            transitionsBuilder: (_, animation, __, child) {
+              const begin = Offset(1.0, 0.0); // De derecha a izquierda
+              const end = Offset.zero;
+              const curve = Curves.ease;
+
+              var tween = Tween(
+                begin: begin,
+                end: end,
+              ).chain(CurveTween(curve: curve));
+
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
+          ),
+        );
+      },
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(

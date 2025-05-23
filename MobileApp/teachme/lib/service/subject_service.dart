@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:teachme/models/subject_model.dart';
 import 'package:teachme/utils/config.dart';
 
@@ -35,7 +36,7 @@ class SubjectService {
     }
   }
 
-  Future<void> updateStudentInterests() async {
+  Future<void> updateStudentInterests(BuildContext context) async {
   try {
     print('ACTUALIZANDO');
     final studentRef = FirebaseFirestore.instance.collection('students').doc(currentStudent.userId);
@@ -44,6 +45,8 @@ class SubjectService {
       'interestsIds': currentStudent.interestsIds,
       'interestsNames': currentStudent.interestsNames,
     });
+    
+    Navigator.pop(context, true); // true = indica que hubo cambios
 
   } catch (e) {
     throw Exception("Error al actualizar intereses del estudiante: $e");

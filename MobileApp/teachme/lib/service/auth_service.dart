@@ -79,6 +79,7 @@ class AuthService extends ChangeNotifier {
 
   static Future<UserModel> getUserById(String id) async {
     try {
+
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(id).get();
 
@@ -150,6 +151,7 @@ class AuthService extends ChangeNotifier {
         'userId': currentStudent.userId,
         'interestsIds': currentStudent.interestsIds,
         'interestsNames': currentStudent.interestsNames,
+        'savedAdvertisements': currentStudent.savedAdvertisements
       });
       await UserPreferences.instance.saveStudent(currentStudent);
     } catch (e) {
@@ -193,6 +195,23 @@ class AuthService extends ChangeNotifier {
 
       await _firestore.collection('users').doc(currentUser.id).update({
         'isTeacher': currentUser.isTeacher,
+      });
+
+      await UserPreferences.instance.saveUser(currentUser);
+      Navigator.pop(context, true); // true = indica que hubo cambios
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> transformTeacherToStudent(BuildContext context) async {
+    try {
+      registerStudent();
+
+      currentUser.isStudent = true;
+
+      await _firestore.collection('users').doc(currentUser.id).update({
+        'isStudent': currentUser.isStudent,
       });
 
       await UserPreferences.instance.saveUser(currentUser);

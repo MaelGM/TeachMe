@@ -99,7 +99,7 @@ class _CommentsSectionState extends State<CommentsSection> {
 
   Widget _noCommentsAlert() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

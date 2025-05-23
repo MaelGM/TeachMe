@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teachme/models/student_model.dart';
 import 'package:teachme/models/subject_model.dart';
 import 'package:teachme/service/auth_service.dart';
+import 'package:teachme/service/student_service.dart';
 import 'package:teachme/service/subject_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
@@ -10,8 +11,13 @@ import 'package:teachme/utils/utils.dart';
 class ChooseInterestsPage extends StatefulWidget {
   static const routeName = "interestsPage";
   final bool editing;
+  final bool? newStudent;
 
-  const ChooseInterestsPage({super.key, required this.editing});
+  const ChooseInterestsPage({
+    super.key,
+    required this.editing,
+    this.newStudent,
+  });
 
   @override
   State<ChooseInterestsPage> createState() => _ChooseInterestsPageState();
@@ -37,11 +43,12 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
 
     _subjects = await _subjectService.getSubjects();
 
-    if (!widget.editing) {
+    if (!widget.editing || (widget.newStudent != null && widget.newStudent!)) {
       currentStudent = StudentModel(
         userId: '',
         interestsIds: [],
-        interestsNames: [], savedAdvertisements: [],
+        interestsNames: [],
+        savedAdvertisements: [],
       );
     } else {
       selectedSubjects = await _subjectService.getSubjectsByIds(
@@ -56,6 +63,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.newStudent != null && widget.newStudent!);
     return Scaffold(
       appBar: AppBar(
         leading: null,
@@ -99,7 +107,9 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _backButton(context),
-                          widget.editing
+                          widget.editing ||
+                                  (widget.newStudent != null &&
+                                      widget.newStudent!)
                               ? _saveButton(context)
                               : _nextButton(context),
                         ],
@@ -148,11 +158,15 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
               selectedSubjects.map((s) => s.id).toList();
           currentStudent.interestsNames =
               selectedSubjects.map((s) => s.name).toList();
-          await _subjectService.updateStudentInterests();
-          print('GUARDADO');
-          Navigator.pop(context);
-        }else {
-          ScaffoldMessageError('Por favor, seleccione minimamente 1 interes', context);
+          if (widget.newStudent != null && widget.newStudent!)
+            await AuthService().transformTeacherToStudent(context);
+          else
+            await _subjectService.updateStudentInterests(context);
+        } else {
+          ScaffoldMessageError(
+            'Por favor, seleccione minimamente 1 interes',
+            context,
+          );
         }
       },
 

@@ -49,6 +49,7 @@ class _TeacherFormState extends State<TeacherForm> {
   void dispose() {
     localidadController.dispose();
     skillController.dispose();
+    
     super.dispose();
   }
 
@@ -422,6 +423,8 @@ class _TeacherFormState extends State<TeacherForm> {
           final langCode = getPreferredLanguageCode(country!);
           Provider.of<LanguageProvider>(context, listen: false).setLanguage(langCode);
 
+          print('_saveButton method: ${currentUser.id}');
+          
           authService = AuthService(); // Instancia de AuthService
           authService.transformStudentToTeacher(context);
         }
