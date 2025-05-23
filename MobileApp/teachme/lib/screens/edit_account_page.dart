@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:teachme/models/models.dart';
 import 'package:teachme/providers/edit_form_provider.dart';
+import 'package:teachme/screens/waiting_email_verification_page.dart';
 import 'package:teachme/service/profile_service.dart';
 import 'package:teachme/ui/input_decorations.dart';
 
@@ -21,8 +22,17 @@ class EditAccountPage extends StatefulWidget {
 class _EditAccountPageState extends State<EditAccountPage> {
   final picker = ImagePicker();
   bool _isLoading = false;
-  String profileImage = currentUser.profilePicture;
+  late String profileImage;
   File? _localProfileImageFile;
+
+  @override
+  void initState() {
+    super.initState();
+    final editForm = Provider.of<EditFormProvider>(context, listen: false);
+    profileImage = currentUser.profilePicture;
+    editForm.name = currentUser.username;
+    editForm.email = currentUser.email;
+  }
 
   Future<void> _showImageSourceDialog() async {
     showModalBottomSheet(
@@ -95,6 +105,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
         children: [
           _header(context),
           Form(
+            key: editForm.formKey,
             child: Padding(
               padding: EdgeInsetsGeometry.symmetric(
                 vertical: 30,
@@ -173,21 +184,64 @@ class _EditAccountPageState extends State<EditAccountPage> {
 
                     if (confirm != true) return;
 
-                    setState(() {_isLoading = true;});
+                    setState(() {
+                      _isLoading = true;
+                    });
                     if (!editForm.formKey.currentState!.validate()) {
-                      setState(() {_isLoading = false;});
+                      setState(() => _isLoading = false);
                       ScaffoldMessageError('Revise los campos', context);
                       return;
                     }
 
-                    String? imageUrl = profileImage;
                     if (_localProfileImageFile != null) {
-                      imageUrl = await ProfileService.uploadImageToCloudinary(
-                        _localProfileImageFile!,
-                      );
+                      final uploadedUrl =
+                          await ProfileService.uploadImageToCloudinary(
+                            _localProfileImageFile!,
+                          );
+                      if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
+                        profileImage = uploadedUrl;
+                      } else {
+                        ScaffoldMessageError(
+                          'Error al subir la imagen',
+                          context,
+                        );
+                        setState(() => _isLoading = false);
+                        return;
+                      }
                     }
-                    await ProfileService.updateUser(editForm, imageUrl!);
 
+                    final user = FirebaseAuth.instance.currentUser!;
+
+                    if (editForm.email != currentUser.email) {
+                      try {
+                        await user.verifyBeforeUpdateEmail(editForm.email);
+                        // Aquí rediriges a la pantalla de espera, no actualizas Firestore todavía
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => WaitingEmailVerificationPage(
+                                  newEmail: editForm.email,
+                                ),
+                          ),
+                        );
+                        return;
+                      } catch (e) {
+                        ScaffoldMessageError(
+                          'No se pudo enviar el correo de verificación',
+                          context,
+                        );
+                        setState(() => _isLoading = false);
+                        return;
+                      }
+                    }
+
+                    // Si no cambia el email, entonces sí puedes actualizar inmediatamente
+                    await ProfileService.updateUser(
+                      editForm,
+                      profileImage,
+                      context,
+                    );
                     setState(() {
                       _isLoading = false;
                       _localProfileImageFile = null;
@@ -219,7 +273,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
 
   Widget _profilePicture(BuildContext context) {
     return GestureDetector(
-      onTap: _isLoading ? null : _showImageSourceDialog,
+      onTap: _showImageSourceDialog,
       child: Stack(
         children: [
           CircleAvatar(
@@ -229,10 +283,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     ? null
                     : _localProfileImageFile != null
                     ? FileImage(_localProfileImageFile!)
-                    : profileImage.isEmpty
-                    ? AssetImage('assets/defaultProfilePicture.png')
-                        as ImageProvider
-                    : NetworkImage(profileImage),
+                    : (profileImage.startsWith('http')
+                        ? NetworkImage(profileImage)
+                        : AssetImage('assets/defaultProfilePicture.png')
+                            as ImageProvider),
             backgroundColor: Colors.grey[800],
             child:
                 _isLoading ? Center(child: CircularProgressIndicator()) : null,
