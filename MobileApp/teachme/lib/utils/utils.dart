@@ -43,6 +43,32 @@ ScaffoldMessageError(String text, BuildContext context) {
     ),
   );
 }
+ScaffoldMessageInfo(String text, BuildContext context) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          Icon(Icons.error_outline, color: Colors.white),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.green,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 6,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      duration: const Duration(seconds: 4),
+    ),
+  );
+}
 
 void initializeTimeagoLocales() {
   timeago.setLocaleMessages('es', timeago.EsMessages());

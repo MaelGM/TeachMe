@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/enums/AdvertisementState.dart';
 import 'package:teachme/models/rating_model.dart';
+import 'package:teachme/utils/config.dart';
 
 class CourseService extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -179,5 +180,31 @@ class CourseService extends ChangeNotifier {
     } catch (e) {
       throw Exception("Error al obtener los comentarios: $e");
     }
+  }
+
+  static Future<void> payCourse(double price) async {
+    // Añadir a favoritos si no está ya
+    if (!currentStudent.savedAdvertisements.any(
+      (ad) => ad.id == CourseService.course.id,
+    )) {
+      currentStudent.savedAdvertisements.add(CourseService.course);
+    }
+    currentStudent.payedAdvertisements[price.toString()] = CourseService.course;
+
+    final adsMapList =
+        currentStudent.savedAdvertisements
+            .map((ad) => ad.toFirestore())
+            .toList();
+    final payedMap = currentStudent.payedAdvertisements.map(
+      (key, ad) => MapEntry(key, ad.toFirestore()),
+    );
+
+    await FirebaseFirestore.instance
+        .collection('students')
+        .doc(currentStudent.userId)
+        .update({
+          'savedAdvertisements': adsMapList,
+          'payedAdvertisements': payedMap,
+        });
   }
 }

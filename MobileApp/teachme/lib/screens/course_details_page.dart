@@ -1,6 +1,7 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:teachme/screens/payment_page.dart';
 import 'package:teachme/screens/profile_page.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/teacher_service.dart';
@@ -98,7 +99,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                   onPressed: () => Navigator.pop(context),
                 ),
                 actions: [
-                  if (currentUser.isStudent && CourseService.course.tutorId != currentUser.id) _favButton(),
+                  if (currentUser.isStudent &&
+                      CourseService.course.tutorId != currentUser.id)
+                    _favButton(),
                   HamburguerMenu(),
                 ],
               ),
@@ -272,7 +275,17 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
 
   TextButton _payButton(double price) {
     return TextButton(
-      onPressed: () => print('pay'),
+      onPressed:
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => PaymentPage(
+                    amount: price,
+                    courseTitle: CourseService.course.title,
+                  ),
+            ),
+          ),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         width: double.infinity,

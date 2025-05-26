@@ -6,12 +6,14 @@ class StudentModel {
   List<String> interestsIds;
   List<String> interestsNames;
   List<AdvertisementModel> savedAdvertisements;
+  Map<String, AdvertisementModel> payedAdvertisements; // NUEVO CAMPO
 
   StudentModel({
     required this.userId,
     required this.interestsIds,
     required this.interestsNames,
     required this.savedAdvertisements,
+    required this.payedAdvertisements, // Añadido al constructor
   });
 
   // Convertir a JSON
@@ -20,7 +22,11 @@ class StudentModel {
       'userId': userId,
       'interestsIds': interestsIds,
       'interestsNames': interestsNames,
-      'savedAdvertisements': savedAdvertisements.map((ad) => ad.toFirestore()).toList(),
+      'savedAdvertisements':
+          savedAdvertisements.map((ad) => ad.toFirestore()).toList(),
+      'payedAdvertisements': payedAdvertisements.map(
+        (key, ad) => MapEntry(key, ad.toFirestore()),
+      ),
     };
   }
 
@@ -30,9 +36,14 @@ class StudentModel {
       userId: json['userId'],
       interestsIds: List<String>.from(json['interestsIds'] ?? []),
       interestsNames: List<String>.from(json['interestsNames'] ?? []),
-      savedAdvertisements: (json['savedAdvertisements'] as List<dynamic>? ?? [])
-          .map((item) => AdvertisementModel.fromJson(item))
-          .toList(),
+      savedAdvertisements:
+          (json['savedAdvertisements'] as List<dynamic>? ?? [])
+              .map((item) => AdvertisementModel.fromJson(item))
+              .toList(),
+      payedAdvertisements:
+          (json['payedAdvertisements'] as Map<String, dynamic>? ?? {}).map(
+            (key, value) => MapEntry(key, AdvertisementModel.fromJson(value)),
+          ),
     );
   }
 
@@ -40,12 +51,17 @@ class StudentModel {
   factory StudentModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return StudentModel(
-      userId: data['userId'] ?? '',
+      userId: data['userId'],
       interestsIds: List<String>.from(data['interestsIds'] ?? []),
       interestsNames: List<String>.from(data['interestsNames'] ?? []),
-      savedAdvertisements: (data['savedAdvertisements'] as List<dynamic>? ?? [])
-          .map((item) => AdvertisementModel.fromJson(item))
-          .toList(),
+      savedAdvertisements:
+          (data['savedAdvertisements'] as List<dynamic>? ?? [])
+              .map((item) => AdvertisementModel.fromJson(item))
+              .toList(),
+      payedAdvertisements:
+          (data['payedAdvertisements'] as Map<String, dynamic>? ?? {}).map(
+            (key, value) => MapEntry(key, AdvertisementModel.fromJson(value)),
+          ),
     );
   }
 }
