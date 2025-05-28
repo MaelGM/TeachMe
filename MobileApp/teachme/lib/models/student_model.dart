@@ -9,6 +9,9 @@ class StudentModel {
   List<AdvertisementModel> savedAdvertisements;
   List<AdvertisementModel> payedAdvertisements; // NUEVO CAMPO
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -31,6 +34,9 @@ class StudentModel {
           savedAdvertisements.map((ad) => ad.toFirestore()).toList(),
       'payedAdvertisements': payedAdvertisements.map((ad) => ad.toFirestore()).toList(),
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -56,6 +62,9 @@ class StudentModel {
               .map((item) => AdvertisementModel.fromJson(item))
               .toList(),
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -79,6 +88,9 @@ class StudentModel {
               .map((item) => AdvertisementModel.fromJson(item))
               .toList(),
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

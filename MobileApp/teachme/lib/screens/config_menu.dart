@@ -4,7 +4,10 @@ import 'package:teachme/screens/choose_language_page.dart';
 import 'package:teachme/service/auth_service.dart';
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 import 'package:teachme/utils/config.dart';
