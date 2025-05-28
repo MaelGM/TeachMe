@@ -2,6 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/screens/choose_language_page.dart';
 import 'package:teachme/service/auth_service.dart';
+<<<<<<< Updated upstream
+=======
+import 'package:teachme/utils/config.dart';
+>>>>>>> Stashed changes
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
 import 'package:teachme/utils/utils.dart';

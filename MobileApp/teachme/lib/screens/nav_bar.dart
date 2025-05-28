@@ -1,6 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:teachme/screens/pages.dart';
+<<<<<<< Updated upstream
+=======
+import 'package:teachme/service/navigation_service.dart';
+import 'package:teachme/utils/config.dart';
+>>>>>>> Stashed changes
 import 'package:teachme/utils/translate.dart';
 
 class NavBarPage extends StatefulWidget {
@@ -20,8 +24,17 @@ class _NavBarPageState extends State<NavBarPage> {
     ProfilePage(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      navIndexNotifier.addListener(_navIndexListener);
+    });
+  }
+
   void _onItemTapped(int index) {
-    _pageController.jumpToPage(index);
+    navIndexNotifier.value = index;
   }
 
   void _onPageChanged(int index) {
@@ -30,8 +43,20 @@ class _NavBarPageState extends State<NavBarPage> {
     });
   }
 
+  void _navIndexListener() {
+    final index = navIndexNotifier.value;
+    if (_pageController.hasClients) {
+      // Importante: verificar si tiene clientes
+      _pageController.jumpToPage(index);
+    }
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   void dispose() {
+    navIndexNotifier.removeListener(_navIndexListener);
     _pageController.dispose();
     super.dispose();
   }
@@ -52,7 +77,7 @@ class _NavBarPageState extends State<NavBarPage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 30),
-            label:translate(context, "home"),
+            label: translate(context, "home"),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search, size: 30),

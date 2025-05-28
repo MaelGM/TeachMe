@@ -20,8 +20,37 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
   @override
   void initState() {
     super.initState();
+<<<<<<< Updated upstream
     _futureSubjects = _subjectService.getSubjects(); // Solo se ejecuta una vez
     creatingStudent = StudentModel(userId: '', interestsIds: [], interestsNames: []);
+=======
+  }
+
+  Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _subjects = await _subjectService.getSubjects();
+
+    if (!widget.editing || (widget.newStudent != null && widget.newStudent!)) {
+      currentStudent = StudentModel(
+        userId: '',
+        interestsIds: [],
+        interestsNames: [],
+        savedAdvertisements: [], 
+        payedAdvertisements: [],
+      );
+    } else {
+      selectedSubjects = await _subjectService.getSubjectsByIds(
+        currentStudent.interestsIds,
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+>>>>>>> Stashed changes
   }
 
   @override
