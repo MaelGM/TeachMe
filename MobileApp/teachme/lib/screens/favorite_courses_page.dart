@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/widgets/favorite_courses.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
+import 'package:teachme/widgets/standard_app_bar.dart';
 
 class FavoriteCoursesPage extends StatefulWidget {
   @override

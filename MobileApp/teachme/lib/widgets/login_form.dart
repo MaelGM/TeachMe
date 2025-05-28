@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/providers/providers.dart';
+import 'package:teachme/screens/forgot_password_page.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/ui/input_decorations.dart';
 import 'package:teachme/utils/translate.dart';
@@ -114,8 +115,7 @@ class _LoginFormState extends State<LoginForm> {
   TextButton _forgotPassword() {
     return TextButton(
               onPressed: () {
-                //TODO: Navigator.push(context, MaterialPageRoute(builder: (context) => RecoverAccount()));
-                print("Recover");
+                Navigator.pushNamed(context, ForgotPasswordPage.routeName);
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,

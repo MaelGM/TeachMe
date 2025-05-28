@@ -3,6 +3,13 @@ import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/widgets/no_comments_alert.dart';
 import 'package:teachme/widgets/rating_card.dart';
+import 'package:flutter/widgets.dart';
+import 'package:teachme/models/rating_model.dart';
+import 'package:teachme/service/course_service.dart';
+import 'package:teachme/utils/config.dart';
+import 'package:teachme/widgets/no_comments_alert.dart';
+import 'package:teachme/widgets/rating_card.dart';
+import 'package:teachme/widgets/widgets.dart';
 
 class FocusCommentsPage extends StatefulWidget {
   @override

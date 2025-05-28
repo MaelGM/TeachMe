@@ -27,7 +27,7 @@ class _NavBarPageState extends State<NavBarPage> {
     HomePage(),
     SearchPage(),
     MessagesPage(),
-    ProfilePage(),
+    ProfilePage(user: currentUser),
   ];
 
   @override

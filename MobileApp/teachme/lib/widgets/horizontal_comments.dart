@@ -1,9 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:expandable_text/expandable_text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/providers/language_provider.dart';
 import 'package:teachme/service/course_service.dart';
+import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/focus_comments_page.dart';
 import 'package:teachme/widgets/no_comments_alert.dart';

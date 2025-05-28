@@ -183,11 +183,11 @@ class _SignInFormState extends State<SignInForm> {
         }else {
           creatingUser = UserModel(
             id: '',
-            connected: false, 
+            connected: 'no', 
             email: signForm.email, 
             isStudent: false, 
             isTeacher: false, 
-            name: signForm.name, 
+            username: signForm.name, 
             profilePicture: ''
           );
           isGoogleSignUp = false;

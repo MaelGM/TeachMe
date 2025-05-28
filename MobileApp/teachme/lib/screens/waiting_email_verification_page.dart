@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:teachme/utils/utils.dart';
 
 class WaitingEmailVerificationPage extends StatefulWidget {
   final String newEmail;

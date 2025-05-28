@@ -12,8 +12,10 @@ class AccessPage extends StatelessWidget{
     return DefaultTabController(
       length: 2, 
       child: Scaffold(
+        
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           centerTitle: true,
           title: Text(translate(context, "welcome"), style: TextStyle(fontSize: 26, color: Colors.white, fontWeight: FontWeight.bold),),
           bottom: TabBar(

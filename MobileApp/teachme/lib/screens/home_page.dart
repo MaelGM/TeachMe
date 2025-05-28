@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/widgets.dart';
 
@@ -19,7 +20,7 @@ class HomePage extends StatelessWidget{
       body: Column(
         children: [
           Text(currentUser.email, style: TextStyle(color: Colors.white),),
-          Text(currentUser.name, style: TextStyle(color: Colors.white),),
+          Text(currentUser.username, style: TextStyle(color: Colors.white),),
           Text(currentUser.isStudent.toString(), style: TextStyle(color: Colors.white),),
           Text(currentUser.isTeacher.toString(), style: TextStyle(color: Colors.white),),
           Text(currentUser.profilePicture, style: TextStyle(color: Colors.white),),

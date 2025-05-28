@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/screens/profile_page.dart';
 import 'package:teachme/service/course_service.dart';
+import 'package:flutter/widgets.dart';
+import 'package:teachme/models/adverstiment_model.dart';
+import 'package:teachme/screens/profile_page.dart';
+import 'package:teachme/service/course_service.dart';
+import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/widgets/vertical_couse_box.dart';
 
 class OtherCoursesRecomendations extends StatefulWidget {

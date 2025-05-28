@@ -1,4 +1,86 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
+
+String capitalize(String word) {
+  if (word.isEmpty) return word;
+  return '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}';
+}
+
+String capitalizePhrase(String phrase) {
+    if (phrase.trim().isEmpty) return phrase;
+
+    return phrase
+        .trim()
+        .split(RegExp(r'\s+'))
+        .map((word) =>
+            word.isEmpty ? '' : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}')
+        .join(' ');
+  }
+
+ScaffoldMessageError(String text, BuildContext context) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          Icon(Icons.error_outline, color: Colors.white),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.redAccent.shade200,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 6,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      duration: const Duration(seconds: 4),
+    ),
+  );
+}
+ScaffoldMessageInfo(String text, BuildContext context) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          Icon(Icons.error_outline, color: Colors.white),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.green,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 6,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      duration: const Duration(seconds: 4),
+    ),
+  );
+}
+
+void initializeTimeagoLocales() {
+  timeago.setLocaleMessages('es', timeago.EsMessages());
+  timeago.setLocaleMessages('en', timeago.EnMessages());
+  timeago.setLocaleMessages('fr', timeago.FrMessages());
+  timeago.setLocaleMessages('de', timeago.DeMessages());
+  timeago.setLocaleMessages('it', timeago.ItMessages());
+  timeago.setLocaleMessages('pt', timeago.PtBrMessages());
+  timeago.setLocaleMessages('zh', timeago.ZhCnMessages());
+  timeago.setLocaleMessages('ja', timeago.JaMessages());
+  timeago.setLocaleMessages('ko', timeago.KoMessages());
+}
 
 Color selectedColor = Color(0xFF3B82F6);
 Color darkerColor = Color(0xFF151515);

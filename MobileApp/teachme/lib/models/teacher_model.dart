@@ -7,7 +7,9 @@ class TeacherModel {
   String timeZone;
   String birthDate;
   String memberSince;
+  List<String> skills;
   double rating;
+  int ratingCount;
 
   TeacherModel({
     required this.userId,
@@ -16,7 +18,9 @@ class TeacherModel {
     required this.timeZone,
     required this.memberSince,
     required this.birthDate,
+    required this.skills,
     required this.rating,
+    required this.ratingCount,
   });
 
   // Convertir a JSON
@@ -24,11 +28,13 @@ class TeacherModel {
     return {
       'userId': userId,
       'aboutMe': aboutMe,
-      'country': country,
+      'countryName': country,
       'timeZone': timeZone,
       'memberSince': memberSince,
       'birthDate': birthDate,
+      'skills': skills,
       'rating': rating,
+      'ratingCount': ratingCount,
     };
   }
 
@@ -37,11 +43,13 @@ class TeacherModel {
     return TeacherModel(
       userId: json['userId'] ?? '',
       aboutMe: json['aboutMe'] ?? '',
-      country: json['country'] ?? '',
+      country: json['countryName'] ?? '',
       timeZone: json['timeZone'] ?? '',
       memberSince: json['memberSince'] ?? '',
       birthDate: json['birthDate'] ?? '',
+      skills: List<String>.from(json['skills'] ?? []),
       rating: (json['rating'] ?? 0).toDouble(),
+      ratingCount: (json['ratingCount'] ?? 0),
     );
   }
 
@@ -51,11 +59,13 @@ class TeacherModel {
     return TeacherModel(
       userId: data['userId'] ?? '',
       aboutMe: data['aboutMe'] ?? '',
-      country: data['country'] ?? '',
+      country: data['countryName'] ?? '',
       timeZone: data['timeZone'] ?? '',
       memberSince: data['memberSince'] ?? '',
       birthDate: data['birthDate'] ?? '',
+      skills: List<String>.from(data['skills'] ?? []),
       rating: (data['rating'] ?? 0).toDouble(),
+      ratingCount: (data['ratingCount'] ?? 0),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/models/teacher_model.dart';
+import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
 

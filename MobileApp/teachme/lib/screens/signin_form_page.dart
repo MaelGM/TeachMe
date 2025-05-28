@@ -27,7 +27,7 @@ class _SigninFormPageState extends State<SigninFormPage> {
       appBar: AppBar(
         leading: null,
         automaticallyImplyLeading: false,
-        title: Text(translate(context, "whatAreYou"), style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),),
+        title: Text(translate(context, "whatAreYou"), style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),),
         centerTitle: true,
         toolbarHeight: 70,
       ),
@@ -87,7 +87,7 @@ class _SigninFormPageState extends State<SigninFormPage> {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => isStudent ? ChooseInterestsPage() : TeacherForm(), 
+                      pageBuilder: (_, __, ___) => isStudent ? ChooseInterestsPage(editing: false,) : TeacherForm(editing: false,), 
                       transitionsBuilder: (_, animation, __, child) {
                         const begin = Offset(1.0, 0.0);
                         const end = Offset.zero;
