@@ -8,6 +8,9 @@ class StudentModel {
 =======
   List<AdvertisementModel> savedAdvertisements;
   List<AdvertisementModel> payedAdvertisements; // NUEVO CAMPO
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
   StudentModel({
@@ -27,6 +30,9 @@ class StudentModel {
       'savedAdvertisements':
           savedAdvertisements.map((ad) => ad.toFirestore()).toList(),
       'payedAdvertisements': payedAdvertisements.map((ad) => ad.toFirestore()).toList(),
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     };
   }
@@ -49,6 +55,9 @@ class StudentModel {
           (json['payedAdvertisements'] as List<dynamic>? ?? [])
               .map((item) => AdvertisementModel.fromJson(item))
               .toList(),
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     );
   }
@@ -69,6 +78,9 @@ class StudentModel {
           (data['payedAdvertisements'] as List<dynamic>? ?? [])
               .map((item) => AdvertisementModel.fromJson(item))
               .toList(),
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     );
   }

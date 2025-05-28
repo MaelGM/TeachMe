@@ -101,6 +101,9 @@ class AuthService extends ChangeNotifier{
       );
     } on FirebaseAuthException catch (ex){
       ScaffoldMessageError(ex.message ?? translate(context, "randomError"), context);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     } catch (e) {
       print(e.toString());

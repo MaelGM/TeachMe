@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/screens/pages.dart';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 import 'package:teachme/service/navigation_service.dart';
 import 'package:teachme/utils/config.dart';
 >>>>>>> Stashed changes
