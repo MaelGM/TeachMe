@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/service/student_service.dart';
-import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/course_card.dart';
 

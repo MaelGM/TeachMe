@@ -35,6 +35,7 @@ class AdvertisementModel {
     required this.tutorId,
     this.parametersDeluxe,
     this.parametersPro,
+    this.paidPrice
   });
 
   // Convertir desde Firestore

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:teachme/models/student_model.dart';
 import 'package:teachme/models/subject_model.dart';
 import 'package:teachme/service/auth_service.dart';
-import 'package:teachme/service/student_service.dart';
 import 'package:teachme/service/subject_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
@@ -49,7 +48,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
         interestsIds: [],
         interestsNames: [],
         savedAdvertisements: [], 
-        payedAdvertisements: {},
+        payedAdvertisements: [],
       );
     } else {
       selectedSubjects = await _subjectService.getSubjectsByIds(

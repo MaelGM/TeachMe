@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/screens/pages.dart';
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 import 'package:teachme/service/navigation_service.dart';
 import 'package:teachme/utils/config.dart';
->>>>>>> Stashed changes
 import 'package:teachme/utils/translate.dart';
 
 class NavBarPage extends StatefulWidget {

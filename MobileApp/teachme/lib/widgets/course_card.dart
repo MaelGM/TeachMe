@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/screens/course_details_page.dart';
-import 'package:teachme/screens/pages.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
@@ -33,7 +32,13 @@ class _CourseCardState extends State<CourseCard> {
               transitionsBuilder: (_, animation, __, child) {
                 const begin = Offset(1.0, 0.0); // De derecha a izquierda
                 const end = Offset.zero;
-                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                const curve = Curves.ease;
+
+                var tween = Tween(
+                  begin: begin,
+                  end: end,
+                ).chain(CurveTween(curve: curve));
+
                 return SlideTransition(
                   position: animation.drive(tween),
                   child: child,
@@ -56,9 +61,12 @@ class _CourseCardState extends State<CourseCard> {
               ),
               child: SizedBox(
                 height: 125,
+                child: Row(
                   children: [
                     // Primera imagen del curso
                     _imageCard(context),
+
+                    // Información importante del curso (precio, nota y titulo)
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(12),
@@ -80,7 +88,9 @@ class _CourseCardState extends State<CourseCard> {
                 ),
               ),
             ),
-            if(currentUser.isTeacher && course.tutorId == currentTeacher.userId && own)
+            if (currentUser.isTeacher &&
+                widget.course.tutorId == currentTeacher.userId &&
+                widget.own)
               Positioned(
                 top: 5,
                 right: 5,
@@ -92,11 +102,18 @@ class _CourseCardState extends State<CourseCard> {
                             ? Colors.green
                             : Colors.red, // Fondo del banner
                     borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    translate(
+                      context,
+                      widget.course.state.name,
+                    ), // Mensaje del banner
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
                 ),
               ),
           ],

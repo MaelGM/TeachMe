@@ -32,7 +32,6 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> initUser() async {
-    final savedUser = await UserPreferences.instance.getUser();
     if (currentUser.isStudent) await checkAndSetStudent(currentUser.id);
     if (currentUser.isTeacher) await checkAndSetTeacher(currentUser.id);
 
@@ -61,38 +60,6 @@ class AuthService extends ChangeNotifier {
     print("FINAL SAVING");
   }
 
-<<<<<<< Updated upstream
-=======
-  Future<void> initUser() async {
-    if (currentUser.isStudent) await checkAndSetStudent(currentUser.id);
-    if (currentUser.isTeacher) await checkAndSetTeacher(currentUser.id);
-
-    await updateUserConnectionStatus('yes');
-  }
-
-  Future<void> checkAndSetStudent(String userUid) async {
-    if (await UserPreferences.instance.existStudent()) {
-      print('STUDENT EXIST');
-      currentStudent = (await UserPreferences.instance.getStudent())!;
-    } else {
-      print('CREATING STUDENT');
-      await saveStudent(userUid);
-    }
-  }
-
-  Future<void> checkAndSetTeacher(String userUid) async {
-    print("SAVING TEACHER");
-    if (await UserPreferences.instance.existTeacher()) {
-      print("TEACHER EXISTS");
-      currentTeacher = (await UserPreferences.instance.getTeacher())!;
-    } else {
-      print("NO TEACHER");
-      await saveTeacher(userUid);
-    }
-    print("FINAL SAVING");
-  }
-
->>>>>>> Stashed changes
   Future<bool> emailExists(String email) async {
     // ignore: deprecated_member_use
     final methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(
@@ -155,15 +122,6 @@ class AuthService extends ChangeNotifier {
       await updateUserConnectionStatus('yes');
 
       Navigator.pushNamedAndRemoveUntil(context, HomePage.routeName, (Route<dynamic> route) => false);
-    } on FirebaseAuthException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(translate(context, "randomError"))),
-      );
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        NavBarPage.routeName,
-        (Route<dynamic> route) => false,
-      );
     } on FirebaseAuthException catch (ex){
       ScaffoldMessageError(ex.message ?? translate(context, "randomError"), context);
     } catch (e) {

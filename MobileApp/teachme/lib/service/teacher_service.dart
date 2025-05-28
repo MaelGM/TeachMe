@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/models.dart';
 import 'package:teachme/models/rating_model.dart';
-import 'package:teachme/models/teacher_model.dart';
+import 'package:teachme/utils/config.dart';
+class TeacherService extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static List<RatingModel> ratings = [];
   static List<AdvertisementModel> courses = [];

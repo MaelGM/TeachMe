@@ -38,7 +38,9 @@ class StudentModel {
           (json['savedAdvertisements'] as List<dynamic>? ?? [])
               .map((item) => AdvertisementModel.fromJson(item))
               .toList(),
-      payedAdvertisements:
+      payedAdvertisements:(json['payedAdvertisements'] as List<dynamic>? ?? [])
+              .map((item) => AdvertisementModel.fromJson(item))
+              .toList(),
     );
   }
 

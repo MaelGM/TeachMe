@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:teachme/models/models.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/service/teacher_service.dart';
@@ -309,7 +311,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         );
       },
->>>>>>> Stashed changes
     );
   }
 }

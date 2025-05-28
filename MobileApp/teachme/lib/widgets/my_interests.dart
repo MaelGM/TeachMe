@@ -5,15 +5,6 @@ import 'package:teachme/screens/pages.dart';
 import 'package:teachme/screens/payed_courses_page.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/config.dart';
-import 'package:flutter/widgets.dart';
-import 'package:teachme/screens/config_menu.dart';
-import 'package:teachme/screens/edit_account_page.dart';
-import 'package:teachme/screens/favorite_courses_page.dart';
-import 'package:teachme/screens/pages.dart';
-import 'package:teachme/service/auth_service.dart';
-import 'package:teachme/utils/config.dart';
-import 'package:teachme/utils/translate.dart';
-import 'package:teachme/widgets/interests_chips.dart';
 
 class MyInterests extends StatefulWidget {
   final VoidCallback? onBecameTeacher;
