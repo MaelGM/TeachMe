@@ -282,23 +282,27 @@ class CourseService extends ChangeNotifier {
   }
 
   Future<List<AdvertisementModel>> searchCourses({
-    String? subjectId,
-    List<String>? specialityIds,
-    double? minPrice,
-    double? maxPrice,
-    String order =
-        'fecha', // posibles valores del orden: 'fecha', 'puntuacionAsc', 'puntuacionDesc' y 'alfabetico'
+    String? title,
+    required Map<String, dynamic> filters,
   }) async {
     try {
       Query query = _firestore
           .collection('advertisements')
           .where('state', isEqualTo: 'Active');
 
-      if (subjectId != null)
-        query = query.where('subjectId', isEqualTo: subjectId);
-      if (specialityIds != null && specialityIds.isNotEmpty)
-        query = query.where('specialityId', whereIn: specialityIds);
+      // Puedes eliminar el filtro inicial por título y hacerlo en el filtrado local
+      // Esto permite búsqueda "containsIgnoreCase"
+      // Si quieres dejarlo, puedes mantenerlo (aunque es menos flexible)
 
+      if (filters['subjectId'] != null) {
+        query = query.where('subjectId', isEqualTo: filters['subjectId']);
+      }
+      if (filters['specialityIds'] != null &&
+          (filters['specialityIds'] as List).isNotEmpty) {
+        query = query.where('specialityId', whereIn: filters['specialityIds']);
+      }
+
+      String order = filters['order'] ?? 'fecha';
       switch (order) {
         case 'puntuacionAsc':
           query = query.orderBy('score', descending: false);
@@ -314,24 +318,34 @@ class CourseService extends ChangeNotifier {
           break;
       }
 
-      final snaphot = await query.get();
-      final allCourses =
-          await snaphot.docs
-              .map((doc) => AdvertisementModel.fromFirestore(doc))
-              .toList();
+      final snapshot = await query.get();
+      final minPrice = filters['minPrice'] as double?;
+      final maxPrice = filters['maxPrice'] as double?;
+      final searchLower = title?.toLowerCase();
 
       final filteredCourses =
-          allCourses.where((course) {
-            if (course.prices.isEmpty) return false;
+          snapshot.docs
+              .map((doc) => AdvertisementModel.fromFirestore(doc))
+              .where((course) {
+                // Validar precios en una sola pasada
+                if (course.prices.isEmpty) return false;
 
-            final hasValidPrice = course.prices.any((price) {
-              final meetsMin = minPrice == null || price >= minPrice;
-              final meetsMax = maxPrice == null || price <= maxPrice;
-              return meetsMin && meetsMax;
-            });
+                final hasValidPrice = course.prices.any((price) {
+                  final meetsMin = minPrice == null || price >= minPrice;
+                  final meetsMax = maxPrice == null || price <= maxPrice;
+                  return meetsMin && meetsMax;
+                });
+                if (!hasValidPrice) return false;
 
-            return hasValidPrice;
-          }).toList();
+                // Validar título (containsIgnoreCase)
+                if (searchLower != null && searchLower.isNotEmpty) {
+                  final courseTitle = course.title.toLowerCase();
+                  if (!courseTitle.contains(searchLower)) return false;
+                }
+
+                return true;
+              })
+              .toList();
 
       return filteredCourses;
     } catch (e) {

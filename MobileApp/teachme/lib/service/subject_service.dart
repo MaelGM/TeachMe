@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:teachme/models/subject_model.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/user_preferences.dart';
 
 class SubjectService {
   final CollectionReference _subjectRef = FirebaseFirestore.instance.collection(
@@ -46,6 +47,7 @@ class SubjectService {
       'interestsNames': currentStudent.interestsNames,
     });
     
+    UserPreferences.instance.saveStudent(currentStudent);
     Navigator.pop(context, true); // true = indica que hubo cambios
 
   } catch (e) {
