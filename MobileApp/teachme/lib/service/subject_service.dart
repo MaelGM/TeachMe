@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:teachme/models/speciality_model.dart';
 import 'package:teachme/models/subject_model.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/user_preferences.dart';
@@ -8,11 +9,19 @@ class SubjectService {
   final CollectionReference _subjectRef = FirebaseFirestore.instance.collection(
     'subjects',
   );
+  final CollectionReference _specialityRef = FirebaseFirestore.instance.collection(
+    'speciality',
+  );
+
+  static List<Subject> subjetcs = [];
 
   Future<List<Subject>> getSubjects() async {
     try {
       final snapshot = await _subjectRef.get();
-      return snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
+      subjetcs = snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
+      
+      print('GETTING SUBJECTS');
+      return subjetcs;
     } catch (e) {
       throw Exception("Error al obtener asignaturas: $e");
     }
@@ -34,6 +43,18 @@ class SubjectService {
           .toList();
     } catch (e) {
       throw Exception("Error al obtener habilidades: $e");
+    }
+  }
+
+  Future<List<SpecialityModel>> getSpecialitiesFromSubject(String subjectId) async {
+    try {
+      final snapshot = await _specialityRef.where('subjectId', isEqualTo: subjectId).get();
+      final specialities = snapshot.docs.map((doc) => SpecialityModel.fromFirestore(doc)).toList();
+      
+      print('GETTING SPECIALITIES ${specialities.length}');
+      return specialities;
+    } catch (e) {
+      throw Exception("Error al obtener asignaturas: $e");
     }
   }
 

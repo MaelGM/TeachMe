@@ -38,7 +38,7 @@ class _HorizontalCommentsState extends State<HorizontalComments> {
           SizedBox(
             height: 180,
             child:
-                CourseService.ratings.isNotEmpty
+                CourseService.ratings.isEmpty
                     ? NoCommentsAlert()
                     : ListView.builder(
                       scrollDirection: Axis.horizontal,

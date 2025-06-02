@@ -51,6 +51,12 @@ class CourseService extends ChangeNotifier {
   static bool dateOrder = true;
   static bool goodRatingOrder = false;
 
+  static Map<String, dynamic> filters = {
+    'subjectId': null,
+    'specialityIds': [],
+    'order': 'date',
+  };
+
   static Future<void> setTeacher(String id) async {
     try {
       final doc = await _firestore.collection('teachers').doc(id).get();
@@ -281,11 +287,12 @@ class CourseService extends ChangeNotifier {
     await UserPreferences.instance.saveStudent(currentStudent);
   }
 
-  Future<List<AdvertisementModel>> searchCourses({
-    String? title,
-    required Map<String, dynamic> filters,
-  }) async {
+  Future<List<AdvertisementModel>> searchCourses({String? title}) async {
     try {
+      filters.forEach((key, value) {
+        print('Clave: $key, Valor: $value');
+      });
+
       Query query = _firestore
           .collection('advertisements')
           .where('state', isEqualTo: 'Active');
@@ -302,15 +309,25 @@ class CourseService extends ChangeNotifier {
         query = query.where('specialityId', whereIn: filters['specialityIds']);
       }
 
-      String order = filters['order'] ?? 'fecha';
+      String order = filters['order'] ?? 'date';
+
       switch (order) {
-        case 'puntuacionAsc':
-          query = query.orderBy('score', descending: false);
+        case 'date':
+          query = query.orderBy('publicationDate', descending: true);
           break;
-        case 'puntuacionDesc':
+        case 'date2':
+          query = query.orderBy('publicationDate', descending: false);
+          break;
+        case 'scoreCount':
+          query = query.orderBy('scoreCount', descending: true);
+          break;
+        case 'score':
           query = query.orderBy('score', descending: true);
           break;
-        case 'alfabetico':
+        case 'score2':
+          query = query.orderBy('score', descending: false);
+          break;
+        case 'title':
           query = query.orderBy('title', descending: false);
           break;
         default:
@@ -319,24 +336,12 @@ class CourseService extends ChangeNotifier {
       }
 
       final snapshot = await query.get();
-      final minPrice = filters['minPrice'] as double?;
-      final maxPrice = filters['maxPrice'] as double?;
       final searchLower = title?.toLowerCase();
 
       final filteredCourses =
           snapshot.docs
               .map((doc) => AdvertisementModel.fromFirestore(doc))
               .where((course) {
-                // Validar precios en una sola pasada
-                if (course.prices.isEmpty) return false;
-
-                final hasValidPrice = course.prices.any((price) {
-                  final meetsMin = minPrice == null || price >= minPrice;
-                  final meetsMax = maxPrice == null || price <= maxPrice;
-                  return meetsMin && meetsMax;
-                });
-                if (!hasValidPrice) return false;
-
                 // Validar título (containsIgnoreCase)
                 if (searchLower != null && searchLower.isNotEmpty) {
                   final courseTitle = course.title.toLowerCase();

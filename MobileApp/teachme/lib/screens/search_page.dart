@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/models/adverstiment_model.dart';
+import 'package:teachme/screens/filter_page.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/debouncer.dart';
@@ -8,20 +9,6 @@ import 'package:teachme/widgets/standard_app_bar.dart';
 
 class SearchPage extends StatefulWidget {
   static const routeName = 'search';
-  final String? subjectId;
-  final List<String>? specialityIds;
-  final double? minPrice;
-  final double? maxPrice;
-  final String? order;
-
-  const SearchPage({
-    Key? key,
-    this.subjectId,
-    this.specialityIds,
-    this.minPrice,
-    this.maxPrice,
-    this.order,
-  }) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -35,21 +22,12 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
 
   List<AdvertisementModel> _courses = [];
-  late Map<String, dynamic> _filters;
 
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-
-    _filters = {
-      'subjectId': widget.subjectId,
-      'specialityIds': widget.specialityIds,
-      'minPrice': widget.minPrice,
-      'maxPrice': widget.maxPrice,
-      'order': widget.order ?? 'date',
-    };
 
     _loadInitialData();
   }
@@ -59,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
       _isLoading = true;
     });
     if (_courses.isEmpty) {
-      final result = await _courseService.searchCourses(filters: _filters);
+      final result = await _courseService.searchCourses();
       setState(() {
         _courses = result;
       });
@@ -74,7 +52,6 @@ class _SearchPageState extends State<SearchPage> {
       // Lógica para llamar a CourseService y actualizar los cursos
       List<AdvertisementModel> results = await _courseService.searchCourses(
         title: title,
-        filters: _filters,
       );
       setState(() {
         _courses = results;
@@ -86,7 +63,9 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       _isLoading = true;
     });
-    final result = await _courseService.searchCourses(title: _searchController.text, filters: _filters);
+    final result = await _courseService.searchCourses(
+      title: _searchController.text,
+    );
     setState(() {
       _courses = result;
       _isLoading = false;
@@ -122,7 +101,6 @@ class _SearchPageState extends State<SearchPage> {
       child: RefreshIndicator(
         onRefresh: () async {
           print('refresh');
-          print(_filters['maxPrice']);
           _loadData();
         },
         child:
@@ -226,7 +204,7 @@ class _SearchPageState extends State<SearchPage> {
               } else {
                 final interest = currentStudent.interestsNames[index - 1];
                 final interestId = currentStudent.interestsIds[index - 1];
-                final isSelected = _selectedFilterIndex == index;
+                final isSelected = CourseService.filters['subjectId'] == interestId;
 
                 return _interestButton(index, isSelected, interest, interestId);
               }
@@ -246,8 +224,10 @@ class _SearchPageState extends State<SearchPage> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedFilterIndex = isSelected ? null : index; // Marca como seleccionado
-          _filters['subjectId'] = isSelected ? null : interestId;
+          _selectedFilterIndex =
+              isSelected ? null : index; // Marca como seleccionado
+          CourseService.filters['subjectId'] = isSelected ? null : interestId;
+          CourseService.filters['specialityIds'] = [];
         });
         _loadData();
       },
@@ -257,7 +237,9 @@ class _SearchPageState extends State<SearchPage> {
         decoration: BoxDecoration(
           color: isSelected ? Color(0xFF1F3B67) : Color(0xFF151515),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? Colors.white38 : Colors.white30),
+          border: Border.all(
+            color: isSelected ? Colors.white38 : Colors.white30,
+          ),
         ),
         child: Center(
           child: Text(
@@ -274,23 +256,39 @@ class _SearchPageState extends State<SearchPage> {
       margin: EdgeInsets.only(right: 5),
       width: 43,
       decoration: BoxDecoration(
-        
-          color:  Color(0xFF151515),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white30),
+        color: Color(0xFF151515),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white30),
       ),
 
       child: IconButton(
         color: Colors.white,
-        
+
         icon: Icon(Icons.filter_list),
-        onPressed: () {
+        onPressed: () async {
           print('FILTER');
-          _loadData();
-          //TODO: Navigator.push(
-          //  context,
-          //  MaterialPageRoute(builder: (context) => FiltroScreen()),
-          //);
+          final result = await Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => FilterPage(), // Tu pantalla destino
+              transitionsBuilder: (_, animation, __, child) {
+                const begin = Offset(0.0, 1.0); // De derecha a izquierda
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(
+                  begin: begin,
+                  end: end,
+                ).chain(CurveTween(curve: curve));
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ),
+          );
+          if(result) _loadData();
         },
       ),
     );
