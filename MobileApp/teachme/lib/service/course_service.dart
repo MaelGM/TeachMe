@@ -10,6 +10,7 @@ import 'package:teachme/utils/user_preferences.dart';
 
 class CourseService extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   static AdvertisementModel course = AdvertisementModel(
     id: '',
     title: '',
@@ -115,7 +116,7 @@ class CourseService extends ChangeNotifier {
           await _firestore
               .collection('advertisements')
               .where('teacherId', isEqualTo: teacherId)
-              .limit(6)
+              .limit(5)
               .get();
 
       final otherCourse =
@@ -138,7 +139,7 @@ class CourseService extends ChangeNotifier {
           await _firestore
               .collection('advertisements')
               .where('specialityId', isEqualTo: specialityId)
-              .limit(6)
+              .limit(5)
               .get();
 
       final otherCourse =
@@ -161,7 +162,7 @@ class CourseService extends ChangeNotifier {
           await _firestore
               .collection('advertisements')
               .where('subjectId', isEqualTo: subjectId)
-              .limit(6)
+              .limit(5)
               .get();
 
       final otherCourse =
@@ -355,6 +356,26 @@ class CourseService extends ChangeNotifier {
       return filteredCourses;
     } catch (e) {
       throw Exception('Error al buscar cursos: $e');
+    }
+  }
+
+  Future<List<AdvertisementModel>> getPopularCourses({
+    required int count,
+  }) async {
+    try {
+      final snapshot =
+          await _firestore
+              .collection('advertisements')
+              .orderBy('score', descending: true)
+              .orderBy('countScore', descending: true)
+              .limit(count)
+              .get();
+
+      return snapshot.docs
+          .map((doc) => AdvertisementModel.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      throw Exception("Error al obtener cursos populares: $e");
     }
   }
 }

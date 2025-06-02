@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/models/rating_model.dart';
+import 'package:teachme/screens/create_comment_page.dart';
 import 'package:teachme/service/course_service.dart';
+import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/no_comments_alert.dart';
 import 'package:teachme/widgets/rating_card.dart';
 
@@ -75,6 +77,25 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
                   final RatingModel rating = CourseService.allRatings[index];
                   return RatingCard(rating: rating);
                 },
+              ),
+      floatingActionButton:
+          currentUser.isTeacher &&
+                  currentTeacher.userId == CourseService.course.tutorId
+              ? null
+              : FloatingActionButton(
+                backgroundColor: Color(0xFF3B82F6),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CreateCommentPage(
+                            courseId: CourseService.course.id,
+                          ),
+                    ),
+                  );
+                },
+                child: Icon(Icons.add, color: Colors.white, size: 28,),
               ),
     );
   }

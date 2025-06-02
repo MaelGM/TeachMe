@@ -74,7 +74,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('INTERESES ${currentStudent.interestsNames.length}');
     return Scaffold(
       appBar: standardAppBar(context, "searchPage"),
       body: Padding(
@@ -82,8 +81,16 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           children: [
             SizedBox(height: 10),
-            _searcher(),
+            if (currentUser.isStudent) _searcher(),
             if (currentUser.isStudent) _filtersButtons(context),
+            if (currentUser.isTeacher && !currentUser.isStudent)
+              Row(
+                children: [
+                  Expanded(child: _searcher()),
+                  SizedBox(width: 10),
+                  _filterButton(),
+                ],
+              ),
             SizedBox(height: 5),
             _findedCourses(),
           ],
@@ -135,8 +142,9 @@ class _SearchPageState extends State<SearchPage> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.white30),
       ),
-      height: 45,
+      height: 40,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(Icons.search, color: Color(0xFF3B82F6)),
           SizedBox(width: 10),
@@ -204,7 +212,8 @@ class _SearchPageState extends State<SearchPage> {
               } else {
                 final interest = currentStudent.interestsNames[index - 1];
                 final interestId = currentStudent.interestsIds[index - 1];
-                final isSelected = CourseService.filters['subjectId'] == interestId;
+                final isSelected =
+                    CourseService.filters['subjectId'] == interestId;
 
                 return _interestButton(index, isSelected, interest, interestId);
               }
@@ -255,6 +264,7 @@ class _SearchPageState extends State<SearchPage> {
     return Container(
       margin: EdgeInsets.only(right: 5),
       width: 43,
+      height: 43,
       decoration: BoxDecoration(
         color: Color(0xFF151515),
         borderRadius: BorderRadius.circular(20),
@@ -288,7 +298,7 @@ class _SearchPageState extends State<SearchPage> {
               },
             ),
           );
-          if(result) _loadData();
+          if (result) _loadData();
         },
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:teachme/models/speciality_model.dart';
@@ -9,17 +11,17 @@ class SubjectService {
   final CollectionReference _subjectRef = FirebaseFirestore.instance.collection(
     'subjects',
   );
-  final CollectionReference _specialityRef = FirebaseFirestore.instance.collection(
-    'speciality',
-  );
+  final CollectionReference _specialityRef = FirebaseFirestore.instance
+      .collection('speciality');
 
   static List<Subject> subjetcs = [];
 
   Future<List<Subject>> getSubjects() async {
     try {
       final snapshot = await _subjectRef.get();
-      subjetcs = snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
-      
+      subjetcs =
+          snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
+
       print('GETTING SUBJECTS');
       return subjetcs;
     } catch (e) {
@@ -46,11 +48,17 @@ class SubjectService {
     }
   }
 
-  Future<List<SpecialityModel>> getSpecialitiesFromSubject(String subjectId) async {
+  Future<List<SpecialityModel>> getSpecialitiesFromSubject(
+    String subjectId,
+  ) async {
     try {
-      final snapshot = await _specialityRef.where('subjectId', isEqualTo: subjectId).get();
-      final specialities = snapshot.docs.map((doc) => SpecialityModel.fromFirestore(doc)).toList();
-      
+      final snapshot =
+          await _specialityRef.where('subjectId', isEqualTo: subjectId).get();
+      final specialities =
+          snapshot.docs
+              .map((doc) => SpecialityModel.fromFirestore(doc))
+              .toList();
+
       print('GETTING SPECIALITIES ${specialities.length}');
       return specialities;
     } catch (e) {
@@ -59,21 +67,57 @@ class SubjectService {
   }
 
   Future<void> updateStudentInterests(BuildContext context) async {
-  try {
-    print('ACTUALIZANDO');
-    final studentRef = FirebaseFirestore.instance.collection('students').doc(currentStudent.userId);
+    try {
+      print('ACTUALIZANDO');
+      final studentRef = FirebaseFirestore.instance
+          .collection('students')
+          .doc(currentStudent.userId);
 
-    await studentRef.update({
-      'interestsIds': currentStudent.interestsIds,
-      'interestsNames': currentStudent.interestsNames,
-    });
-    
-    UserPreferences.instance.saveStudent(currentStudent);
-    Navigator.pop(context, true); // true = indica que hubo cambios
+      await studentRef.update({
+        'interestsIds': currentStudent.interestsIds,
+        'interestsNames': currentStudent.interestsNames,
+      });
 
-  } catch (e) {
-    throw Exception("Error al actualizar intereses del estudiante: $e");
+      UserPreferences.instance.saveStudent(currentStudent);
+      Navigator.pop(context, true); // true = indica que hubo cambios
+    } catch (e) {
+      throw Exception("Error al actualizar intereses del estudiante: $e");
+    }
   }
-}
 
+  Future<List<Subject>> getRandomSubjects({required int count}) async {
+    try {
+      final snapshot = await _subjectRef.get();
+      List<Subject> allSubjects =
+          snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
+
+      if (allSubjects.isEmpty) return [];
+
+      // Mezclamos aleatoriamente y tomamos "count" elementos
+      allSubjects.shuffle(Random());
+      return allSubjects.take(count).toList();
+    } catch (e) {
+      throw Exception("Error al obtener asignaturas aleatorias: $e");
+    }
+  }
+
+  Future<List<SpecialityModel>> getFeaturedSpecialities({
+    required int count,
+  }) async {
+    try {
+      final snapshot = await _specialityRef.get();
+      List<SpecialityModel> allSpecialities =
+          snapshot.docs
+              .map((doc) => SpecialityModel.fromFirestore(doc))
+              .toList();
+
+      if (allSpecialities.isEmpty) return [];
+
+      // Mezclamos aleatoriamente y tomamos "count" elementos
+      allSpecialities.shuffle(Random());
+      return allSpecialities.take(count).toList();
+    } catch (e) {
+      throw Exception("Error al obtener especialidades destacadas: $e");
+    }
+  }
 }

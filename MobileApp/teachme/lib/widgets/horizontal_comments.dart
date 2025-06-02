@@ -5,7 +5,7 @@ import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/providers/language_provider.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/translate.dart';
-import 'package:teachme/widgets/focus_comments_page.dart';
+import 'package:teachme/screens/focus_comments_page.dart';
 import 'package:teachme/widgets/no_comments_alert.dart';
 import 'package:timeago/timeago.dart' as timeago;
 

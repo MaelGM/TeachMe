@@ -46,11 +46,6 @@ class AboutMeSection extends StatelessWidget {
               icon: Icons.person_outline,
               title: 'Member since',
             ),
-            InfoListTile(
-              subtitle: '2h ago',
-              icon: Icons.location_on,
-              title: 'Last active',
-            ),
             SizedBox(height: 7),
             Text(
               'Skills',
