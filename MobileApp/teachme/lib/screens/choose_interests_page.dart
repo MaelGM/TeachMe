@@ -48,7 +48,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
         interestsIds: [],
         interestsNames: [],
         savedAdvertisements: [], 
-        payedAdvertisements: [],
+        payedAdvertisements: {},
       );
     } else {
       selectedSubjects = await _subjectService.getSubjectsByIds(

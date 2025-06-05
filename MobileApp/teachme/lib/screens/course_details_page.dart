@@ -131,7 +131,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
 
   Widget _favButton() {
     final isFavorite = currentStudent.savedAdvertisements.any(
-      (ad) => ad.id == CourseService.course.id,
+      (id) => id == CourseService.course.id,
     );
 
     return IconButton(
@@ -143,10 +143,10 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
         setState(() {
           if (isFavorite) {
             currentStudent.savedAdvertisements.removeWhere(
-              (ad) => ad.id == CourseService.course.id,
+              (id) => id == CourseService.course.id,
             );
           } else {
-            currentStudent.savedAdvertisements.add(CourseService.course);
+            currentStudent.savedAdvertisements.add(CourseService.course.id);
           }
           _hasChangedFavorite = true;
         });
@@ -287,11 +287,10 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
           );
         } else if (!currentUser.isStudent) {
           _alertDialogNoEstudiante(context);
-        } else if (currentStudent.payedAdvertisements.any(
-          (ad) =>
-              ad.id == CourseService.course.id &&
-              ad.paidPrice != null && ad.paidPrice == price, 
-        )) {
+        } else if (currentStudent.payedAdvertisements[CourseService
+                .course
+                .id] ==
+            price) {
           ScaffoldMessageError(
             'Ya ha pagado esta versión de este curso',
             context,

@@ -13,7 +13,7 @@ class AdvertisementModel {
   final DateTime publicationDate;
   final double score;
   final double scoreCount;
-  final AdvertisementState state;
+  AdvertisementState state;
   final String specialityId;
   final String subjectId;
   final String tutorId;

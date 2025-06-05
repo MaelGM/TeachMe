@@ -10,6 +10,8 @@ import 'package:teachme/widgets/no_comments_alert.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class HorizontalComments extends StatefulWidget {
+  const HorizontalComments({super.key});
+
   @override
   State<HorizontalComments> createState() => _HorizontalCommentsState();
 }
@@ -144,7 +146,7 @@ class _HorizontalCommentsState extends State<HorizontalComments> {
             onPressed: () async {
               print('see all');
               await CourseService().getCommentsByDate();
-              Navigator.push(
+              await Navigator.push(
                 context,
                 PageRouteBuilder(
                   pageBuilder: (_, __, ___) => FocusCommentsPage(),

@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/models.dart';
 import 'package:teachme/models/rating_model.dart';
-import 'package:teachme/utils/config.dart';
+
 class TeacherService extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static List<RatingModel> ratings = [];
@@ -141,36 +141,9 @@ class TeacherService extends ChangeNotifier {
     }
   }
 
-  // Añadir un comentario al profesor
-  Future<void> addRatingToTeacher({
-    required String teacherId,
-    required double score,
-    required String comment,
-    List<String>? photos,
-  }) async {
-    final ratingsRef = _firestore.collection('ratings');
-
-    final newRating = RatingModel(
-      id: '',
-      teacherId: teacherId,
-      advertisementId: null,
-      userId: currentUser.id,
-      userName: currentUser.username,
-      userPhotoUrl: currentUser.profilePicture,
-      score: score,
-      comment: comment,
-      date: DateTime.now(),
-      photos: photos ?? [],
-    );
-
-    await ratingsRef.add(newRating.toMap());
-
-    // Actualizamos la media del profesor
-    await updateTeacherRatingStats(teacherId: teacherId, score: score);
-  }
 
   // Actualizamos el contador de comentario, y con ello, la nota media
-  Future<void> updateTeacherRatingStats({
+  static Future<void> updateTeacherRatingStats({
     required String teacherId,
     required double score,
   }) async {
@@ -190,5 +163,53 @@ class TeacherService extends ChangeNotifier {
         'rating': newAverage,
       });
     });
+  }
+
+  static Future<void> postComment(RatingModel comentario) async {
+    await _firestore.collection('ratings').add({
+      'userId': comentario.userId,
+      'userName': comentario.userName,
+      'userPhotoUrl': comentario.userPhotoUrl,
+      'comment': comentario.comment,
+      'date': comentario.date,
+      'score': comentario.score,
+      'photos': comentario.photos,
+      'teacherId': comentario.teacherId,
+    });
+
+    await updateTeacherScore(comentario.teacherId!);
+  }
+
+  static Future<void> updateTeacherScore(String teacherId) async {
+    final ratingsSnapshot =
+        await _firestore
+            .collection('ratings')
+            .where('teacherId', isEqualTo: teacherId)
+            .get();
+
+    if (ratingsSnapshot.docs.isEmpty) {
+      print('No hay puntuaciones para este curso.');
+      return;
+    }
+
+    double totalScore = 0;
+    int scoreCount = 0;
+
+    for (var doc in ratingsSnapshot.docs) {
+      final data = doc.data();
+      if (data.containsKey('score')) {
+        totalScore += (data['score'] as num).toDouble();
+        scoreCount++;
+      }
+    }
+
+    final averageScore = totalScore / scoreCount;
+
+    await _firestore.collection('teachers').doc(teacherId).update({
+      'rating': averageScore,
+      'ratingCount': scoreCount,
+    });
+
+    print('Profesor actualizado con promedio: $averageScore ($scoreCount votos)');
   }
 }

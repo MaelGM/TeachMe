@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/enums/AdvertisementState.dart';
 import 'package:teachme/models/rating_model.dart';
@@ -46,6 +50,8 @@ class CourseService extends ChangeNotifier {
     username: '',
     profilePicture: '',
   );
+  static const String cloudName = 'dkxcnf3jm';
+  static const String uploadPreset = 'teachMe';
   static List<RatingModel> ratings = [];
   static List<RatingModel> allRatings = [];
 
@@ -87,8 +93,6 @@ class CourseService extends ChangeNotifier {
       final doc = await _firestore.collection('advertisements').doc(id).get();
 
       course = AdvertisementModel.fromFirestore(doc);
-      print(course.description);
-      print(course.tutorId);
     } catch (e) {
       throw Exception("Error al obtener el curso: $e");
     }
@@ -96,15 +100,13 @@ class CourseService extends ChangeNotifier {
 
   Future<void> updateSavedAdvertisementsInFirestore(
     String userId,
-    List<AdvertisementModel> savedAds,
+    List<String> savedAds,
   ) async {
-    final adsMapList = savedAds.map((ad) => ad.toFirestore()).toList();
-
     currentStudent.savedAdvertisements = savedAds;
     await UserPreferences.instance.saveStudent(currentStudent);
 
     await FirebaseFirestore.instance.collection('students').doc(userId).update({
-      'savedAdvertisements': adsMapList,
+      'savedAdvertisements': currentStudent.savedAdvertisements,
     });
   }
 
@@ -115,6 +117,7 @@ class CourseService extends ChangeNotifier {
       final snapshot =
           await _firestore
               .collection('advertisements')
+              .where('state', isEqualTo: 'active')
               .where('teacherId', isEqualTo: teacherId)
               .limit(5)
               .get();
@@ -138,6 +141,7 @@ class CourseService extends ChangeNotifier {
       final snapshot =
           await _firestore
               .collection('advertisements')
+              .where('state', isEqualTo: 'active')
               .where('specialityId', isEqualTo: specialityId)
               .limit(5)
               .get();
@@ -161,6 +165,7 @@ class CourseService extends ChangeNotifier {
       final snapshot =
           await _firestore
               .collection('advertisements')
+              .where('state', isEqualTo: 'active')
               .where('subjectId', isEqualTo: subjectId)
               .limit(5)
               .get();
@@ -240,49 +245,24 @@ class CourseService extends ChangeNotifier {
 
   static Future<void> payCourse(double price) async {
     // Añadir a favoritos si no está ya
-    if (!currentStudent.savedAdvertisements.any(
-      (ad) => ad.id == CourseService.course.id,
-    )) {
-      currentStudent.savedAdvertisements.add(CourseService.course);
+    if (!currentStudent.savedAdvertisements.contains(CourseService.course.id)) {
+      currentStudent.savedAdvertisements.add(CourseService.course.id);
     }
 
-    // Crear una copia del anuncio con el precio pagado
-    final paidAd = AdvertisementModel(
-      id: CourseService.course.id,
-      title: CourseService.course.title,
-      parametersBasic: CourseService.course.parametersBasic,
-      parametersPro: CourseService.course.parametersPro,
-      parametersDeluxe: CourseService.course.parametersDeluxe,
-      description: CourseService.course.description,
-      photos: CourseService.course.photos,
-      prices: CourseService.course.prices,
-      publicationDate: CourseService.course.publicationDate,
-      score: CourseService.course.score,
-      scoreCount: CourseService.course.scoreCount,
-      state: CourseService.course.state,
-      specialityId: CourseService.course.specialityId,
-      subjectId: CourseService.course.subjectId,
-      tutorId: CourseService.course.tutorId,
-      paidPrice: price, // 🆕 Aquí guardamos solo el precio pagado
-    );
+    final currentPaid =
+        currentStudent.payedAdvertisements[CourseService.course.id];
 
-    currentStudent.payedAdvertisements.add(paidAd);
-
-    final adsMapList =
-        currentStudent.savedAdvertisements
-            .map((ad) => ad.toFirestore())
-            .toList();
-    final payedList =
-        currentStudent.payedAdvertisements
-            .map((ad) => ad.toFirestore())
-            .toList();
+    // Si no existe el pago o es menor al nuevo precio, se actualiza
+    if (currentPaid == null || currentPaid < price) {
+      currentStudent.payedAdvertisements[CourseService.course.id] = price;
+    }
 
     await FirebaseFirestore.instance
         .collection('students')
         .doc(currentStudent.userId)
         .update({
-          'savedAdvertisements': adsMapList,
-          'payedAdvertisements': payedList,
+          'savedAdvertisements': currentStudent.savedAdvertisements,
+          'payedAdvertisements': currentStudent.payedAdvertisements,
         });
 
     await UserPreferences.instance.saveStudent(currentStudent);
@@ -296,11 +276,7 @@ class CourseService extends ChangeNotifier {
 
       Query query = _firestore
           .collection('advertisements')
-          .where('state', isEqualTo: 'Active');
-
-      // Puedes eliminar el filtro inicial por título y hacerlo en el filtrado local
-      // Esto permite búsqueda "containsIgnoreCase"
-      // Si quieres dejarlo, puedes mantenerlo (aunque es menos flexible)
+          .where('state', isEqualTo: 'active');
 
       if (filters['subjectId'] != null) {
         query = query.where('subjectId', isEqualTo: filters['subjectId']);
@@ -366,6 +342,7 @@ class CourseService extends ChangeNotifier {
       final snapshot =
           await _firestore
               .collection('advertisements')
+              .where('state', isEqualTo: 'active')
               .orderBy('score', descending: true)
               .orderBy('countScore', descending: true)
               .limit(count)
@@ -376,6 +353,105 @@ class CourseService extends ChangeNotifier {
           .toList();
     } catch (e) {
       throw Exception("Error al obtener cursos populares: $e");
+    }
+  }
+
+  static Future<List<String>> uploadImagesToCloudinary(List<File> files) async {
+    List<String> uploadedUrls = [];
+
+    for (File file in files) {
+      final uri = Uri.parse(
+        'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
+      );
+      final request =
+          http.MultipartRequest('POST', uri)
+            ..fields['upload_preset'] = uploadPreset
+            ..files.add(await http.MultipartFile.fromPath('file', file.path));
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final resStr = await response.stream.bytesToString();
+        final data = json.decode(resStr);
+        uploadedUrls.add(data['secure_url']);
+      } else {
+        print(
+          'Cloudinary upload failed for ${file.path}: ${response.statusCode}',
+        );
+      }
+    }
+
+    return uploadedUrls;
+  }
+
+  static Future<void> postComment(RatingModel comentario) async {
+    await _firestore.collection('ratings').add({
+      'userId': comentario.userId,
+      'userName': comentario.userName,
+      'userPhotoUrl': comentario.userPhotoUrl,
+      'comment': comentario.comment,
+      'date': comentario.date,
+      'score': comentario.score,
+      'photos': comentario.photos,
+      'advertisementId': comentario.advertisementId,
+    });
+
+    await updateCourseScore(comentario.advertisementId!);
+  }
+
+  static Future<void> updateCourseScore(String courseId) async {
+    final ratingsSnapshot =
+        await _firestore
+            .collection('ratings')
+            .where('advertisementId', isEqualTo: courseId)
+            .get();
+
+    if (ratingsSnapshot.docs.isEmpty) {
+      print('No hay puntuaciones para este curso.');
+      return;
+    }
+
+    double totalScore = 0;
+    int scoreCount = 0;
+
+    for (var doc in ratingsSnapshot.docs) {
+      final data = doc.data();
+      if (data.containsKey('score')) {
+        totalScore += (data['score'] as num).toDouble();
+        scoreCount++;
+      }
+    }
+
+    final averageScore = totalScore / scoreCount;
+
+    await _firestore.collection('advertisements').doc(courseId).update({
+      'score': averageScore,
+      'scoreCount': scoreCount,
+    });
+
+    print('Curso actualizado con promedio: $averageScore ($scoreCount votos)');
+  }
+
+  static Future<void> changeState(String state, String courseId) async {
+    await _firestore.collection('advertisements').doc(courseId).update({
+      'state': state,
+    });
+  }
+
+  static Future<AdvertisementModel?> getCourseById(String courseId) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('advertisements')
+              .doc(courseId)
+              .get();
+
+      if (!doc.exists) return null;
+
+      return AdvertisementModel.fromFirestore(doc);
+    } catch (e) {
+      print('Error al obtener el curso: $e');
+      return null;
     }
   }
 }

@@ -123,7 +123,6 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
     await UserPreferences.instance.saveUser(userModel);
     currentUser = userModel;
-    print(currentUser.id);
     AuthService authService = AuthService();
 
     await authService.initUser();

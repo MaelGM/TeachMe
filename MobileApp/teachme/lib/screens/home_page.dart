@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/models.dart';
-import 'package:teachme/models/speciality_model.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/navigation_service.dart';
 import 'package:teachme/service/subject_service.dart';
@@ -33,7 +32,6 @@ class HomeTeacher extends StatefulWidget {
 
 class _HomeTeacherState extends State<HomeTeacher> {
   bool _isLoading = false;
-  List<Subject> randomSubjects = [];
 
   @override
   void initState() {
@@ -46,7 +44,7 @@ class _HomeTeacherState extends State<HomeTeacher> {
       _isLoading = true;
     });
 
-    randomSubjects = await SubjectService().getRandomSubjects(count: 3);
+    if(SubjectService.randomSubjects.isEmpty) await SubjectService().getRandomSubjects(count: 3);
 
     setState(() {
       _isLoading = false;
@@ -61,8 +59,8 @@ class _HomeTeacherState extends State<HomeTeacher> {
 
     return ListView(
       children: [
-        if (randomSubjects.isNotEmpty) ...[
-          ...randomSubjects.map((subject) => _subjectSection(subject)).toList(),
+        if (SubjectService.randomSubjects.isNotEmpty) ...[
+          ...SubjectService.randomSubjects.map((subject) => _subjectSection(subject)).toList(),
         ]
       ],
     );
@@ -74,8 +72,8 @@ class _HomeTeacherState extends State<HomeTeacher> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(height: 240, child: Center(child: CircularProgressIndicator()));
-        //} else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        //  return SizedBox.shrink();
+        //TODO} else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        //TODO  return SizedBox.shrink();
         } else {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -114,30 +112,6 @@ class _HomeTeacherState extends State<HomeTeacher> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _specialitySection(SpecialityModel speciality) {
-    return FutureBuilder<List<AdvertisementModel>>(
-      future: CourseService().getOtherCoursesFromSpeciality(speciality.id),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(height: 240, child: Center(child: CircularProgressIndicator()));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return SizedBox.shrink();
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(speciality.name, style: TextStyle(color: Colors.white, fontSize: 20)),
-                _scrollHorizontalCourses(snapshot.data!),
-              ],
-            ),
-          );
-        }
-      },
     );
   }
 

@@ -70,7 +70,7 @@ class RatingCard extends StatelessWidget {
         Icon(Icons.star, color: Colors.amber, size: 17),
         SizedBox(width: 4),
         Text(
-          rating.score.toStringAsFixed(1),
+          rating.score.toStringAsFixed(0),
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -104,13 +104,13 @@ class RatingCard extends StatelessWidget {
                       builder:
                           (_) => FullscreenImagePage(
                             imageUrl: photoUrl,
-                            tag: 'photo_$index',
+                            tag: 'photo_${index}_${rating.id}',
                           ),
                     ),
                   );
                 },
                 child: Hero(
-                  tag: 'photo_$index',
+                  tag: 'photo_${index}_${rating.id}',
                   child: Image.network(
                     photoUrl,
                     width: 80,

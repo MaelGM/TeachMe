@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:teachme/screens/create_comment_page.dart';
 import 'package:teachme/service/teacher_service.dart';
+import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/rating_card.dart';
 
 class CommentsSection extends StatefulWidget {
@@ -64,36 +66,95 @@ class _CommentsSectionState extends State<CommentsSection> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async => await _fetchInitialRatings(),
-      child:
-          _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : TeacherService.ratings.isEmpty
-              ? _noCommentsAlert()
-              : ListView.builder(
-                controller: _scrollController,
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 10,
-                ),
-                itemCount:
-                    TeacherService.ratings.length +
-                    1 +
-                    (_hasMoreComments
-                        ? 1
-                        : 0), // Le sumamos 1 para poder poner el header que queremos
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return _buildHeader();
-                  } else if (index <= TeacherService.ratings.length) {
-                    final rating = TeacherService.ratings[index - 1];
-                    return RatingCard(rating: rating);
-                  }
-                  return null;
-                },
-              ),
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: () async => await _fetchInitialRatings(),
+          child:
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : TeacherService.ratings.isEmpty
+                  ? Stack(
+                    children: [
+                      if (currentUser.id != TeacherService.teacher.userId)
+                        Positioned(
+                          bottom: 16.0,
+                          right: 16.0,
+                          child: FloatingActionButton(
+                            backgroundColor: Color(0xFF3B82F6),
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => CreateCommentPage(
+                                        teacherId:
+                                            TeacherService.teacher.userId,
+                                      ),
+                                ),
+                              );
+                              if (result == true) {
+                                setState(() {});
+                              }
+                            },
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                      _noCommentsAlert(),
+                    ],
+                  )
+                  : Positioned.fill(
+                    // Aquí se asegura de ocupar todo el espacio
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 10,
+                      ),
+                      itemCount:
+                          TeacherService.ratings.length +
+                          1 +
+                          (_hasMoreComments ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return _buildHeader();
+                        } else if (index <= TeacherService.ratings.length) {
+                          final rating = TeacherService.ratings[index - 1];
+                          return RatingCard(rating: rating);
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+        ),
+        if (currentUser.id != TeacherService.teacher.userId)
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: FloatingActionButton(
+              backgroundColor: Color(0xFF3B82F6),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => CreateCommentPage(
+                          teacherId: TeacherService.teacher.userId,
+                        ),
+                  ),
+                );
+                if (result == true) {
+                  setState(() {});
+                }
+              },
+              child: Icon(Icons.add, color: Colors.white, size: 28),
+            ),
+          ),
+      ],
     );
   }
 

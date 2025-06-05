@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teachme/models/adverstiment_model.dart';
+import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/student_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/course_card.dart';
@@ -15,6 +17,7 @@ class _FavoriteCoursesState extends State<FavoriteCourses> {
   final ScrollController _scrollController = ScrollController();
 
   bool _isLoading = false;
+  List<AdvertisementModel> _favoriteCourses = [];
 
   @override
   void initState() {
@@ -23,11 +26,20 @@ class _FavoriteCoursesState extends State<FavoriteCourses> {
   }
 
   Future<void> _loadCourses() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
+
     await _studentService.fetchFavorites(currentUser.id);
+
+    final fetchedCourses = await Future.wait(
+      currentStudent.savedAdvertisements.map((courseId) async {
+        final course = await CourseService.getCourseById(courseId);
+        return course;
+      }),
+    );
+
     setState(() {
+      _favoriteCourses =
+          fetchedCourses.whereType<AdvertisementModel>().toList();
       _isLoading = false;
     });
   }
@@ -35,29 +47,25 @@ class _FavoriteCoursesState extends State<FavoriteCourses> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh:
-          () async => await _studentService.fetchFavorites(currentUser.id),
+      onRefresh: _loadCourses,
       child:
           _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : currentStudent.savedAdvertisements.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : _favoriteCourses.isEmpty
               ? _noCoursesAlert()
               : ListView.builder(
                 controller: _scrollController,
-                shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 10,
                 ),
-                itemCount: currentStudent.savedAdvertisements.length,
+                itemCount: _favoriteCourses.length,
                 itemBuilder: (context, index) {
-                  final course = currentStudent.savedAdvertisements[index];
+                  final course = _favoriteCourses[index];
                   return CourseCard(
                     course: course,
                     own: false,
-                    onRefresh: () async {
-                      await _loadCourses();
-                    },
+                    onRefresh: _loadCourses,
                   );
                 },
               ),
@@ -66,15 +74,15 @@ class _FavoriteCoursesState extends State<FavoriteCourses> {
 
   Widget _noCoursesAlert() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
+            const Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
             const SizedBox(height: 16),
-            Text(
-              'Aún no hay ningún tienes ningún curso como favorito',
+            const Text(
+              'Aún no tienes ningún curso como favorito',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -83,8 +91,8 @@ class _FavoriteCoursesState extends State<FavoriteCourses> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            Text(
-              'Guardate un curso como favorito, y se almacenará aquí.',
+            const Text(
+              'Guarda un curso como favorito, y se almacenará aquí.',
               style: TextStyle(color: Colors.white54, fontSize: 14),
               textAlign: TextAlign.center,
             ),

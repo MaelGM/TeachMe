@@ -33,15 +33,6 @@ class ProfileService {
     }
   }
 
-  /// Actualiza la URL de imagen de perfil del usuario en Firebase
-  static Future<void> updateUserProfileImage(String imageUrl) async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    await FirebaseFirestore.instance.collection('users').doc(uid).update({
-      'profile_picture': imageUrl,
-    });
-    currentUser.profilePicture = imageUrl;
-  }
-
   static Future<void> updateUser(
     EditFormProvider editForm,
     String imageUrl,

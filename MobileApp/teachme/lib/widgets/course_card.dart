@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/models/adverstiment_model.dart';
+import 'package:teachme/models/enums/AdvertisementState.dart';
 import 'package:teachme/screens/course_details_page.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/translate.dart';
+import 'package:teachme/utils/utils.dart';
 
 class CourseCard extends StatefulWidget {
   final AdvertisementModel course;
@@ -94,24 +96,27 @@ class _CourseCardState extends State<CourseCard> {
               Positioned(
                 top: 5,
                 right: 5,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color:
-                        widget.course.state.name != 'Active'
-                            ? Colors.green
-                            : Colors.red, // Fondo del banner
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    translate(
-                      context,
-                      widget.course.state.name,
-                    ), // Mensaje del banner
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                child: GestureDetector(
+                  onTap: () => _showStateOptions(context),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color:
+                          widget.course.state.name == 'active'
+                              ? Colors.green
+                              : Colors.red, // Fondo del banner
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      translate(
+                        context,
+                        widget.course.state.name,
+                      ), // Mensaje del banner
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -119,6 +124,145 @@ class _CourseCardState extends State<CourseCard> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showStateOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Color(0xFF1E1E1E),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Padding(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: 35,
+            top: 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Estado del anuncio',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              SizedBox(height: 10),
+              Divider(color: const Color.fromARGB(31, 158, 158, 158)),
+              ListTile(
+                leading: Icon(Icons.visibility, color: Colors.white),
+                title: Text("Activar", style: TextStyle(color: Colors.white)),
+                onTap: () async{
+                  Navigator.pop(context);
+                  setState(() {
+                    widget.course.state = AdvertisementState.active;
+                  });
+                  await CourseService.changeState(widget.course.state.name, widget.course.id);
+                  ScaffoldMessageInfo('El estado del anuncio es ahora: Activo', context);
+                },
+              ),
+              Divider(color: const Color.fromARGB(31, 158, 158, 158)),
+              ListTile(
+                leading: Icon(Icons.visibility_off, color: Colors.white),
+                title: Text("Ocultar", style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  final bool? confirm = await _confirmDialog(context);
+                  if (confirm != true) return;
+
+                  Navigator.pop(context);
+                  setState(() {
+                    widget.course.state = AdvertisementState.hidden;
+                  });
+                  await CourseService.changeState(widget.course.state.name, widget.course.id);
+                  ScaffoldMessageInfo('El estado del anuncio es ahora: Oculto', context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<bool?> _confirmDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: Color(0xFF121212),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Column(
+              children: [
+                Icon(
+                  Icons.warning_amber,
+                  color: Color(0xFF3B82F6),
+                  size: 48,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Estas seguro que quiere ocultar este anuncio?',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Este anuncio no se mostrará a los estudiantes.',
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  'Puedes revertir esta acción en cualquier momento.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF3B82F6),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.end,
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(translate(context, "cancel")),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF3B82F6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(
+                  translate(context, "confirm"),
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
     );
   }
 

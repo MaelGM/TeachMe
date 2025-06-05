@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:teachme/models/adverstiment_model.dart';
+import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/navigation_service.dart';
 import 'package:teachme/service/student_service.dart';
 import 'package:teachme/utils/config.dart';
@@ -16,6 +18,7 @@ class _PayedCoursesState extends State<PayedCourses> {
   final StudentService _studentService = StudentService();
   final ScrollController _scrollController = ScrollController();
 
+  List<AdvertisementModel> _paidCourses = [];
   bool _isLoading = false;
 
   @override
@@ -25,11 +28,22 @@ class _PayedCoursesState extends State<PayedCourses> {
   }
 
   Future<void> _loadCourses() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
+
+    // Cargar estudiante con sus anuncios pagados
     await _studentService.fetchFavorites(currentUser.id);
+
+    // Obtener cursos pagados desde Firestore
+    final entries = currentStudent.payedAdvertisements.entries;
+    final fetchedCourses = await Future.wait(
+      entries.map((entry) async {
+        final course = await CourseService.getCourseById(entry.key);
+        return course;
+      }),
+    );
+
     setState(() {
+      _paidCourses = fetchedCourses.whereType<AdvertisementModel>().toList();
       _isLoading = false;
     });
   }
@@ -37,23 +51,21 @@ class _PayedCoursesState extends State<PayedCourses> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh:
-          () async => await _studentService.fetchFavorites(currentUser.id),
+      onRefresh: _loadCourses,
       child:
           _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : currentStudent.payedAdvertisements.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : _paidCourses.isEmpty
               ? _noCoursesAlert()
               : ListView.builder(
                 controller: _scrollController,
-                shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 10,
                 ),
-                itemCount: currentStudent.payedAdvertisements.length,
+                itemCount: _paidCourses.length,
                 itemBuilder: (context, index) {
-                  final course = currentStudent.payedAdvertisements[index];
+                  final course = _paidCourses[index];
                   return CourseCard(course: course, own: false);
                 },
               ),
@@ -62,14 +74,14 @@ class _PayedCoursesState extends State<PayedCourses> {
 
   Widget _noCoursesAlert() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
+            const Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Aún no has pagado ningún servício o curso',
               style: TextStyle(
                 color: Colors.white,
@@ -82,12 +94,12 @@ class _PayedCoursesState extends State<PayedCourses> {
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
-                style: TextStyle(color: Colors.white54, fontSize: 14),
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
                 children: [
-                  TextSpan(text: 'Encuentra algo que te guste '),
+                  const TextSpan(text: 'Encuentra algo que te guste '),
                   TextSpan(
                     text: 'aquí',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.blueAccent,
                       decoration: TextDecoration.underline,
                     ),
@@ -97,7 +109,7 @@ class _PayedCoursesState extends State<PayedCourses> {
                             navIndexNotifier.value = 1;
                           },
                   ),
-                  TextSpan(text: '.'),
+                  const TextSpan(text: '.'),
                 ],
               ),
             ),

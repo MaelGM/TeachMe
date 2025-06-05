@@ -23,11 +23,17 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
     });
-    await CourseService().getCommentsByDate();
+    await CourseService.setCourse(CourseService.course.id);
+    await _courseService.getCommentsByDate();
     if (_dateOrder) {
       await _courseService.getCommentsByDate();
     } else if (_goodRatingOrder) {
@@ -66,26 +72,32 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
               ? Center(child: CircularProgressIndicator())
               : CourseService.allRatings.isEmpty
               ? NoCommentsAlert()
-              : ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 10,
+              : RefreshIndicator(
+                onRefresh: _loadData,
+                color: Colors.blueAccent,
+                backgroundColor: Colors.black,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 10,
+                  ),
+                  itemCount: CourseService.allRatings.length,
+                  itemBuilder: (context, index) {
+                    final RatingModel rating = CourseService.allRatings[index];
+                    return RatingCard(rating: rating);
+                  },
                 ),
-                itemCount: CourseService.allRatings.length,
-                itemBuilder: (context, index) {
-                  final RatingModel rating = CourseService.allRatings[index];
-                  return RatingCard(rating: rating);
-                },
               ),
+
       floatingActionButton:
           currentUser.isTeacher &&
                   currentTeacher.userId == CourseService.course.tutorId
               ? null
               : FloatingActionButton(
                 backgroundColor: Color(0xFF3B82F6),
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder:
@@ -94,8 +106,11 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
                           ),
                     ),
                   );
+                  if (result == true) {
+                    setState(() {});
+                  }
                 },
-                child: Icon(Icons.add, color: Colors.white, size: 28,),
+                child: Icon(Icons.add, color: Colors.white, size: 28),
               ),
     );
   }

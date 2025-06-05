@@ -15,6 +15,7 @@ class SubjectService {
       .collection('speciality');
 
   static List<Subject> subjetcs = [];
+  static List<Subject> randomSubjects = [];
 
   Future<List<Subject>> getSubjects() async {
     try {
@@ -87,15 +88,16 @@ class SubjectService {
 
   Future<List<Subject>> getRandomSubjects({required int count}) async {
     try {
+      if (randomSubjects.isNotEmpty) return randomSubjects;
       final snapshot = await _subjectRef.get();
-      List<Subject> allSubjects =
+      randomSubjects =
           snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
 
-      if (allSubjects.isEmpty) return [];
 
       // Mezclamos aleatoriamente y tomamos "count" elementos
-      allSubjects.shuffle(Random());
-      return allSubjects.take(count).toList();
+      randomSubjects.shuffle(Random());
+      randomSubjects = randomSubjects.take(count).toList();
+      return randomSubjects;
     } catch (e) {
       throw Exception("Error al obtener asignaturas aleatorias: $e");
     }

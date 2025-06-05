@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teachme/models/adverstiment_model.dart';
 
 class StudentModel {
   String userId;
   List<String> interestsIds;
   List<String> interestsNames;
-  List<AdvertisementModel> savedAdvertisements;
-  List<AdvertisementModel> payedAdvertisements;
+  List<String> savedAdvertisements;
+  Map<String, double> payedAdvertisements; // Cambiado aquí
 
   StudentModel({
     required this.userId,
     required this.interestsIds,
     required this.interestsNames,
     required this.savedAdvertisements,
-    required this.payedAdvertisements, 
+    required this.payedAdvertisements,
   });
 
   // Convertir a JSON
@@ -22,43 +21,37 @@ class StudentModel {
       'userId': userId,
       'interestsIds': interestsIds,
       'interestsNames': interestsNames,
-      'savedAdvertisements':
-          savedAdvertisements.map((ad) => ad.toFirestore()).toList(),
-      'payedAdvertisements': payedAdvertisements.map((ad) => ad.toFirestore()).toList(),
+      'savedAdvertisements': savedAdvertisements,
+      'payedAdvertisements': payedAdvertisements,
     };
   }
 
   // Crear desde JSON
   factory StudentModel.fromJson(Map<String, dynamic> json) {
+    final rawMap = Map<String, dynamic>.from(json['payedAdvertisements'] ?? {});
+    final parsedMap = rawMap.map((key, value) => MapEntry(key, (value as num).toDouble()));
+
     return StudentModel(
       userId: json['userId'],
       interestsIds: List<String>.from(json['interestsIds'] ?? []),
       interestsNames: List<String>.from(json['interestsNames'] ?? []),
-      savedAdvertisements:
-          (json['savedAdvertisements'] as List<dynamic>? ?? [])
-              .map((item) => AdvertisementModel.fromJson(item))
-              .toList(),
-      payedAdvertisements:(json['payedAdvertisements'] as List<dynamic>? ?? [])
-              .map((item) => AdvertisementModel.fromJson(item))
-              .toList(),
+      savedAdvertisements: List<String>.from(json['savedAdvertisements'] ?? []),
+      payedAdvertisements: parsedMap,
     );
   }
 
   // Crear desde Firestore
   factory StudentModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    final rawMap = Map<String, dynamic>.from(data['payedAdvertisements'] ?? {});
+    final parsedMap = rawMap.map((key, value) => MapEntry(key, (value as num).toDouble()));
+
     return StudentModel(
       userId: data['userId'],
       interestsIds: List<String>.from(data['interestsIds'] ?? []),
       interestsNames: List<String>.from(data['interestsNames'] ?? []),
-      savedAdvertisements:
-          (data['savedAdvertisements'] as List<dynamic>? ?? [])
-              .map((item) => AdvertisementModel.fromJson(item))
-              .toList(),
-      payedAdvertisements:
-          (data['payedAdvertisements'] as List<dynamic>? ?? [])
-              .map((item) => AdvertisementModel.fromJson(item))
-              .toList(),
+      savedAdvertisements: List<String>.from(data['savedAdvertisements'] ?? []),
+      payedAdvertisements: parsedMap,
     );
   }
 }

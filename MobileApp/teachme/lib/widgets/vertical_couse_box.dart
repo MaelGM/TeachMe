@@ -16,30 +16,29 @@ class VerticalCourseBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async{
+      onTap: () async {
         await CourseService.setCourse(course.id);
-          await Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder:
-                  (_, __, ___) => CourseDetailsPage(), // Tu pantalla destino
-              transitionsBuilder: (_, animation, __, child) {
-                const begin = Offset(1.0, 0.0); // De derecha a izquierda
-                const end = Offset.zero;
-                const curve = Curves.ease;
+        await Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => CourseDetailsPage(),
+            transitionsBuilder: (_, animation, __, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.ease;
 
-                var tween = Tween(
-                  begin: begin,
-                  end: end,
-                ).chain(CurveTween(curve: curve));
+              var tween = Tween(
+                begin: begin,
+                end: end,
+              ).chain(CurveTween(curve: curve));
 
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
-              },
-            ),
-          );
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
+          ),
+        );
       },
       child: Container(
         width: 190,
@@ -59,37 +58,42 @@ class VerticalCourseBox extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            _imageCard(context),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _showScore(),
-                  const SizedBox(height: 6),
-                  Text(
-                    course.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _imageCard(context),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _showPrice(),
+                      const SizedBox(height: 6),
+                      Text(
+                        course.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [_showPrice()],
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            Positioned(top: 0, right: 0, child: _showScore()),
           ],
         ),
       ),
@@ -103,7 +107,7 @@ class VerticalCourseBox extends StatelessWidget {
         topRight: Radius.circular(16),
       ),
       child: Container(
-        height: 120,
+        height: 130,
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -116,26 +120,33 @@ class VerticalCourseBox extends StatelessWidget {
   }
 
   Widget _showScore() {
-    return Row(
-      children: [
-        const Icon(Icons.star, color: Colors.amber, size: 18),
-        const SizedBox(width: 4),
-        Text(
-          course.score.toStringAsFixed(1),
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+    return Container(
+      padding: EdgeInsets.only(top: 3, right: 6, bottom: 6, left: 6),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(120, 0, 0, 0),
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16), topRight: Radius.circular(1))
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.star, color: Colors.amber, size: 18),
+          const SizedBox(width: 4),
+          Text(
+            course.score.toStringAsFixed(1),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          "(${course.scoreCount.toInt()})",
-          style: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 12,
+          const SizedBox(width: 4),
+          Text(
+            "(${course.scoreCount.toInt()})",
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 12,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
