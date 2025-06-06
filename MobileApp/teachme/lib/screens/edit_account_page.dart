@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/providers/edit_form_provider.dart';
 import 'package:teachme/screens/waiting_email_verification_page.dart';
+import 'package:teachme/service/image_service.dart';
 import 'package:teachme/service/profile_service.dart';
 import 'package:teachme/ui/input_decorations.dart';
 
@@ -195,7 +196,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
 
                     if (_localProfileImageFile != null) {
                       final uploadedUrl =
-                          await ProfileService.uploadImageToCloudinary(
+                          await ImageService.uploadImageToCloudinary(
                             _localProfileImageFile!,
                           );
                       if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
