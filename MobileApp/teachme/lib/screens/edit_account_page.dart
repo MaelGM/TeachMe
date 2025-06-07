@@ -107,7 +107,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
           Form(
             key: editForm.formKey,
             child: Padding(
-              padding: EdgeInsetsGeometry.symmetric(
+              padding: EdgeInsets.symmetric(
                 vertical: 30,
                 horizontal: 20,
               ),
