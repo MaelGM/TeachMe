@@ -6,8 +6,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/enums/AdvertisementState.dart';
+import 'package:teachme/models/speciality_model.dart';
+import 'package:teachme/models/subject_model.dart';
+import 'package:teachme/screens/create_versions_course_page.dart';
 import 'package:teachme/service/image_service.dart';
-import 'package:teachme/ui/input_decorations.dart';
+import 'package:teachme/service/subject_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/utils.dart';
 
@@ -21,32 +24,42 @@ class CreateCoursePage extends StatefulWidget {
 
 class _CreateCoursePageState extends State<CreateCoursePage> {
   AdvertisementModel advertisement = AdvertisementModel(
-    id: '',
-    title: '',
+    id: '', // Done
+    title: '', // Done
     parametersBasic: {},
-    description: '',
-    photos: [],
+    description: '', // Done
+    photos: [], // Done
     prices: [],
-    publicationDate: DateTime.now(),
-    score: 0,
-    scoreCount: 0,
-    state: AdvertisementState.active,
+    publicationDate: DateTime.now(), // Done
+    score: 0, // Done
+    scoreCount: 0, // Done
+    state: AdvertisementState.active, // Done
     specialityId: '',
     subjectId: '',
-    tutorId: currentTeacher.userId,
+    tutorId: currentTeacher.userId, // Done
   );
+
+  final SubjectService _subjectService = SubjectService();
+
+  List<Subject> _subjects = [];
+  List<SpecialityModel> _specialities = [];
+
+  Subject? _selectedSubject;
+  SpecialityModel? _selectedSpeciality;
 
   final picker = ImagePicker();
   final PageController _pageController = PageController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  bool _isLoading = false;
+  bool _isImageLoading = false;
   int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadInitialData();
+
     _pageController.addListener(() {
       final page = _pageController.page?.round() ?? 0;
       if (page != _currentPage) {
@@ -57,9 +70,20 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     });
   }
 
+  void _loadInitialData() async {
+    final subjects =
+        await _subjectService.getSubjects(); // Asume que este método existe
+    final specialities = await _subjectService.getSpecialities();
+
+    setState(() {
+      _subjects = subjects;
+      _specialities = specialities;
+    });
+  }
+
   void _resetData() {
     setState(() {
-      _isLoading = true;
+      _isImageLoading = true;
     });
 
     advertisement = AdvertisementModel(
@@ -80,9 +104,43 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
 
     _titleController.text = '';
     _descriptionController.text = '';
+    _selectedSpeciality = null;
+    _selectedSubject = null;
+
+    _loadInitialData();
 
     setState(() {
-      _isLoading = false;
+      _isImageLoading = false;
+    });
+  }
+
+  void _onSubjectSelected(Subject? subject) async {
+    if (subject == null) return;
+
+    final specialities = await _subjectService.getSpecialitiesFromSubject(
+      subject.id,
+    );
+
+    setState(() {
+      _selectedSubject = subject;
+      _specialities = specialities;
+      _selectedSpeciality = null;
+
+      advertisement.subjectId = subject.id;
+    });
+  }
+
+  void _onSpecialitySelected(SpecialityModel? speciality) async {
+    if (speciality == null) return;
+
+    final subject = await _subjectService.getSubjectById(speciality.subjectId);
+
+    setState(() {
+      _selectedSpeciality = speciality;
+      _selectedSubject = subject;
+
+      advertisement.specialityId = speciality.id;
+      advertisement.subjectId = subject.id;
     });
   }
 
@@ -111,43 +169,31 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20),
-                  //Text(
-                  //  'Titulo',
-                  //  style: TextStyle(
-                  //    color: Colors.white,
-                  //    fontSize: 20,
-                  //    fontWeight: FontWeight.bold,
-                  //  ),
-                  //),
-                  //_inputField(
-                  //  label: 'Escriba el título...',
-                  //  controller: _titleController,
-                  //),
-                  //SizedBox(height: 20),
-                  //Text(
-                  //  'Descripción',
-                  //  style: TextStyle(
-                  //    color: Colors.white,
-                  //    fontSize: 20,
-                  //    fontWeight: FontWeight.bold,
-                  //  ),
-                  //),
-                  //_inputField(
-                  //  label: 'Describa el curso del anuncio...',
-                  //  controller: _descriptionController,
-                  //  minLines: 2,
-                  //),
-
-                  _inputField2(label: 'Título', controller: _titleController, hintText: 'Escriba el título...'),
-//
+                  _inputField(
+                    label: 'Título *',
+                    controller: _titleController,
+                    hintText: 'Escriba el título...',
+                  ),
                   SizedBox(height: 30),
-                  _inputField2(label: 'Descripción', controller: _descriptionController, hintText: 'Describa el curso del anuncio...', minLines: 2),
+                  _inputField(
+                    label: 'Descripción *',
+                    controller: _descriptionController,
+                    hintText: 'Describa el curso del anuncio...',
+                    minLines: 2,
+                  ),
+                  SizedBox(height: 30),
+                  _buildSubjectDropdown(),
+                  SizedBox(height: 30),
+                  _buildSpecialityDropdown(),
+              SizedBox(height: 120),
                 ],
               ),
             ),
           ],
         ),
       ),
+      floatingActionButton: _nextButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -155,7 +201,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     return SizedBox(
       height: screenHeight * 0.33,
       child:
-          _isLoading
+          _isImageLoading
               ? Container(
                 color: Colors.grey[850],
                 child: Center(child: CircularProgressIndicator()),
@@ -304,7 +350,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
     setState(() {
-      _isLoading = true;
+      _isImageLoading = true;
     });
     if (pickedFile != null) {
       final newImage = await ImageService.uploadImageToCloudinary(
@@ -320,34 +366,16 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
             context,
           );
         }
-        _isLoading = false;
+        _isImageLoading = false;
       });
     } else {
       setState(() {
-        _isLoading = false;
+        _isImageLoading = false;
       });
     }
   }
 
-  Widget _inputField({
-    required String label,
-    required TextEditingController controller,
-    int? minLines,
-  }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: false,
-      minLines: minLines,
-      maxLines: null,
-      style: TextStyle(color: Colors.white),
-      decoration: InputDecorations.authInputDecorationBorderFull(
-        labelText: label,
-        hintText: label,
-      ),
-    );
-  }
-
-  TextField _inputField2({
+  TextField _inputField({
     required String label,
     required TextEditingController controller,
     int? minLines,
@@ -369,6 +397,138 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xFF3B82F6)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubjectDropdown() {
+    return DropdownButtonFormField<Subject>(
+      value: _selectedSubject,
+      onChanged: _onSubjectSelected,
+      items:
+          _subjects.map((subject) {
+            return DropdownMenuItem<Subject>(
+              value: subject,
+              child: Text(subject.name, style: TextStyle(color: Colors.white)),
+            );
+          }).toList(),
+      decoration: InputDecoration(
+        labelText: 'Asignatura *',
+        labelStyle: TextStyle(color: Colors.white),
+        hintText: 'Selecciona una asignatura',
+        hintStyle: TextStyle(color: Colors.white38),
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white30),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF3B82F6)),
+        ),
+      ),
+      dropdownColor: Colors.black87,
+      iconEnabledColor: Colors.white,
+    );
+  }
+
+  Widget _buildSpecialityDropdown() {
+    return DropdownButtonFormField<SpecialityModel>(
+      value: _selectedSpeciality,
+      onChanged: _onSpecialitySelected,
+      items:
+          _specialities.map((speciality) {
+            return DropdownMenuItem<SpecialityModel>(
+              value: speciality,
+              child: Text(
+                speciality.name,
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          }).toList(),
+      decoration: InputDecoration(
+        labelText: 'Especialidad',
+        labelStyle: TextStyle(color: Colors.white),
+        hintText: 'Selecciona una especialidad',
+        hintStyle: TextStyle(color: Colors.white38),
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white30),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF3B82F6)),
+        ),
+      ),
+      dropdownColor: Colors.black87,
+      iconEnabledColor: Colors.white,
+    );
+  }
+
+  Padding _nextButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 16),
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            print('Next');
+            advertisement.description = _descriptionController.text;
+            advertisement.title = _titleController.text;
+            if (advertisement.photos.isEmpty) {
+              ScaffoldMessageError(
+                'Por favor, añada al menos una imagen al anuncio',
+                context,
+              );
+            } else if (advertisement.description.isEmpty ||
+                advertisement.title.isEmpty ||
+                advertisement.subjectId.isEmpty) {
+              ScaffoldMessageError(
+                'Por favor, rellene los datos obligatorios antes de continuar',
+                context,
+              );
+            } else {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder:
+                      (_, __, ___) => CreateVersionsCoursePage(
+                        advertisement: advertisement,
+                      ),
+                  transitionsBuilder: (_, animation, __, child) {
+                    const begin = Offset(1.0, 0.0);
+                    const end = Offset.zero;
+                    const curve = Curves.ease;
+
+                    var tween = Tween(
+                      begin: begin,
+                      end: end,
+                    ).chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 43, 97, 184),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Siguiente',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ],
+          ),
         ),
       ),
     );

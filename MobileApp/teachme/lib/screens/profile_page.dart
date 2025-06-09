@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:teachme/models/models.dart';
+import 'package:teachme/screens/chat_page.dart';
 import 'package:teachme/service/auth_service.dart';
+import 'package:teachme/service/chat_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/widgets/favorite_courses.dart';
@@ -24,6 +26,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = false;
   String _currentView = 'Favoritos';
+  final ChatService _chatService = ChatService();
 
   @override
   void initState() {
@@ -75,6 +78,32 @@ class _ProfilePageState extends State<ProfilePage> {
                     _teacherSection(context),
                   ],
                 ),
+        floatingActionButton: currentUser.id != widget.user.id ? FloatingActionButton.extended(
+              backgroundColor: Colors.white,
+              onPressed: () async {
+                await _chatService.createEmptyChatRoom(TeacherService.teacher.userId);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => ChatPage(
+                          receiverUserId: TeacherService.teacher.userId,
+                          receiverUserName: TeacherService.teacherUserAcount.username,
+                          receiverUserPicture: TeacherService.teacherUserAcount.profilePicture,
+                          receiverUserState: TeacherService.teacherUserAcount.connected,
+                        ),
+                  ),
+                );
+              },
+              label: Row(
+                children: [
+                  Icon(Icons.chat_outlined, color: Colors.black,),
+                  SizedBox(width: 8,),
+                  Text('Contactar', style: TextStyle(color: Colors.black, fontSize: 16),),
+                ],
+              ),
+            ): null,
+            floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ),
     );
   }

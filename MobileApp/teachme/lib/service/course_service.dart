@@ -455,5 +455,9 @@ class CourseService extends ChangeNotifier {
     }
   }
 
+  static Future<void> postAdvertisement(AdvertisementModel adverstiment) async {
+    await _firestore.collection('advertisements').add(adverstiment.toFirestore());
+  }
+
   
 }

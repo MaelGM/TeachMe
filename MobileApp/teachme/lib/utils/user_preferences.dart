@@ -221,7 +221,7 @@ class UserPreferences {
         return StudentModel.fromJson(userMap);
       }
     } catch (e) {
-      print("Error leyendo el profesor: $e");
+      print("Error leyendo al estudiante: $e");
     }
     return null;
   }

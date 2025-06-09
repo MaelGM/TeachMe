@@ -23,10 +23,19 @@ class SubjectService {
       subjetcs =
           snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
 
-      print('GETTING SUBJECTS');
       return subjetcs;
     } catch (e) {
       throw Exception("Error al obtener asignaturas: $e");
+    }
+  }
+
+  Future<Subject> getSubjectById(String id) async {
+    try {
+      final subject = await _subjectRef.doc(id).get();
+
+      return Subject.fromFirestore(subject);
+    } catch (e) {
+      throw Exception("Error al obtener habilidades: $e");
     }
   }
 
@@ -46,6 +55,20 @@ class SubjectService {
           .toList();
     } catch (e) {
       throw Exception("Error al obtener habilidades: $e");
+    }
+  }
+
+  Future<List<SpecialityModel>> getSpecialities() async {
+    try {
+      final snapshot = await _specialityRef.get();
+      final specialities =
+          snapshot.docs
+              .map((doc) => SpecialityModel.fromFirestore(doc))
+              .toList();
+
+      return specialities;
+    } catch (e) {
+      throw Exception("Error al obtener asignaturas: $e");
     }
   }
 
@@ -92,7 +115,6 @@ class SubjectService {
       final snapshot = await _subjectRef.get();
       randomSubjects =
           snapshot.docs.map((doc) => Subject.fromFirestore(doc)).toList();
-
 
       // Mezclamos aleatoriamente y tomamos "count" elementos
       randomSubjects.shuffle(Random());

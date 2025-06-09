@@ -3,21 +3,20 @@ import 'package:teachme/models/enums/AdvertisementState.dart';
 
 class AdvertisementModel {
   final String id;
-  final String title;
-  final Map<String, String>? parametersDeluxe;
-  final Map<String, String>? parametersPro;
-  final Map<String, String> parametersBasic;
-  final String description;
+  String title;
+  Map<String, String>? parametersDeluxe;
+  Map<String, String>? parametersPro;
+  Map<String, String> parametersBasic;
+  String description;
   final List<String> photos;
-  final List<double> prices;
+  List<double> prices;
   final DateTime publicationDate;
   final double score;
   final double scoreCount;
   AdvertisementState state;
-  final String specialityId;
-  final String subjectId;
+  String specialityId;
+  String subjectId;
   final String tutorId;
-  final double? paidPrice;
 
   AdvertisementModel({
     required this.id,
@@ -35,7 +34,6 @@ class AdvertisementModel {
     required this.tutorId,
     this.parametersDeluxe,
     this.parametersPro,
-    this.paidPrice
   });
 
   // Convertir desde Firestore
@@ -60,28 +58,25 @@ class AdvertisementModel {
       specialityId: data['specialityId'],
       subjectId: data['subjectId'],
       tutorId: data['teacherId'],
-      paidPrice: (data['paidPrice'] ?? 0).toDouble(),
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      'id': id,
       'title': title,
-      'parametersDeluxe': parametersDeluxe,
-      'parametersPro': parametersPro,
+      if(parametersDeluxe != null) 'parametersDeluxe': parametersDeluxe,
+      if(parametersPro != null) 'parametersPro': parametersPro,
       'parametersBasic': parametersBasic,
       'description': description,
       'photos': photos,
       'prices': prices,
-      'publicationDate': publicationDate.toIso8601String(),
+      'publicationDate': publicationDate,
       'score': score,
       'scoreCount': scoreCount,
       'state': state.name,
       'specialityId': specialityId,
       'subjectId': subjectId,
-      'tutorId': tutorId,
-      'paidPrice': paidPrice,
+      'teacherId': tutorId,
     };
   }
 
@@ -118,8 +113,7 @@ class AdvertisementModel {
       state: AdvertisementStateExtension.fromString(json['state']),
       specialityId: json['specialityId'] ?? '',
       subjectId: json['subjectId'] ?? '',
-      tutorId: json['tutorId'] ?? '',
-      paidPrice: (json['paidPrice'] ?? 0).toDouble(),
+      tutorId: json['teacherId'] ?? '',
     );
   }
 }

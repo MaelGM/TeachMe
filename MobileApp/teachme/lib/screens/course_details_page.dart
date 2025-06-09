@@ -8,6 +8,7 @@ import 'package:teachme/screens/profile_page.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/utils.dart';
+import 'package:teachme/widgets/full_screen_image.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
 import 'package:teachme/widgets/horizontal_comments.dart';
 import 'package:teachme/widgets/other_courses_recomendations.dart';
@@ -452,6 +453,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
 
   Widget _textContent() {
     return Container(
+      width: double.infinity,
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Color(0xFF151515),
@@ -586,10 +588,27 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
             controller: _pageController,
             itemCount: CourseService.course.photos.length,
             itemBuilder: (context, index) {
-              return Image.network(
-                CourseService.course.photos[index],
-                width: double.infinity,
-                fit: BoxFit.cover,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => FullscreenImagePage(
+                            imageUrl: CourseService.course.photos[index],
+                            tag: 'photo_${index}_${CourseService.course.id}',
+                          ),
+                    ),
+                  );
+                },
+                child: Hero(
+                  tag: 'photo_${index}_${CourseService.course.id}',
+                  child: Image.network(
+                    CourseService.course.photos[index],
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               );
             },
           ),

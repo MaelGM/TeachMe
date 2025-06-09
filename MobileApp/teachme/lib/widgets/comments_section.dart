@@ -133,7 +133,7 @@ class _CommentsSectionState extends State<CommentsSection> {
         ),
         if (currentUser.id != TeacherService.teacher.userId)
           Positioned(
-            bottom: 16.0,
+            bottom: 39.0,
             right: 16.0,
             child: FloatingActionButton(
               backgroundColor: Color(0xFF3B82F6),

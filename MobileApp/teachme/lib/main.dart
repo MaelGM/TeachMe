@@ -24,7 +24,7 @@ void main() async {
       .initPrefs(); // Cargamos las preferencias locales y las mini BD locales
   initializeTimeagoLocales();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
+  
   bool isSessionActive = await AuthService().initSession();
   runApp(
     MultiProvider(
