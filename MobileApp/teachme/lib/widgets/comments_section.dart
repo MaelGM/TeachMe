@@ -74,39 +74,7 @@ class _CommentsSectionState extends State<CommentsSection> {
               _isLoading
                   ? Center(child: CircularProgressIndicator())
                   : TeacherService.ratings.isEmpty
-                  ? Stack(
-                    children: [
-                      if (currentUser.id != TeacherService.teacher.userId)
-                        Positioned(
-                          bottom: 16.0,
-                          right: 16.0,
-                          child: FloatingActionButton(
-                            backgroundColor: Color(0xFF3B82F6),
-                            onPressed: () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => CreateCommentPage(
-                                        teacherId:
-                                            TeacherService.teacher.userId,
-                                      ),
-                                ),
-                              );
-                              if (result == true) {
-                                setState(() {});
-                              }
-                            },
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                          ),
-                        ),
-                      _noCommentsAlert(),
-                    ],
-                  )
+                  ? _noCommentsAlert()
                   : Positioned.fill(
                     // Aquí se asegura de ocupar todo el espacio
                     child: ListView.builder(

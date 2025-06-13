@@ -23,6 +23,19 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -32,7 +45,20 @@ class _ChatPageState extends State<ChatPage> {
       );
       // Limpiamos el campo de texto tras enviarlo
       _messageController.clear();
+      _scrollToBottom();
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
@@ -117,7 +143,12 @@ class _ChatPageState extends State<ChatPage> {
           messageWidgets.add(_buildMessageItem(doc));
         }
 
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom();
+        });
+
         return ListView(
+          controller: _scrollController,
           padding: EdgeInsets.only(bottom: 10, top: 10),
           children: messageWidgets,
         );
@@ -126,55 +157,51 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildMessageItem(DocumentSnapshot document) {
-  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-  bool isMe = data['senderId'] == currentUser.id;
-  DateTime time = (data['timestamp'] as Timestamp).toDate().toLocal();
-  String formattedTime =
-      "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    bool isMe = data['senderId'] == currentUser.id;
+    DateTime time = (data['timestamp'] as Timestamp).toDate().toLocal();
+    String formattedTime =
+        "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
 
-  return Align(
-    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-    child: Container(
-      margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width * 0.75,
-      ),
-      decoration: BoxDecoration(
-        color: isMe ? Color.fromARGB(255, 35, 91, 180) : Colors.grey[900],
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(isMe ? 18 : 0),
-          bottomRight: Radius.circular(isMe ? 0 : 18),
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
-      ),
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 48.0, bottom: 14.0),
-            child: Text(
-              data['message'] ?? '',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
+        decoration: BoxDecoration(
+          color: isMe ? Color.fromARGB(255, 35, 91, 180) : Colors.grey[900],
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
+            bottomLeft: Radius.circular(isMe ? 18 : 0),
+            bottomRight: Radius.circular(isMe ? 0 : 18),
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Text(
-              formattedTime,
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.white70,
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 48.0, bottom: 14.0),
+              child: Text(
+                data['message'] ?? '',
+                style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Text(
+                formattedTime,
+                style: TextStyle(fontSize: 11, color: Colors.white70),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   String _getDateLabel(DateTime date) {
     DateTime now = DateTime.now();

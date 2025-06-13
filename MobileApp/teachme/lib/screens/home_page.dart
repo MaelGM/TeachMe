@@ -72,8 +72,8 @@ class _HomeTeacherState extends State<HomeTeacher> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(height: 240, child: Center(child: CircularProgressIndicator()));
-        //TODO} else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        //TODO  return SizedBox.shrink();
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return SizedBox.shrink();
         } else {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
