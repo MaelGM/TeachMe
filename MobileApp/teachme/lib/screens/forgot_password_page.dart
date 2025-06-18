@@ -45,7 +45,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('¿Olvidaste tu contraseña?', style: TextStyle(fontSize: 22),), centerTitle: true,),
+      appBar: AppBar(title: Text(translate(context, "forgotPassword"), style: TextStyle(fontSize: 22),), centerTitle: true,),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -54,7 +54,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
+                translate(context, "emailPassword"),
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
               const SizedBox(height: 24),
@@ -83,7 +83,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       backgroundColor: Color(0xFF3B82F6),
                       padding: EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: Text('Enviar enlace', style: TextStyle(color: Colors.white, fontSize: 16),),
+                    child: Text(translate(context, "sendPassword"), style: TextStyle(color: Colors.white, fontSize: 16),),
                   ),
                 );
   }

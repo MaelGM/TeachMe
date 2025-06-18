@@ -3,10 +3,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teachme/screens/choose_interests_page.dart';
-import 'package:teachme/screens/payment_page.dart';
 import 'package:teachme/screens/profile_page.dart';
+import 'package:teachme/service/chat_service.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/utils.dart';
 import 'package:teachme/widgets/full_screen_image.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
@@ -29,6 +30,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   final CourseService _courseService = CourseService();
+  final ChatService _chatService = ChatService();
   bool _isScrolledPastImage = false;
   bool _hasChangedFavorite = false;
 
@@ -226,7 +228,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
               return Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  "No hay información disponible.",
+                  translate(context, "noInfoAvailable"),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               );
@@ -282,10 +284,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
       onPressed: () async {
         if (currentUser.isTeacher &&
             CourseService.course.tutorId == currentTeacher.userId) {
-          ScaffoldMessageError(
-            'El autor del curso no puede comprar este mismo curso',
-            context,
-          );
+          ScaffoldMessageError(translate(context, 'authorPayment'), context);
         } else if (!currentUser.isStudent) {
           _alertDialogNoEstudiante(context);
         } else if (currentStudent.payedAdvertisements[CourseService
@@ -293,19 +292,18 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                 .id] ==
             price) {
           ScaffoldMessageError(
-            'Ya ha pagado esta versión de este curso',
+            translate(context, 'alreadyPayedThisVersion'),
             context,
           );
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => PaymentPage(
-                    amount: price,
-                    courseTitle: CourseService.course.title,
-                  ),
-            ),
+          await CourseService.payCourse(price, context);
+
+          final courseName = CourseService.course.title;
+          final studentName = currentUser.username;
+
+          await _chatService.sendMessage(
+            CourseService.author.userId,
+            "¡Hola! Soy $studentName y acabo de adquirir el curso \"$courseName\". 😊\nEstoy muy entusiasmado/a por comenzar. ¿Cuándo podríamos empezar?",
           );
         }
       },
@@ -322,7 +320,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
         ),
         child: Center(
           child: Text(
-            'Continuar ${price.toStringAsFixed(0)} €',
+            '${translate(context, "pay")} ${price.toStringAsFixed(0)} €',
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),
@@ -348,7 +346,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                 ),
                 SizedBox(height: 16),
                 Text(
-                  "Acceso restringido",
+                  translate(context, "noAllowed"),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -362,7 +360,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "No puedes pagar este curso o servicio si no eres un estudiante.",
+                  translate(context, "noStudentAllowed"),
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
@@ -372,9 +370,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                   text: TextSpan(
                     style: TextStyle(color: Colors.white54, fontSize: 14),
                     children: [
-                      TextSpan(text: 'Haz clic '),
+                      TextSpan(text: translate(context, "doClick")),
                       TextSpan(
-                        text: 'aquí',
+                        text: translate(context, "here"),
                         style: TextStyle(
                           color: Colors.blueAccent,
                           decoration: TextDecoration.underline,
@@ -394,7 +392,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                                 );
                               },
                       ),
-                      TextSpan(text: ' para convertirte en uno.'),
+                      TextSpan(text: translate(context, "toBecomeOne")),
                     ],
                   ),
                 ),
@@ -408,7 +406,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                   print("Cancelar presionado");
                   Navigator.of(context).pop(false);
                 },
-                child: Text("Cancelar"),
+                child: Text(translate(context, "cancel")),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -421,7 +419,10 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                   print("Confirmar presionado");
                   Navigator.of(context).pop(true);
                 },
-                child: Text("Confirmar", style: TextStyle(color: Colors.white)),
+                child: Text(
+                  translate(context, "confirm"),
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -477,7 +478,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
             CourseService.course.description,
             maxLines: 7,
             style: TextStyle(color: Colors.white, fontSize: 15),
-            expandText: 'show more',
+            expandText: translate(context, "seeMore"),
             linkColor: Color(0xFF3B82F6),
           ),
         ],

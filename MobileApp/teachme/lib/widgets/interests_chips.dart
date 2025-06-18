@@ -49,7 +49,7 @@ class _InterestsChipsState extends State<InterestsChips> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Interests',
+          translate(context, "interests"),
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -84,13 +84,13 @@ class _InterestsChipsState extends State<InterestsChips> {
           style: ButtonStyle(
             padding: MaterialStateProperty.all<EdgeInsets>(
               EdgeInsets.zero,
-            ), // Eliminar padding extra
+            ),
             tapTargetSize:
                 MaterialTapTargetSize
-                    .shrinkWrap, // Hace que el área de tap se ajuste al contenido
+                    .shrinkWrap,
           ),
           child: Text(
-            'Edit',
+            translate(context, "edit"),
             style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
           ),
         ),

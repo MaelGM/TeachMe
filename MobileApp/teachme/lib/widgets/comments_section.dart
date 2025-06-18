@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:teachme/screens/create_comment_page.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/rating_card.dart';
 
 class CommentsSection extends StatefulWidget {
@@ -144,7 +145,7 @@ class _CommentsSectionState extends State<CommentsSection> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Aún no hay comentarios',
+                  translate(context, "noComments"),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -154,7 +155,7 @@ class _CommentsSectionState extends State<CommentsSection> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Cuando recibas comentarios de estudiantes,\naparecerán aquí.',
+                  translate(context, "commentsWillAppear"),
                   style: TextStyle(color: Colors.white54, fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
@@ -175,7 +176,7 @@ class _CommentsSectionState extends State<CommentsSection> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Sorted by',
+              translate(context, "sortBy"),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -206,7 +207,7 @@ class _CommentsSectionState extends State<CommentsSection> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Overall rating',
+          translate(context, "finalScore"),
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -234,17 +235,17 @@ class _CommentsSectionState extends State<CommentsSection> {
   Text _textButtonText() {
     if (_dateOrder) {
       return Text(
-        'Most recent',
+        translate(context, "recent"),
         style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
       );
     } else if (_goodRatingOrder) {
       return Text(
-        'Most favourable',
+        translate(context, "bestScore"),
         style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
       );
     } else {
       return Text(
-        'Most critical',
+        translate(context, "worstScore"),
         style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
       );
     }
@@ -270,7 +271,7 @@ class _CommentsSectionState extends State<CommentsSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Sort by',
+                translate(context, "sortBy"),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -283,7 +284,7 @@ class _CommentsSectionState extends State<CommentsSection> {
               ListTile(
                 leading: Icon(Icons.access_time, color: Colors.white),
                 title: Text(
-                  "Most recent",
+                  translate(context, "recent"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {
@@ -299,7 +300,7 @@ class _CommentsSectionState extends State<CommentsSection> {
               ListTile(
                 leading: Icon(Icons.thumb_up, color: Colors.white),
                 title: Text(
-                  "Most favourable",
+                  translate(context, "bestScore"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {
@@ -317,7 +318,7 @@ class _CommentsSectionState extends State<CommentsSection> {
               ListTile(
                 leading: Icon(Icons.thumb_down, color: Colors.white),
                 title: Text(
-                  "Most critical",
+                  translate(context, "worstScore"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {

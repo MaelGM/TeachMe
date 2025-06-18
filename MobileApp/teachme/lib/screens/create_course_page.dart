@@ -12,6 +12,7 @@ import 'package:teachme/screens/create_versions_course_page.dart';
 import 'package:teachme/service/image_service.dart';
 import 'package:teachme/service/subject_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/utils.dart';
 
 class CreateCoursePage extends StatefulWidget {
@@ -71,8 +72,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   }
 
   void _loadInitialData() async {
-    final subjects =
-        await _subjectService.getSubjects(); // Asume que este método existe
+    final subjects = await _subjectService.getSubjects();
     final specialities = await _subjectService.getSpecialities();
 
     setState(() {
@@ -149,8 +149,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Creando anuncio'),
+        title: Text(translate(context, "creatingAdd")),
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
@@ -170,22 +171,22 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                 children: [
                   SizedBox(height: 20),
                   _inputField(
-                    label: 'Título *',
+                    label: '${translate(context, "title")} *',
                     controller: _titleController,
-                    hintText: 'Escriba el título...',
+                    hintText: translate(context, "writeTitle"),
                   ),
                   SizedBox(height: 30),
                   _inputField(
-                    label: 'Descripción *',
+                    label: '${translate(context, "description")} *',
                     controller: _descriptionController,
-                    hintText: 'Describa el curso del anuncio...',
+                    hintText: translate(context, "describeTheAdd"),
                     minLines: 2,
                   ),
                   SizedBox(height: 30),
                   _buildSubjectDropdown(),
                   SizedBox(height: 30),
                   _buildSpecialityDropdown(),
-              SizedBox(height: 120),
+                  SizedBox(height: 120),
                 ],
               ),
             ),
@@ -320,7 +321,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               ListTile(
                 leading: Icon(Icons.camera_alt, color: Colors.white),
                 title: Text(
-                  'Usar cámara',
+                  translate(context, "useCamera"),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 onTap: () {
@@ -332,7 +333,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               ListTile(
                 leading: Icon(Icons.photo_library, color: Colors.white),
                 title: Text(
-                  'Elegir de galería',
+                  translate(context, "useGalery"),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 onTap: () {
@@ -362,7 +363,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
           print('FOTO AÑADIDA');
         } else {
           ScaffoldMessageError(
-            'Ha ocurrido un error. No se ha podido guardar la imágen',
+            translate(context, "imageError"),
             context,
           );
         }
@@ -414,9 +415,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
             );
           }).toList(),
       decoration: InputDecoration(
-        labelText: 'Asignatura *',
+        labelText: '${translate(context, "subject")} *',
         labelStyle: TextStyle(color: Colors.white),
-        hintText: 'Selecciona una asignatura',
+        hintText: translate(context, "selectSubject"),
         hintStyle: TextStyle(color: Colors.white38),
         border: OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
@@ -446,9 +447,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
             );
           }).toList(),
       decoration: InputDecoration(
-        labelText: 'Especialidad',
+        labelText: translate(context, "speciality"),
         labelStyle: TextStyle(color: Colors.white),
-        hintText: 'Selecciona una especialidad',
+        hintText: translate(context, "selectSpeciality"),
         hintStyle: TextStyle(color: Colors.white38),
         border: OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
@@ -476,14 +477,14 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
             advertisement.title = _titleController.text;
             if (advertisement.photos.isEmpty) {
               ScaffoldMessageError(
-                'Por favor, añada al menos una imagen al anuncio',
+                translate(context, "oneImageAtLeast"),
                 context,
               );
             } else if (advertisement.description.isEmpty ||
                 advertisement.title.isEmpty ||
                 advertisement.subjectId.isEmpty) {
               ScaffoldMessageError(
-                'Por favor, rellene los datos obligatorios antes de continuar',
+                translate(context, "completeData"),
                 context,
               );
             } else {
@@ -524,7 +525,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Siguiente',
+                translate(context, "next"),
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ],

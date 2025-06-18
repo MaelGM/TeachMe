@@ -5,6 +5,7 @@ import 'package:teachme/screens/pages.dart';
 import 'package:teachme/screens/payed_courses_page.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 
 class MyInterests extends StatefulWidget {
   final VoidCallback? onBecameTeacher;
@@ -24,7 +25,7 @@ class _MyInterestsState extends State<MyInterests> {
         Container(
           padding: EdgeInsets.only(left: 16, top: 16, right: 16),
           child: Text(
-            'My Interests',
+            translate(context, "myInterests"),
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -39,7 +40,7 @@ class _MyInterestsState extends State<MyInterests> {
         Container(
           padding: EdgeInsets.only(left: 16, top: 16, right: 16),
           child: Text(
-            'Settings',
+            translate(context, "settings"),
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -141,7 +142,7 @@ class _MyInterestsState extends State<MyInterests> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  "Confirmar acción",
+                  translate(context, "confirmAction"),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -155,13 +156,13 @@ class _MyInterestsState extends State<MyInterests> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "¿Estás seguro de que deseas convertirte en un profesor?",
+                  translate(context, "sureToBeAProfessor"),
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 12),
                 Text(
-                  "Esta acción no es reversible.",
+                  translate(context, "noGoingBack"),
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(
@@ -178,7 +179,7 @@ class _MyInterestsState extends State<MyInterests> {
               TextButton(
                 style: TextButton.styleFrom(foregroundColor: Colors.white),
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text("Cancelar"),
+                child: Text(translate(context, "cancel")),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -188,7 +189,7 @@ class _MyInterestsState extends State<MyInterests> {
                   ),
                 ),
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text("Confirmar", style: TextStyle(color: Colors.white)),
+                child: Text(translate(context, "confirm"), style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

@@ -147,7 +147,7 @@ class _CourseCardState extends State<CourseCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Estado del anuncio',
+                translate(context, "Estado del anuncio"),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -159,20 +159,20 @@ class _CourseCardState extends State<CourseCard> {
               Divider(color: const Color.fromARGB(31, 158, 158, 158)),
               ListTile(
                 leading: Icon(Icons.visibility, color: Colors.white),
-                title: Text("Activar", style: TextStyle(color: Colors.white)),
+                title: Text(translate(context, "activate"), style: TextStyle(color: Colors.white)),
                 onTap: () async{
                   Navigator.pop(context);
                   setState(() {
                     widget.course.state = AdvertisementState.active;
                   });
                   await CourseService.changeState(widget.course.state.name, widget.course.id);
-                  ScaffoldMessageInfo('El estado del anuncio es ahora: Activo', context);
+                  ScaffoldMessageInfo(translate(context, "nowActive"), context);
                 },
               ),
               Divider(color: const Color.fromARGB(31, 158, 158, 158)),
               ListTile(
                 leading: Icon(Icons.visibility_off, color: Colors.white),
-                title: Text("Ocultar", style: TextStyle(color: Colors.white)),
+                title: Text(translate(context, "hide"), style: TextStyle(color: Colors.white)),
                 onTap: () async {
                   final bool? confirm = await _confirmDialog(context);
                   if (confirm != true) return;
@@ -182,7 +182,7 @@ class _CourseCardState extends State<CourseCard> {
                     widget.course.state = AdvertisementState.hidden;
                   });
                   await CourseService.changeState(widget.course.state.name, widget.course.id);
-                  ScaffoldMessageInfo('El estado del anuncio es ahora: Oculto', context);
+                  ScaffoldMessageInfo(translate(context, "nowHide"), context);
                 },
               ),
             ],
@@ -210,7 +210,7 @@ class _CourseCardState extends State<CourseCard> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Estas seguro que quiere ocultar este anuncio?',
+                  translate(context, "sureToHide"),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -225,13 +225,13 @@ class _CourseCardState extends State<CourseCard> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Este anuncio no se mostrará a los estudiantes.',
+                  translate(context, "wontBeVisible"),
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 12),
                 Text(
-                  'Puedes revertir esta acción en cualquier momento.',
+                  translate(context, "youCanChangeIt"),
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(0xFF3B82F6),
@@ -270,7 +270,7 @@ class _CourseCardState extends State<CourseCard> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text("From  ", style: TextStyle(color: Colors.grey[400], fontSize: 12)),
+        Text("${translate(context, "from")}  ", style: TextStyle(color: Colors.grey[400], fontSize: 12)),
         Text(
           "${widget.course.prices.first.toStringAsFixed(0)} €",
           style: TextStyle(

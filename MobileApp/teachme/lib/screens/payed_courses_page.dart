@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
 import 'package:teachme/widgets/payed_courses.dart';
 
@@ -12,7 +13,7 @@ class _PayedCoursesPageState extends State<PayedCoursesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payed Courses'),
+        title: Text(translate(context, "payedCourses")),
         iconTheme: IconThemeData(color: Colors.white),
         actions: [HamburguerMenu()],
       ),

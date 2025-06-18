@@ -6,6 +6,7 @@ import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/service/chat_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/favorite_courses.dart';
 import 'package:teachme/widgets/about_me_section.dart';
 import 'package:teachme/widgets/payed_courses.dart';
@@ -25,7 +26,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = false;
-  String _currentView = 'Favoritos';
+  String _currentView = 'favorites';
   final ChatService _chatService = ChatService();
 
   @override
@@ -99,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Icon(Icons.chat_outlined, color: Colors.black,),
                   SizedBox(width: 8,),
-                  Text('Contactar', style: TextStyle(color: Colors.black, fontSize: 16),),
+                  Text(translate(context, "contact"), style: TextStyle(color: Colors.black, fontSize: 16),),
                 ],
               ),
             ): null,
@@ -138,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         Expanded(
-          child: _currentView == 'Favoritos'
+          child: _currentView == 'favorites'
               ? FavoriteCourses()
               : PayedCourses(),
         ), // Mostrar vista según opción
@@ -148,7 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _textButtonText() {
     return Text(
-      "Ver: $_currentView",
+      "${translate(context, "see")}: ${translate(context, _currentView)}",
       style: TextStyle(
         color: Color(0xFF3B82F6),
         fontSize: 16,
@@ -176,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Mostrar',
+                translate(context, "show"),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -188,22 +189,22 @@ class _ProfilePageState extends State<ProfilePage> {
               Divider(color: const Color.fromARGB(31, 158, 158, 158)),
               ListTile(
                 leading: Icon(Icons.favorite, color: Colors.white),
-                title: Text("Favoritos", style: TextStyle(color: Colors.white)),
+                title: Text(translate(context, "favorites"), style: TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.pop(context);
                   setState(() {
-                    _currentView = 'Favoritos';
+                    _currentView = "favorites";
                   });
                 },
               ),
               Divider(color: const Color.fromARGB(31, 158, 158, 158)),
               ListTile(
                 leading: Icon(Icons.payment, color: Colors.white),
-                title: Text("Pagados", style: TextStyle(color: Colors.white)),
+                title: Text(translate(context, "payed"), style: TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.pop(context);
                   setState(() {
-                    _currentView = 'Pagados';
+                    _currentView = 'payed';
                   });
                 },
               ),
@@ -224,11 +225,11 @@ class _ProfilePageState extends State<ProfilePage> {
         indicatorColor: Color(0xFF3B82F6),
         labelColor: Color(0xFF3B82F6),
         tabs: [
-          Tab(text: "Sobre mi"),
-          Tab(text: "Anuncios"),
-          Tab(text: "Comentarios"),
+          Tab(text: translate(context, "aboutMe")),
+          Tab(text: translate(context, "gigs")),
+          Tab(text: translate(context, "comments")),
           if (currentUser.isStudent && currentUser.id == widget.user.id)
-            Tab(text: "Otros"),
+            Tab(text: translate(context, "other")),
         ],
       ),
     );
@@ -317,7 +318,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               ListTile(
                 leading: Icon(Icons.circle, color: Colors.green),
-                title: Text("Conectado", style: TextStyle(color: Colors.white)),
+                title: Text(translate(context, "connected"), style: TextStyle(color: Colors.white)),
                 onTap: () async {
                   Navigator.pop(context);
                   await authService.updateUserConnectionStatus("yes");
@@ -327,7 +328,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ListTile(
                 leading: Icon(Icons.circle, color: Colors.grey),
                 title: Text(
-                  "Desconectado",
+                  translate(context, "disconnected"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:teachme/screens/chat_page.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/standard_app_bar.dart';
 
 class MessagesPage extends StatelessWidget {
@@ -33,8 +34,8 @@ class MessagesPage extends StatelessWidget {
                   (data['participants'] as List).contains(currentUser.id);
             }).toList();
 
-        if(chatRooms.isEmpty) {
-          return _noChatsAlert();
+        if (chatRooms.isEmpty) {
+          return _noChatsAlert(context);
         }
 
         return ListView.builder(
@@ -90,51 +91,64 @@ class MessagesPage extends StatelessWidget {
               time = TimeOfDay.fromDateTime(timestamp.toDate()).format(context);
             }
 
-            return _listTileItem(userData, lastMessage, time, context, otherUserId);
+            return _listTileItem(
+              userData,
+              lastMessage,
+              time,
+              context,
+              otherUserId,
+            );
           },
         );
       },
     );
   }
 
-  ListTile _listTileItem(Map<String, dynamic> userData, String lastMessage, String time, BuildContext context, String otherUserId) {
+  ListTile _listTileItem(
+    Map<String, dynamic> userData,
+    String lastMessage,
+    String time,
+    BuildContext context,
+    String otherUserId,
+  ) {
     return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(userData['profile_picture']),
-              radius: 25,
-            ),
-            title: Text(
-              userData['username'],
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            subtitle: Text(
-              lastMessage,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Colors.white70),
-            ),
-            trailing: Text(
-              time,
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (_) => ChatPage(
-                        receiverUserId: otherUserId,
-                        receiverUserName: userData['username'],
-                        receiverUserPicture: userData['profile_picture'],
-                        receiverUserState: userData['conected'],
-                      ),
+      leading: CircleAvatar(
+        backgroundImage:
+            userData['profile_picture'].toString().isEmpty
+                ? AssetImage('assets/defaultProfilePicture.png')
+                : NetworkImage(userData['profile_picture']),
+        radius: 25,
+        backgroundColor: Colors.grey[800],
+      ),
+      title: Text(
+        userData['username'],
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+      subtitle: Text(
+        lastMessage,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: Colors.white70),
+      ),
+      trailing: Text(time, style: TextStyle(color: Colors.grey, fontSize: 12)),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => ChatPage(
+                  receiverUserId: otherUserId,
+                  receiverUserName: userData['username'],
+                  receiverUserPicture: userData['profile_picture'],
+                  receiverUserState: userData['conected'],
                 ),
-              );
-            },
-          );
+          ),
+        );
+      },
+    );
   }
 
-  Widget _noChatsAlert() {
+  Widget _noChatsAlert(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
@@ -146,14 +160,10 @@ class MessagesPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.chat,
-                    color: Colors.white,
-                    size: 60,
-                  ),
+                  Icon(Icons.chat, color: Colors.white, size: 60),
                   const SizedBox(height: 16),
                   Text(
-                    'Aún no has comenzado ninguna conversación',
+                    translate(context, "noChatsYet"),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -163,7 +173,7 @@ class MessagesPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Cuando recibas algún mensaje, aparecerá aquí.',
+                    translate(context, "messageWillAppear"),
                     style: TextStyle(color: Colors.white54, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),

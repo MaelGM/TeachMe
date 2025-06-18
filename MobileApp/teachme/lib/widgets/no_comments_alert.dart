@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 
 class NoCommentsAlert extends StatelessWidget{
   @override
@@ -21,7 +22,7 @@ class NoCommentsAlert extends StatelessWidget{
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Aún no hay comentarios',
+                  translate(context, "noComments"),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -32,8 +33,8 @@ class NoCommentsAlert extends StatelessWidget{
                 const SizedBox(height: 8),
                 Text(
                   CourseService.course.tutorId == currentUser.id
-                      ? 'Cuando recibas comentarios de estudiantes,\naparecerán aquí.'
-                      : 'Nadie ha dejado un comentario todavía.\n¡Sé el primero en compartir tu opinión!',
+                      ? translate(context, "commentsWillAppear")
+                      : translate(context, "beTheFirstComment"),
                   style: TextStyle(color: Colors.white54, fontSize: 14),
                   textAlign: TextAlign.center,
                 ),

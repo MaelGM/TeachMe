@@ -5,6 +5,7 @@ import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/navigation_service.dart';
 import 'package:teachme/service/subject_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/student_home.dart';
 import 'package:teachme/widgets/vertical_couse_box.dart';
 import 'package:teachme/widgets/widgets.dart';
@@ -107,7 +108,7 @@ class _HomeTeacherState extends State<HomeTeacher> {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           child: Text(
-            'Ver más',
+            translate(context, "seeMore"),
             style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
           ),
         ),

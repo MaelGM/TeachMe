@@ -78,7 +78,6 @@ class AuthService extends ChangeNotifier {
 
   static Future<UserModel> getUserById(String id) async {
     try {
-
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(id).get();
 
@@ -110,7 +109,7 @@ class AuthService extends ChangeNotifier {
       } else {
         uid = FirebaseAuth.instance.currentUser!.uid;
       }
-      
+
       creatingUser.id = uid;
       await _firestore.collection('users').doc(uid).set(creatingUser.toMap());
       currentUser = creatingUser;
@@ -120,9 +119,16 @@ class AuthService extends ChangeNotifier {
       if (creatingUser.isTeacher) registerTeacher();
       await updateUserConnectionStatus('yes');
 
-      Navigator.pushNamedAndRemoveUntil(context, HomePage.routeName, (Route<dynamic> route) => false);
-    } on FirebaseAuthException catch (ex){
-      ScaffoldMessageError(ex.message ?? translate(context, "randomError"), context);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        HomePage.routeName,
+        (Route<dynamic> route) => false,
+      );
+    } on FirebaseAuthException catch (ex) {
+      ScaffoldMessageError(
+        ex.message ?? translate(context, "randomError"),
+        context,
+      );
     } catch (e) {
       print(e.toString());
       ScaffoldMessageError(translate(context, "unexpectedError"), context);
@@ -145,7 +151,7 @@ class AuthService extends ChangeNotifier {
         'userId': currentStudent.userId,
         'interestsIds': currentStudent.interestsIds,
         'interestsNames': currentStudent.interestsNames,
-        'savedAdvertisements': currentStudent.savedAdvertisements
+        'savedAdvertisements': currentStudent.savedAdvertisements,
       });
       await UserPreferences.instance.saveStudent(currentStudent);
     } catch (e) {
@@ -350,7 +356,11 @@ class AuthService extends ChangeNotifier {
     await UserPreferences.instance.deleteStudent();
     await UserPreferences.instance.deleteTeacher();
     await UserPreferences.instance.deleteRefreshToken();
-    Navigator.pushReplacementNamed(context, AccessPage.routeName);
+
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      AccessPage.routeName,
+      (Route<dynamic> route) => false,
+    );
   }
 
   Future<void> updateUserConnectionStatus(String status) async {

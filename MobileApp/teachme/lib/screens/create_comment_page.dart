@@ -6,6 +6,7 @@ import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/utils.dart';
 
 class CreateCommentPage extends StatefulWidget {
@@ -37,14 +38,14 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
   void _loadComment() async {
     if (_commentController.text.isEmpty) {
       ScaffoldMessageError(
-        'Escriba algo antes de enviar el comentario por favor.',
+        translate(context, 'writeSomethingComment'),
         context,
       );
       return;
     }
     if (_rating == -1) {
       ScaffoldMessageError(
-        'Seleccione la puntuación del comentario por favor.',
+        translate(context, 'scoreComment'),
         context,
       );
       return;
@@ -76,11 +77,11 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessageInfo('Mensaje enviado correctamente', context);
+      ScaffoldMessageInfo(translate(context, "commentDone"), context);
       Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessageError(
-        'Ha ocurrido un error. No se ha podido enviar el comentario',
+        translate(context, 'errorComment'),
         context,
       );
 
@@ -97,7 +98,7 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Crear Comentario')),
+      appBar: AppBar(title: Text(translate(context, "createComment"))),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: ListView(
@@ -162,7 +163,7 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
           if (!_isLoading) Icon(Icons.send, color: Colors.white, size: 22),
           if (!_isLoading) SizedBox(width: 10),
           Text(
-            _isLoading ? 'Cargando...' : 'Publicar comentario',
+            _isLoading ? translate(context, "loading") : translate(context, "publishComment"),
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
         ],
@@ -227,7 +228,7 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
         ElevatedButton.icon(
           onPressed: _showImageSourceDialog,
           icon: Icon(Icons.image, size: 20, color: Colors.white),
-          label: Text('Imagenes', style: TextStyle(color: Colors.white)),
+          label: Text(translate(context, "images"), style: TextStyle(color: Colors.white)),
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFF3B82F6),
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -236,8 +237,8 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
         SizedBox(width: 10),
         Text(
           _images.isEmpty
-              ? 'No se han seleccionado imágenes'
-              : '${_images.length} imagen(es)',
+              ? translate(context, "noImagesSelected")
+              : '${_images.length} ${translate(context, "images")}',
           style: TextStyle(color: Colors.white),
         ),
       ],
@@ -251,9 +252,9 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
       minLines: 2,
       style: TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        labelText: 'Tu comentario',
+        labelText: translate(context, "yourComment"),
         labelStyle: TextStyle(color: Colors.white),
-        hintText: 'Escribe aquí...',
+        hintText: translate(context, "writeHere"),
         hintStyle: TextStyle(color: Colors.white38),
         border: OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
@@ -286,7 +287,7 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
               ListTile(
                 leading: Icon(Icons.camera_alt, color: Colors.white),
                 title: Text(
-                  'Usar cámara',
+                  translate(context, "useCamera"),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 onTap: () {
@@ -298,7 +299,7 @@ class _CreateCommentPageState extends State<CreateCommentPage> {
               ListTile(
                 leading: Icon(Icons.photo_library, color: Colors.white),
                 title: Text(
-                  'Elegir de galería',
+                  translate(context, "useGalery"),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 onTap: () {

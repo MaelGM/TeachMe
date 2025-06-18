@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/favorite_courses.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
 
@@ -12,7 +13,7 @@ class _FavoriteCoursesPageState extends State<FavoriteCoursesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorite Courses'),
+        title: Text(translate(context, "favCourses")),
         iconTheme: IconThemeData(color: Colors.white),
         actions: [HamburguerMenu()],
       ),

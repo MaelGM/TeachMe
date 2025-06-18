@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/screens/course_details_page.dart';
 import 'package:teachme/service/course_service.dart';
+import 'package:teachme/utils/translate.dart';
 
 class VerticalCourseBox extends StatelessWidget {
   final AdvertisementModel course;
@@ -86,7 +87,7 @@ class VerticalCourseBox extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: [_showPrice()],
+                        children: [_showPrice(context)],
                       ),
                     ],
                   ),
@@ -150,11 +151,11 @@ class VerticalCourseBox extends StatelessWidget {
     );
   }
 
-  Widget _showPrice() {
+  Widget _showPrice(BuildContext context) {
     return Row(
       children: [
         Text(
-          "From ",
+          "${translate(context, "from")} ",
           style: TextStyle(
             color: Colors.grey[400],
             fontSize: 13,

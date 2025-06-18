@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/screens/profile_page.dart';
 import 'package:teachme/service/course_service.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/vertical_couse_box.dart';
 
 class OtherCoursesRecomendations extends StatefulWidget {
@@ -88,7 +89,7 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(child: Text('Other gigs from ${CourseService.authorUserAcount.username}', maxLines: 2, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+            Expanded(child: Text('${translate(context, "otherGigsFrom")} ${CourseService.authorUserAcount.username}', maxLines: 2, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
             _seeMoreButton()
           ],
         );
@@ -124,7 +125,7 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
               padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),  // Eliminar padding extra
               tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Hace que el área de tap se ajuste al contenido
             ),
-            child: Text('See more', style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),)
+            child: Text(translate(context, "seeMore"), style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),)
           );
   }
 
@@ -138,7 +139,7 @@ class _OtherCoursesRecomendationsState extends State<OtherCoursesRecomendations>
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text('People also view', maxLines: 2, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+              Expanded(child: Text(translate(context, "othersCourses"), maxLines: 2, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
             ],
           ),
           _scrollHorizontalCourses(_otherCoursesFromSpeciality)

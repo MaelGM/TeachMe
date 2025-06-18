@@ -177,7 +177,7 @@ class _HorizontalCommentsState extends State<HorizontalComments> {
                       .shrinkWrap, // Hace que el área de tap se ajuste al contenido
             ),
             child: Text(
-              'See all',
+              translate(context, "seeAll"),
               style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
             ),
           ),

@@ -4,7 +4,6 @@ import 'package:teachme/screens/choose_language_page.dart';
 import 'package:teachme/screens/course_details_page.dart';
 import 'package:teachme/screens/forgot_password_page.dart';
 import 'package:teachme/screens/pages.dart';
-import 'package:teachme/screens/payment_page.dart';
 import 'package:teachme/utils/config.dart';
 
 Map<String, WidgetBuilder> getApplicationRoutes(){
@@ -21,7 +20,6 @@ Map<String, WidgetBuilder> getApplicationRoutes(){
     ChooseInterestsPage.routeName:(BuildContext context) => ChooseInterestsPage(editing: false),
     ChooseLanguagePage.routeName:(BuildContext context) => ChooseLanguagePage(),
     CourseDetailsPage.routeName:(BuildContext context) => CourseDetailsPage(),
-    PaymentPage.routeName: (BuildContext context) => PaymentPage(amount: 0, courseTitle: '')
 
   };
 }

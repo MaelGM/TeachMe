@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:teachme/service/chat_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverUserId;
@@ -260,7 +261,7 @@ class _ChatPageState extends State<ChatPage> {
               child: TextField(
                 controller: _messageController,
                 decoration: InputDecoration(
-                  hintText: "Mensaje",
+                  hintText: translate(context, "message"),
                   border: InputBorder.none,
                 ),
                 minLines: 1,

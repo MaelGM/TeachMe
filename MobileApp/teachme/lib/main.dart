@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/firebase_options.dart';
@@ -24,6 +25,7 @@ void main() async {
       .initPrefs(); // Cargamos las preferencias locales y las mini BD locales
   initializeTimeagoLocales();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  Stripe.publishableKey = 'pk_test_51RbIzfD0rT16v2dTXbbaHKBybS8cH1qtxzNpI4Eb4vxoZiRNoBnjzxXBFiEpvFcxXqU4k7FE9UbzSUthQKJl6SXC00kMkF2WUo';
   
   bool isSessionActive = await AuthService().initSession();
   runApp(

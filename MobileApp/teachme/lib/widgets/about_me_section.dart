@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/info_list_tile.dart';
 import 'package:teachme/widgets/interests_chips.dart';
 import 'package:teachme/widgets/skill_chips.dart';
@@ -20,7 +21,7 @@ class AboutMeSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'User information',
+              translate(context, "userInfo"),
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -32,23 +33,23 @@ class AboutMeSection extends StatelessWidget {
               TeacherService.teacher.aboutMe,
               maxLines: 5,
               style: TextStyle(color: Colors.white, fontSize: 15),
-              expandText: 'show more',
-              collapseText: 'show less',
+              expandText: translate(context, "seeMore"),
+              collapseText: translate(context, "seeLess"),
               linkColor: Color(0xFF3B82F6),
             ),
             InfoListTile(
               subtitle: TeacherService.teacher.country,
               icon: Icons.location_on,
-              title: 'From',
+              title: translate(context, "fromCountry"),
             ),
             InfoListTile(
               subtitle: TeacherService.teacher.memberSince,
               icon: Icons.person_outline,
-              title: 'Member since',
+              title: translate(context, "memberSince"),
             ),
             SizedBox(height: 7),
             Text(
-              'Skills',
+              translate(context, "userSkills"),
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/models/enums/AdvertisementState.dart';
@@ -10,7 +13,9 @@ import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/models/teacher_model.dart';
 import 'package:teachme/models/user_model.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
+import 'package:teachme/utils/utils.dart';
 
 class CourseService extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -243,29 +248,82 @@ class CourseService extends ChangeNotifier {
     }
   }
 
-  static Future<void> payCourse(double price) async {
-    // Añadir a favoritos si no está ya
-    if (!currentStudent.savedAdvertisements.contains(CourseService.course.id)) {
-      currentStudent.savedAdvertisements.add(CourseService.course.id);
+  static Future<void> payCourse(double price, BuildContext context) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('USUARIO NO AUTENTIFICADO');
+      throw Exception(
+        'Usuario no autenticado. Por favor, inicia sesión para realizar el pago.',
+      );
     }
 
-    final currentPaid =
-        currentStudent.payedAdvertisements[CourseService.course.id];
+    try {
+      print('USUARIO AUTENTIFICADO');
 
-    // Si no existe el pago o es menor al nuevo precio, se actualiza
-    if (currentPaid == null || currentPaid < price) {
-      currentStudent.payedAdvertisements[CourseService.course.id] = price;
+      // Llamada HTTP a tu función Cloud pública
+      final url = Uri.parse(
+        'https://us-central1-teachme-39e86.cloudfunctions.net/createPaymentIntent',
+      );
+      print('USUARIO AUTENTIFICADO2');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'amount': (price * 100).toInt(), 'currency': 'eur'}),
+      );
+      print('USUARIO AUTENTIFICADO3');
+
+      if (response.statusCode != 200) {
+        throw Exception('Error al crear el pago: ${response.body}');
+      }
+
+      final responseData = jsonDecode(response.body);
+      final clientSecret = responseData['clientSecret'];
+
+      print('CLIENT SECRET RECIBIDO');
+
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: 'TeachMe',
+        ),
+      );
+
+      print('SHEET INICIALIZADO');
+
+      await Stripe.instance.presentPaymentSheet();
+
+      print('PAGO COMPLETADO');
+
+      // Añadir a favoritos si no está ya
+      if (!currentStudent.savedAdvertisements.contains(
+        CourseService.course.id,
+      )) {
+        currentStudent.savedAdvertisements.add(CourseService.course.id);
+      }
+
+      final currentPaid =
+          currentStudent.payedAdvertisements[CourseService.course.id];
+
+      if (currentPaid == null || currentPaid < price) {
+        currentStudent.payedAdvertisements[CourseService.course.id] = price;
+      }
+
+      await FirebaseFirestore.instance
+          .collection('students')
+          .doc(currentStudent.userId)
+          .update({
+            'savedAdvertisements': currentStudent.savedAdvertisements,
+            'payedAdvertisements': currentStudent.payedAdvertisements,
+          });
+
+      await UserPreferences.instance.saveStudent(currentStudent);
+      ScaffoldMessageInfo(translate(context, "coursePayed"), context);
+    } on StripeException catch (e) {
+      throw Exception('Error en el pago: ${e.error.localizedMessage}');
+    } catch (e) {
+      throw Exception('Error inesperado: $e');
     }
-
-    await FirebaseFirestore.instance
-        .collection('students')
-        .doc(currentStudent.userId)
-        .update({
-          'savedAdvertisements': currentStudent.savedAdvertisements,
-          'payedAdvertisements': currentStudent.payedAdvertisements,
-        });
-
-    await UserPreferences.instance.saveStudent(currentStudent);
   }
 
   Future<List<AdvertisementModel>> searchCourses({String? title}) async {
@@ -455,9 +513,19 @@ class CourseService extends ChangeNotifier {
     }
   }
 
-  static Future<void> postAdvertisement(AdvertisementModel adverstiment) async {
-    await _firestore.collection('advertisements').add(adverstiment.toFirestore());
-  }
+  static Future<void> postAdvertisement(
+    AdvertisementModel adverstiment,
+    BuildContext context,
+  ) async {
+    try {
+      await _firestore
+          .collection('advertisements')
+          .add(adverstiment.toFirestore());
 
-  
+      ScaffoldMessageInfo('El anuncio fue publicado con éxito!', context);
+    } catch (e) {
+      ScaffoldMessageError('Hubo un error al publicar el anuncio.', context);
+      print('Error al publicar anuncio: $e');
+    }
+  }
 }

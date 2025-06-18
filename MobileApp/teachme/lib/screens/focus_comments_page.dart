@@ -3,6 +3,7 @@ import 'package:teachme/models/rating_model.dart';
 import 'package:teachme/screens/create_comment_page.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/no_comments_alert.dart';
 import 'package:teachme/widgets/rating_card.dart';
 
@@ -63,8 +64,8 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
         ],
         title: Text(
           CourseService.allRatings.isEmpty
-              ? 'No comments'
-              : '${CourseService.allRatings.length} Comments',
+              ? translate(context, "noComments")
+              : '${CourseService.allRatings.length} ${translate(context, "comments")}',
         ),
       ),
       body:
@@ -135,7 +136,7 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Sort by',
+                translate(context, "sortBy"),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -148,7 +149,7 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
               ListTile(
                 leading: Icon(Icons.access_time, color: Colors.white),
                 title: Text(
-                  "Most recent",
+                  translate(context, "recent"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {
@@ -166,7 +167,7 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
               ListTile(
                 leading: Icon(Icons.thumb_up, color: Colors.white),
                 title: Text(
-                  "Most favourable",
+                  translate(context, "bestScore"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {
@@ -184,7 +185,7 @@ class _FocusCommentsPageState extends State<FocusCommentsPage> {
               ListTile(
                 leading: Icon(Icons.thumb_down, color: Colors.white),
                 title: Text(
-                  "Most critical",
+                  translate(context, "worstScore"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {

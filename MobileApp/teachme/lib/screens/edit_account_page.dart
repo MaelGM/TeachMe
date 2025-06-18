@@ -55,7 +55,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
               ListTile(
                 leading: Icon(Icons.camera_alt, color: Colors.white),
                 title: Text(
-                  'Usar cámara',
+                  translate(context, "useCamera"),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 onTap: () {
@@ -67,7 +67,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
               ListTile(
                 leading: Icon(Icons.photo_library, color: Colors.white),
                 title: Text(
-                  'Elegir de galería',
+                  translate(context, "useGalery"),
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 onTap: () {
@@ -190,7 +190,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     });
                     if (!editForm.formKey.currentState!.validate()) {
                       setState(() => _isLoading = false);
-                      ScaffoldMessageError('Revise los campos', context);
+                      ScaffoldMessageError(translate(context, "checkData"), context);
                       return;
                     }
 
@@ -203,7 +203,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                         profileImage = uploadedUrl;
                       } else {
                         ScaffoldMessageError(
-                          'Error al subir la imagen',
+                          translate(context, "imageError"),
                           context,
                         );
                         setState(() => _isLoading = false);
@@ -229,7 +229,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                         return;
                       } catch (e) {
                         ScaffoldMessageError(
-                          'No se pudo enviar el correo de verificación',
+                          translate(context, "verificationError"),
                           context,
                         );
                         setState(() => _isLoading = false);
@@ -250,7 +250,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     Navigator.pop(context, true);
                   },
           label: Text(
-            'Save',
+            translate(context, "save"),
             style: TextStyle(fontSize: 18, color: Colors.white),
           ),
         ),

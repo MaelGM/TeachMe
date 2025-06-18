@@ -11,10 +11,15 @@ class ChatService extends ChangeNotifier {
 
   // Método para enviar el mensaje
   Future<void> sendMessage(String receiverId, String message) async {
+    print('ENVIANDO MENSAJE');
     // get currentUser and receiver and time of the message
     final String currentUserId = currentUser.id;
     final String currentUserName = currentUser.username;
     final Timestamp timestamp = Timestamp.now();
+
+    print(currentUserId);
+
+    print(receiverId);
 
     // Create new Message
     Message newMessage = Message(

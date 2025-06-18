@@ -226,7 +226,7 @@ class _ConfigMenuPageState extends State<ConfigMenuPage> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  "Confirmar acción",
+                  translate(context, "confirm"),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -240,13 +240,13 @@ class _ConfigMenuPageState extends State<ConfigMenuPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "¿Estás seguro de que deseas convertirte en un $palabra?",
+                  "${translate(context, "becomeOne")} $palabra?",
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 12),
                 Text(
-                  "Esta acción no es reversible.",
+                  translate(context, "noGoingBack"),
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(
@@ -263,7 +263,7 @@ class _ConfigMenuPageState extends State<ConfigMenuPage> {
               TextButton(
                 style: TextButton.styleFrom(foregroundColor: Colors.white),
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text("Cancelar"),
+                child: Text(translate(context, "cancel")),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -273,7 +273,7 @@ class _ConfigMenuPageState extends State<ConfigMenuPage> {
                   ),
                 ),
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text("Confirmar", style: TextStyle(color: Colors.white)),
+                child: Text(translate(context, "confirm"), style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

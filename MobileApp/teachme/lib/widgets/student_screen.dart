@@ -3,6 +3,7 @@ import 'package:teachme/models/user_model.dart';
 import 'package:teachme/service/auth_service.dart';
 import 'package:teachme/service/teacher_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/hamburguer_menu.dart';
 import 'package:teachme/widgets/my_interests.dart';
 
@@ -31,7 +32,9 @@ class _StudentScreenState extends State<StudentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         actions: [
           HamburguerMenu(
@@ -142,7 +145,7 @@ class _StudentScreenState extends State<StudentScreen> {
             children: [
               ListTile(
                 leading: Icon(Icons.circle, color: Colors.green),
-                title: Text("Conectado", style: TextStyle(color: Colors.white)),
+                title: Text(translate(context, "connected"), style: TextStyle(color: Colors.white)),
                 onTap: () async {
                   Navigator.pop(context);
                   await authService.updateUserConnectionStatus("yes");
@@ -152,7 +155,7 @@ class _StudentScreenState extends State<StudentScreen> {
               ListTile(
                 leading: Icon(Icons.circle, color: Colors.grey),
                 title: Text(
-                  "Desconectado",
+                  translate(context, "disconnected"),
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () async {

@@ -164,7 +164,7 @@ class _ChooseInterestsPageState extends State<ChooseInterestsPage> {
             await _subjectService.updateStudentInterests(context);
         } else {
           ScaffoldMessageError(
-            'Por favor, seleccione minimamente 1 interes',
+            translate(context, 'oneInterest'),
             context,
           );
         }

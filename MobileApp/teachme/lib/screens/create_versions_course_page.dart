@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teachme/models/adverstiment_model.dart';
 import 'package:teachme/providers/tab_form_data.dart';
 import 'package:teachme/service/course_service.dart';
+import 'package:teachme/service/navigation_service.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/utils.dart';
 
 class CreateVersionsCoursePage extends StatefulWidget {
@@ -78,8 +81,9 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Creando versiones'),
+        title: Text(translate(context, "creatingVersions")),
         actions: [
           IconButton(onPressed: () => _resetData(), icon: Icon(Icons.refresh)),
         ],
@@ -92,7 +96,7 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Aqui puedes crear las versiones que podrán emplear los clientes. Puedes crear un máximo de 3 versiones, con diferente precio, descripción y especificaciones.',
+                translate(context, "versionsTutorial"),
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
               SizedBox(height: 10),
@@ -110,7 +114,7 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
   }
 
   TabBar _versionsTabBar() {
-    final levelNames = ['Básico', 'Pro', 'Deluxe'];
+    final levelNames = [translate(context, "basic"), translate(context, "pro"), translate(context, "deluxe")];
 
     List<Tab> _tabs = [];
 
@@ -160,7 +164,7 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
         margin: EdgeInsets.only(bottom: 16),
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: _onCreatePressed,
+          onPressed: _isLoading ? null : _onCreatePressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: Color.fromARGB(255, 43, 97, 184),
             padding: const EdgeInsets.symmetric(vertical: 14),
@@ -172,7 +176,7 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Crear',
+                _isLoading ? translate(context, "creating") : translate(context, "create"),
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ],
@@ -211,12 +215,21 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
       required TextEditingController controller,
       int? minLines,
       required String hintText,
+      bool isPrice = false, // <-- nuevo parámetro
     }) {
       return TextField(
         controller: controller,
         maxLines: null,
         minLines: minLines,
         style: TextStyle(color: Colors.white),
+        keyboardType:
+            isPrice
+                ? const TextInputType.numberWithOptions(decimal: true)
+                : TextInputType.text,
+        inputFormatters:
+            isPrice
+                ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))]
+                : [],
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Colors.white),
@@ -239,27 +252,28 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _inputField(
-            label: 'Precio *',
+            label: '${translate(context, "price")} *',
             controller: tabData.priceController,
-            hintText: 'Introduce el precio',
+            hintText: translate(context, "tapPrice"),
+            isPrice: true,
           ),
           SizedBox(height: 16),
           _inputField(
-            label: 'Título (opcional)',
+            label: translate(context, "titleOptional"),
             controller: tabData.titleController,
             minLines: 1,
-            hintText: 'Introduce un título para esta versión',
+            hintText: translate(context, "typeTitleForVersion"),
           ),
           SizedBox(height: 16),
           _inputField(
-            label: 'Descripción *',
+            label: '${translate(context, "description")} *',
             controller: tabData.descriptionController,
             minLines: 3,
-            hintText: 'Introduce la descripción',
+            hintText: translate(context, "typeDescription"),
           ),
           SizedBox(height: 24),
           Text(
-            'Características adicionales',
+            translate(context, "additionalsThings"),
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           SizedBox(height: 8),
@@ -271,17 +285,17 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
                 children: [
                   Expanded(
                     child: _inputField(
-                      label: 'Clave',
+                      label: translate(context, "key"),
                       controller: tabData.keyControllers[index],
-                      hintText: 'Ejemplo: duración',
+                      hintText: translate(context, "keyExample"),
                     ),
                   ),
                   SizedBox(width: 12),
                   Expanded(
                     child: _inputField(
-                      label: 'Valor',
+                      label: translate(context, "valor"),
                       controller: tabData.valueControllers[index],
-                      hintText: 'Ejemplo: 30 días',
+                      hintText: translate(context, "valorExample"),
                     ),
                   ),
                   IconButton(
@@ -297,7 +311,7 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
             onPressed: addParameter,
             icon: Icon(Icons.add, color: Colors.white),
             label: Text(
-              'Agregar característica',
+              translate(context, "addThing"),
               style: TextStyle(color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3B82F6)),
@@ -308,22 +322,26 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
   }
 
   void _onCreatePressed() async {
-    final levelNames = ['Básico', 'Pro', 'Deluxe'];
-    print('Okeu');
+    final levelNames = [translate(context, "basic"), translate(context, "pro"), translate(context, "deluxe")];
+
+    setState(() {
+      _isLoading = true;
+    });
 
     for (int i = 0; i < tabsData.length; i++) {
       final price = tabsData[i].priceController.text.trim();
       final description = tabsData[i].descriptionController.text.trim();
       if (price.isEmpty || description.isEmpty) {
         ScaffoldMessageError(
-          'Por favor completa precio y descripción en la pestaña ${levelNames[i]}.',
+          translate(context, "completeVersions"),
           context,
         );
+        setState(() {
+          _isLoading = false;
+        });
         return;
       }
     }
-
-    print('Okeu');
 
     List<double> prices = [];
     Map<String, String> parametersBasic = {};
@@ -357,6 +375,17 @@ class _CreateVersionsCoursePageState extends State<CreateVersionsCoursePage>
     widget.advertisement.parametersDeluxe = parametersDeluxe;
     widget.advertisement.prices = prices;
 
-    await CourseService.postAdvertisement(widget.advertisement);
+    await CourseService.postAdvertisement(widget.advertisement, context);
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (context.mounted) {
+      // Cambias el índice para que muestre la pantalla perfil
+      navIndexNotifier.value = 3;
+
+      // Luego haces pop hasta que vuelvas a la raíz
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
   }
 }

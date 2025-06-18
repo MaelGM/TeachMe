@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teachme/models/speciality_model.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/subject_service.dart';
+import 'package:teachme/utils/translate.dart';
 
 class FilterPage extends StatefulWidget {
   @override
@@ -57,7 +58,7 @@ class _FilterPageState extends State<FilterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Filters'),
+        title: Text(translate(context, "filters")),
         leading: IconButton(
           onPressed: () => Navigator.pop(context, false),
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -75,7 +76,7 @@ class _FilterPageState extends State<FilterPage> {
         child: ListView(
           children: [
             Text(
-              'Sort by: ',
+              translate(context, "sortBy"),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -104,7 +105,7 @@ class _FilterPageState extends State<FilterPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Materia:',
+          translate(context, "topic"),
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -158,7 +159,7 @@ class _FilterPageState extends State<FilterPage> {
               });
             },
             child: Text(
-              showMoreSubjects ? 'Ver menos' : 'Ver todos',
+              showMoreSubjects ? translate(context, "seeLess") : translate(context, "seeAll"),
               style: TextStyle(color: Colors.blueAccent),
             ),
           ),
@@ -172,7 +173,7 @@ class _FilterPageState extends State<FilterPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Especialidades:',
+          translate(context, "specialities"),
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -251,7 +252,7 @@ class _FilterPageState extends State<FilterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Aplicar',
+                translate(context, "apply"),
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ],
@@ -263,12 +264,12 @@ class _FilterPageState extends State<FilterPage> {
 
   Widget _sortChips() {
     final Map<String, String> options = {
-      'date': 'Más reciente',
-      'date2': 'Más antiguo',
-      'scoreCount': 'Más popular',
-      'score': 'Mejor valorado',
-      'score2': 'Peor valorado',
-      'title': 'Alfabéticamente',
+      'date': translate(context, "recent"),
+      'date2': translate(context, "old"),
+      'scoreCount': translate(context, "popular"),
+      'score': translate(context, "best"),
+      'score2': translate(context, "worst"),
+      'title': translate(context, "alfabetical"),
     };
 
     return Wrap(

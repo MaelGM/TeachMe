@@ -4,6 +4,7 @@ import 'package:teachme/screens/filter_page.dart';
 import 'package:teachme/service/course_service.dart';
 import 'package:teachme/utils/config.dart';
 import 'package:teachme/utils/debouncer.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/course_card.dart';
 import 'package:teachme/widgets/standard_app_bar.dart';
 
@@ -154,7 +155,7 @@ class _SearchPageState extends State<SearchPage> {
               onChanged: _onSearchChanged,
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Buscar curso...',
+                hintText: translate(context, "searching"),
                 hintStyle: TextStyle(color: Colors.white38),
                 border: InputBorder.none,
               ),
@@ -175,7 +176,7 @@ class _SearchPageState extends State<SearchPage> {
             Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
             const SizedBox(height: 16),
             Text(
-              'No se ha encontrado nigún curso',
+              translate(context, "noCourseFound"),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -185,7 +186,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Intenta cambiar los filtros o busca otro tema.',
+              translate(context, "tryChangeFilter"),
               style: TextStyle(color: Colors.white54, fontSize: 14),
               textAlign: TextAlign.center,
             ),

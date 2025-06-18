@@ -5,6 +5,7 @@ import 'package:teachme/service/course_service.dart';
 import 'package:teachme/service/navigation_service.dart';
 import 'package:teachme/service/student_service.dart';
 import 'package:teachme/utils/config.dart';
+import 'package:teachme/utils/translate.dart';
 import 'package:teachme/widgets/course_card.dart';
 
 class PayedCourses extends StatefulWidget {
@@ -50,25 +51,30 @@ class _PayedCoursesState extends State<PayedCourses> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _loadCourses,
-      child:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _paidCourses.isEmpty
-              ? _noCoursesAlert()
-              : ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                itemCount: _paidCourses.length,
-                itemBuilder: (context, index) {
-                  final course = _paidCourses[index];
-                  return CourseCard(course: course, own: false);
-                },
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return RefreshIndicator(
+          onRefresh: _loadCourses,
+          child:
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _paidCourses.isEmpty
+                  ? _noCoursesAlert()
+                  : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: _paidCourses.length,
+                    itemBuilder: (context, index) {
+                      final course = _paidCourses[index];
+                      return CourseCard(course: course, own: false);
+                    },
+                  ),
+        );
+      },
     );
   }
 
@@ -81,8 +87,8 @@ class _PayedCoursesState extends State<PayedCourses> {
           children: [
             const Icon(Icons.menu_book_outlined, color: Colors.white, size: 60),
             const SizedBox(height: 16),
-            const Text(
-              'Aún no has pagado ningún servício o curso',
+            Text(
+              translate(context, "noPayedCoursesYet"),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -96,9 +102,9 @@ class _PayedCoursesState extends State<PayedCourses> {
               text: TextSpan(
                 style: const TextStyle(color: Colors.white54, fontSize: 14),
                 children: [
-                  const TextSpan(text: 'Encuentra algo que te guste '),
+                  TextSpan(text: translate(context, "findSomething")),
                   TextSpan(
-                    text: 'aquí',
+                    text: translate(context, "here"),
                     style: const TextStyle(
                       color: Colors.blueAccent,
                       decoration: TextDecoration.underline,
