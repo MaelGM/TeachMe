@@ -123,7 +123,7 @@
   "writeSomethingComment": "コメントを送信する前に何か書いてください。",
   "scoreComment": "コメントの評価を選択してください。",
   "errorComment": "エラーが発生しました。コメントを送信できませんでした。",
-  "commentDome": "メッセージが正常に送信されました",
+  "commentDone": "メッセージが正常に送信されました",
   "imageError": "エラーが発生しました。画像を保存できませんでした。",
   "oneImageAtLeast": "掲載に少なくとも1枚の画像を追加してください",
   "completeData": "続行する前に必須項目を入力してください",

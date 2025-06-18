@@ -83,7 +83,6 @@ class SubjectService {
               .map((doc) => SpecialityModel.fromFirestore(doc))
               .toList();
 
-      print('GETTING SPECIALITIES ${specialities.length}');
       return specialities;
     } catch (e) {
       throw Exception("Error al obtener asignaturas: $e");

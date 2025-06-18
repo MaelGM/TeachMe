@@ -69,6 +69,17 @@ class CourseService extends ChangeNotifier {
     'order': 'date',
   };
 
+  // Variable para mantener el último documento cargado
+  DocumentSnapshot? _lastDocument;
+
+  // Tamaño de página
+  final int pageSize = 5;
+
+  // Resetea la paginación
+  void resetPagination() {
+    _lastDocument = null;
+  }
+
   static Future<void> setTeacher(String id) async {
     try {
       final doc = await _firestore.collection('teachers').doc(id).get();
@@ -326,7 +337,10 @@ class CourseService extends ChangeNotifier {
     }
   }
 
-  Future<List<AdvertisementModel>> searchCourses({String? title}) async {
+  Future<List<AdvertisementModel>> searchCourses({
+    String? title,
+    bool loadMore = false,
+  }) async {
     try {
       filters.forEach((key, value) {
         print('Clave: $key, Valor: $value');
@@ -370,7 +384,19 @@ class CourseService extends ChangeNotifier {
           break;
       }
 
+      // Aplicar paginación
+      query = query.limit(pageSize);
+
+      if (loadMore && _lastDocument != null) {
+        query = query.startAfterDocument(_lastDocument!);
+      }
+
       final snapshot = await query.get();
+
+      if (snapshot.docs.isNotEmpty) {
+        _lastDocument = snapshot.docs.last;
+      }
+
       final searchLower = title?.toLowerCase();
 
       final filteredCourses =
@@ -382,7 +408,6 @@ class CourseService extends ChangeNotifier {
                   final courseTitle = course.title.toLowerCase();
                   if (!courseTitle.contains(searchLower)) return false;
                 }
-
                 return true;
               })
               .toList();

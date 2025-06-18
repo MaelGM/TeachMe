@@ -12,6 +12,7 @@ import 'package:teachme/providers/teacher_form_provider.dart';
 import 'package:teachme/routes/routes.dart';
 import 'package:teachme/screens/pages.dart';
 import 'package:teachme/service/auth_service.dart';
+import 'package:teachme/service/subject_service.dart';
 import 'package:teachme/utils/translate.dart';
 import 'package:teachme/utils/user_preferences.dart';
 import 'package:teachme/utils/utils.dart';
@@ -28,6 +29,7 @@ void main() async {
   Stripe.publishableKey = 'pk_test_51RbIzfD0rT16v2dTXbbaHKBybS8cH1qtxzNpI4Eb4vxoZiRNoBnjzxXBFiEpvFcxXqU4k7FE9UbzSUthQKJl6SXC00kMkF2WUo';
   
   bool isSessionActive = await AuthService().initSession();
+  final SubjectService _subjectService = SubjectService();
   runApp(
     MultiProvider(
       providers: [
@@ -49,6 +51,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
+    
 
     return MaterialApp(
       locale: languageProvider.locale,

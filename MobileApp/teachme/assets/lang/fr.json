@@ -124,7 +124,7 @@
     "writeSomethingComment": "Veuillez écrire quelque chose avant d’envoyer le commentaire.",
     "scoreComment": "Veuillez sélectionner une note pour le commentaire.",
     "errorComment": "Une erreur s'est produite. Le commentaire n'a pas pu être envoyé",
-    "commentDome": "Message envoyé avec succès",
+    "commentDone": "Message envoyé avec succès",
     "imageError": "Une erreur s'est produite. L'image n'a pas pu être enregistrée",
     "oneImageAtLeast": "Veuillez ajouter au moins une image à l'annonce",
     "completeData": "Veuillez remplir les champs obligatoires avant de continuer",

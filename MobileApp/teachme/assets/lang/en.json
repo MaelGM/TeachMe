@@ -123,7 +123,7 @@
   "writeSomethingComment": "Please write something before submitting the comment.",
   "scoreComment": "Please select a rating for the comment.",
   "errorComment": "An error occurred. Could not send the comment",
-  "commentDome": "Message sent successfully",
+  "commentDone": "Message sent successfully",
   "imageError": "An error occurred. Could not save the image",
   "oneImageAtLeast": "Please add at least one image to the listing",
   "completeData": "Please complete the required fields before continuing",

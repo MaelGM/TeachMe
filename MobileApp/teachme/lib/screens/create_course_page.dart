@@ -81,7 +81,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     });
   }
 
-  void _resetData() {
+  void _resetData() async {
     setState(() {
       _isImageLoading = true;
     });

@@ -123,7 +123,7 @@
   "writeSomethingComment": "Bitte schreiben Sie etwas, bevor Sie den Kommentar absenden.",
   "scoreComment": "Bitte wählen Sie eine Bewertung für den Kommentar aus.",
   "errorComment": "Ein Fehler ist aufgetreten. Der Kommentar konnte nicht gesendet werden",
-  "commentDome": "Nachricht erfolgreich gesendet",
+  "commentDone": "Nachricht erfolgreich gesendet",
   "imageError": "Ein Fehler ist aufgetreten. Das Bild konnte nicht gespeichert werden",
   "oneImageAtLeast": "Bitte fügen Sie dem Inserat mindestens ein Bild hinzu",
   "completeData": "Bitte füllen Sie die Pflichtfelder aus, bevor Sie fortfahren",

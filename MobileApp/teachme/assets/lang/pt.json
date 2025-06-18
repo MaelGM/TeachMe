@@ -123,7 +123,7 @@
     "writeSomethingComment": "Escreva algo antes de enviar o comentário.",
     "scoreComment": "Selecione uma pontuação para o comentário.",
     "errorComment": "Ocorreu um erro. Não foi possível enviar o comentário.",
-    "commentDome": "Mensagem enviada com sucesso",
+    "commentDone": "Mensagem enviada com sucesso",
     "imageError": "Ocorreu um erro. Não foi possível salvar a imagem.",
     "oneImageAtLeast": "Adicione pelo menos uma imagem ao anúncio",
     "completeData": "Preencha os campos obrigatórios antes de continuar",

@@ -30,22 +30,52 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
 
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 100) {
+        _loadMoreData();
+      }
+    });
+
     _loadInitialData();
   }
 
   void _loadInitialData() async {
+    _courseService.resetPagination();
+    setState(() => _isLoading = true);
+
+    final result = await _courseService.searchCourses(
+      title: _searchController.text,
+    );
+
+    setState(() {
+      _courses = result;
+      _isLoading = false;
+    });
+  }
+
+  void _loadMoreData() async {
+    if (_isLoading) return;
+
     setState(() {
       _isLoading = true;
     });
-    if (_courses.isEmpty) {
-      final result = await _courseService.searchCourses();
+
+    final result = await _courseService.searchCourses(
+      title: _searchController.text,
+      loadMore: true,
+    );
+
+    if (result.isNotEmpty) {
       setState(() {
-        _courses = result;
+        _courses.addAll(result);
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
       });
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void _onSearchChanged(String title) {
@@ -101,15 +131,10 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _findedCourses() {
-    if (_isLoading) {
-      return Expanded(child: Center(child: CircularProgressIndicator()));
-    }
-
     return Expanded(
       child: RefreshIndicator(
         onRefresh: () async {
-          print('refresh');
-          _loadData();
+          _loadInitialData();
         },
         child:
             _courses.isEmpty
@@ -125,8 +150,15 @@ class _SearchPageState extends State<SearchPage> {
                 : ListView.builder(
                   controller: _scrollController,
                   physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: _courses.length,
+                  itemCount: _courses.length + (_isLoading ? 1 : 0),
                   itemBuilder: (context, index) {
+                    if (index == _courses.length) {
+                      // Spinner al final mientras carga más
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
                     final course = _courses[index];
                     return CourseCard(course: course, own: false);
                   },

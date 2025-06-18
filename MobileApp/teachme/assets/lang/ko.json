@@ -123,7 +123,7 @@
   "writeSomethingComment": "댓글을 보내기 전에 내용을 작성해주세요.",
   "scoreComment": "댓글 평가를 선택해주세요.",
   "errorComment": "오류가 발생했습니다. 댓글을 보낼 수 없었습니다.",
-  "commentDome": "메시지가 성공적으로 전송되었습니다",
+  "commentDone": "메시지가 성공적으로 전송되었습니다",
   "imageError": "오류가 발생했습니다. 이미지를 저장할 수 없습니다.",
   "oneImageAtLeast": "광고에 최소 하나의 이미지를 추가해주세요",
   "completeData": "계속하려면 필수 항목을 입력해주세요",

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teachme/models/rating_model.dart';
@@ -141,46 +140,45 @@ class _HorizontalCommentsState extends State<HorizontalComments> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _showCourseScore(),
-        if (CourseService.ratings.isNotEmpty)
-          TextButton(
-            onPressed: () async {
-              print('see all');
-              await CourseService().getCommentsByDate();
-              await Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (_, __, ___) => FocusCommentsPage(),
-                  transitionsBuilder: (_, animation, __, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset.zero;
-                    const curve = Curves.ease;
+        TextButton(
+          onPressed: () async {
+            print('see all');
+            await CourseService().getCommentsByDate();
+            await Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => FocusCommentsPage(),
+                transitionsBuilder: (_, animation, __, child) {
+                  const begin = Offset(1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.ease;
 
-                    var tween = Tween(
-                      begin: begin,
-                      end: end,
-                    ).chain(CurveTween(curve: curve));
+                  var tween = Tween(
+                    begin: begin,
+                    end: end,
+                  ).chain(CurveTween(curve: curve));
 
-                    return SlideTransition(
-                      position: animation.drive(tween),
-                      child: child,
-                    );
-                  },
-                ),
-              );
-            },
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all<EdgeInsets>(
-                EdgeInsets.zero,
-              ), // Eliminar padding extra
-              tapTargetSize:
-                  MaterialTapTargetSize
-                      .shrinkWrap, // Hace que el área de tap se ajuste al contenido
-            ),
-            child: Text(
-              translate(context, "seeAll"),
-              style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
-            ),
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
+              ),
+            );
+          },
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all<EdgeInsets>(
+              EdgeInsets.zero,
+            ), // Eliminar padding extra
+            tapTargetSize:
+                MaterialTapTargetSize
+                    .shrinkWrap, // Hace que el área de tap se ajuste al contenido
           ),
+          child: Text(
+            translate(context, "seeAll"),
+            style: TextStyle(color: Color(0xFF3B82F6), fontSize: 16),
+          ),
+        ),
       ],
     );
   }

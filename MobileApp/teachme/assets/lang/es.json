@@ -139,7 +139,7 @@
     "writeSomethingComment": "Escriba algo antes de enviar el comentario por favor.",
     "scoreComment": "Seleccione la puntuación del comentario por favor.",
     "errorComment": "Ha ocurrido un error. No se ha podido enviar el comentario",
-    "commentDome": "Mensaje enviado correctamente",
+    "commentDone": "Mensaje enviado correctamente",
     "imageError": "Ha ocurrido un error. No se ha podido guardar la imágen",
     "oneImageAtLeast": "Por favor, añada al menos una imagen al anuncio",
     "completeData": "Por favor, rellene los datos obligatorios antes de continuar",

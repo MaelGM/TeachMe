@@ -62,6 +62,8 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
       }
     });
 
+    print(CourseService.course.toFirestore());
+
     _loadData();
   }
 

@@ -123,7 +123,7 @@
     "writeSomethingComment": "Scrivi qualcosa prima di inviare il commento, per favore.",
     "scoreComment": "Seleziona una valutazione per il commento, per favore.",
     "errorComment": "Si è verificato un errore. Il commento non è stato inviato",
-    "commentDome": "Messaggio inviato con successo",
+    "commentDone": "Messaggio inviato con successo",
     "imageError": "Si è verificato un errore. L'immagine non è stata salvata",
     "oneImageAtLeast": "Aggiungi almeno un'immagine all'annuncio, per favore",
     "completeData": "Compila i campi obbligatori prima di continuare",
